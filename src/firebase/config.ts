@@ -1,8 +1,9 @@
-console.log("!!! ARQUIVO DE CONFIGURAÇÃO DO FIREBASE FOI CARREGADO !!!");
+
 
 import { initializeApp } from "firebase/app";
 import { connectFirestoreEmulator, getFirestore } from "firebase/firestore";
 import { connectAuthEmulator, getAuth } from "firebase/auth";
+
 
 const firebaseConfig = {
     apiKey: import.meta.env.VITE_API_KEY,
@@ -14,6 +15,7 @@ const firebaseConfig = {
     appId: import.meta.env.VITE_APP_ID,
     measurementId: import.meta.env.VITE_MEASUREMENT_ID,
 };
+
 
 const app = initializeApp(firebaseConfig);
 

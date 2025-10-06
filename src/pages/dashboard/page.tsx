@@ -20,6 +20,7 @@ import NewDesktopWindow from "../../components/windows/newDesktop";
 import { useTranslation } from "react-i18next";
 import { FullFileData, getFilesByDesktop, listenToFilesByDesktop, updateFilePosition } from "../../services/file";
 import OpenLinkWindow from "../../components/windows/openLink";
+import DesktopConfigWindow from "../../components/windows/desktopConfig";
 
 
 const findNextAvailablePosition = (icons: FullFileData[], containerWidth: number): { x: number; y: number } | null => {
@@ -187,6 +188,7 @@ export default function DashboardPage() {
             <FileWindow />
             <ListDesktopsWindow />
             <NewDesktopWindow />
+            <DesktopConfigWindow />
             <OpenLinkWindow url={openLink.url as string} />
             <div className={`${start ? 'opacity-100' : 'opacity-0'} transition-opacity duration-1000 flex flex-col w-full h-screen overflow-hidden text-white`}>
                 <div className="flex flex-row flex-wrap justify-between items-center w-full gap-3 p-4">

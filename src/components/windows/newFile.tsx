@@ -20,7 +20,7 @@ export default function NewFileWindow() {
 
         let normalized = inputUrl.trim();
 
-        if (!normalized.match(/ ^[a-zA-Z]+: \/ \/ /)) {
+        if (!normalized.match(/^[a-zA-Z]+:\/\//)) {
             normalized = 'https://' + normalized;
         }
 

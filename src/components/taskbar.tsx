@@ -11,11 +11,15 @@ export default function TaskBar() {
             <img onClick={() => {
                 minimazeAllWindows()
                 config.openWindow()
-            }} src="/assets/images/settings.png" alt="profile" className=" p-1.5 px-2 h-full transition-all cursor-pointer hover:bg-zinc-500/30" />
+            }} src="/assets/images/settings.png" alt="profile" className=" p-1.5 px-2 w-11 transition-all cursor-pointer hover:bg-zinc-500/30" />
             <img onClick={() => {
                 minimazeAllWindows()
                 profile.openWindow()
-            }} src="/assets/images/profile.png" alt="profile" className=" p-1.5 px-2 h-full transition-all cursor-pointer hover:bg-zinc-500/30" />
+            }} src="/assets/images/profile.png" alt="profile" className=" p-1.5 px-2 w-11 transition-all cursor-pointer hover:bg-zinc-500/30" />
+            <img onClick={() => {
+                minimazeAllWindows()
+                profile.openWindow()
+            }} src="/assets/images/users.png" alt="users" className=" p-1.5 px-2 w-11 transition-all cursor-pointer hover:bg-zinc-500/30" />
         </div>
     )
 }

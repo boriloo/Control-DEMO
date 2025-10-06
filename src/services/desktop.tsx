@@ -1,5 +1,5 @@
 import { db } from "../firebase/config";
-import { addDoc, collection, doc, getDoc, getDocs, query, serverTimestamp, updateDoc, where } from "firebase/firestore";
+import { addDoc, collection, deleteDoc, doc, getDoc, getDocs, query, serverTimestamp, updateDoc, where, writeBatch } from "firebase/firestore";
 import { DesktopData } from "../types/desktop";
 
 export type FullDesktopData = DesktopData & { id: string };
@@ -121,3 +121,37 @@ export const updateDesktopBackground = async (desktopId: string, imageURL: strin
     }
 };
 
+export const deleteDesktopById = async (userId: string, desktopId: string) => {
+    try {
+        const q = query(
+            collection(db, "files"),
+            where("desktopId", "==", desktopId),
+            where("parentId", "==", null),
+            where("usersId", "array-contains", userId)
+        );
+
+        const querySnapshot = await getDocs(q);
+
+        if (querySnapshot.empty) {
+            console.log("Nenhum documento encontrado para apagar.");
+        } else {
+            const batch = writeBatch(db);
+
+            querySnapshot.forEach((doc) => {
+                batch.delete(doc.ref);
+            });
+
+            await batch.commit();
+        }
+
+        const docRef = doc(db, "desktops", desktopId);
+
+        await deleteDoc(docRef);
+
+        console.log("Desktop Excluido com sucesso!");
+
+    } catch (error) {
+        console.error("Erro ao excluir desktop:", error);
+        throw error;
+    }
+};

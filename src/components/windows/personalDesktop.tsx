@@ -11,7 +11,7 @@ interface PersonalProps {
 
 
 export default function PersonalDesktopWindow({ onFinish }: PersonalProps) {
-    const { user, changeCurrentDesktop, authLogoutUser } = useUser();
+    const { user, changeCurrentDesktop } = useUser();
     const [imageSelected, setImageSelected] = useState<File>()
     const [desktopName, setDesktopName] = useState<string | null>()
     const [loading, setLoading] = useState<boolean>(false)

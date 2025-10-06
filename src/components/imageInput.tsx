@@ -2,6 +2,7 @@ import { useCallback, useState, useEffect } from 'react';
 import { useDropzone } from 'react-dropzone';
 import { useUser } from '../context/AuthContext';
 import { Upload } from 'lucide-react';
+import { useWindowContext } from '../context/WindowContext';
 
 type ClickableImageInputProps = {
     currentImageUrl?: string;
@@ -9,7 +10,7 @@ type ClickableImageInputProps = {
 };
 
 export function ClickableImageInput({ onFileSelected, currentImageUrl }: ClickableImageInputProps) {
-    const { currentDesktop } = useUser();
+    const { dtConfig } = useWindowContext();
     const [preview, setPreview] = useState<string | null>(currentImageUrl || null);
     const [errors, setError] = useState<string | null>()
 
@@ -21,8 +22,6 @@ export function ClickableImageInput({ onFileSelected, currentImageUrl }: Clickab
             onFileSelected(file);
         }
     }, [onFileSelected]);
-
-    console.log('OPA', currentDesktop?.background)
 
     const { getRootProps, getInputProps } = useDropzone({
         maxSize: 10 * 1024 * 1024,
@@ -46,6 +45,10 @@ export function ClickableImageInput({ onFileSelected, currentImageUrl }: Clickab
         };
     }, [preview, currentImageUrl]);
 
+    useEffect(() => {
+        setPreview(null)
+    }, [dtConfig.desktop?.background])
+
     return (
         <>
             <div
@@ -67,10 +70,10 @@ export function ClickableImageInput({ onFileSelected, currentImageUrl }: Clickab
                     </>
                 ) : (
                     <>
-                        {currentDesktop?.background ? (<>
+                        {dtConfig.desktop?.background ? (<>
                             <div
                                 className="w-full h-[168px] bg-cover bg-center"
-                                style={{ backgroundImage: `url(${currentDesktop?.background || 'assets/images/authBG.jpg'} )` }}
+                                style={{ backgroundImage: `url(${dtConfig.desktop?.background} )` }}
                             />
                             <div className="absolute top-0 left-0 z-10 w-full h-full flex justify-center items-center font-medium text-lg transition-all 
       opacity-0 bg-black/50 group-hover:opacity-100 backdrop-blur-sm">
@@ -78,7 +81,7 @@ export function ClickableImageInput({ onFileSelected, currentImageUrl }: Clickab
                             </div>
                         </>)
                             :
-                            (<h1 className="p-3 text-center flex flex-row gap-2 justify-center items-center">
+                            (<h1 className="p-2 text-center flex flex-row gap-2 justify-center items-center">
                                 Escolher imagem
                                 <Upload />
                             </h1>)

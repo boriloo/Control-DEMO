@@ -9,7 +9,7 @@ interface AppContextType {
 const AppContext = createContext<AppContextType | undefined>(undefined);
 
 export const AppProvider = ({ children }: { children: ReactNode }) => {
-    const { file, profile, newFile, config, listdt, newdt, openLink } = useWindowContext()
+    const { file, profile, newFile, config, listdt, newdt, openLink, dtConfig } = useWindowContext()
 
     const minimazeAllWindows = useCallback(() => {
         config.minimizeWindow()
@@ -19,6 +19,7 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
         listdt.minimizeWindow()
         newdt.closeWindow()
         openLink.closeWindow()
+        dtConfig.closeWindow()
     }, []);
 
     const closeAllWindows = useCallback(() => {
@@ -29,6 +30,7 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
         listdt.closeWindow()
         newdt.closeWindow()
         openLink.closeWindow()
+        dtConfig.closeWindow()
     }, []);
 
 

@@ -144,10 +144,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
                     const lastDesktop = await getDesktopById(item);
                     changeCurrentDesktop(lastDesktop);
                 }
-
                 const userProfile = await getUserProfile(user.uid);
                 if (userProfile) setUser(userProfile);
             } catch (err) {
+                localStorage.removeItem("last-desktop")
                 alert(err);
             } finally {
                 setIsLoading(false);

@@ -22,6 +22,7 @@ export default function AppearanceOption() {
         setColorFilter(user.filterColor as ColorFilter)
     }, [user])
 
+
     if (!currentDesktop) return;
 
     const handleEditBackground = async () => {
@@ -66,36 +67,7 @@ export default function AppearanceOption() {
         <div className="flex flex-col items-start gap-4 p-4 w-full">
             {hasDesktops && (<h1 className="text-[25px] flex">Desktop atual - {currentDesktop.name} ({currentDesktop.type})</h1>)}
             <div className="w-full h-[1px] bg-zinc-600"></div>
-            <div className="flex flex-col gap-4 px-2 items-start">
-                <p className="text-xl">Tela de fundo</p>
-                <p className="text-md mt-[-12px] mb-1">Imagem exibida no fundo do Desktop atual.</p>
-
-                {currentImage && !loading && (<p className="mb-[-5px] p-1 px-2 bg-white/10 rounded-lg">Prévia</p>)}
-
-                <div className={`${loading ? 'saturate-0 pointer-events-none opacity-50 scale-90' : ''} origin-left transition-all w-full`}>
-                    <ClickableImageInput onFileSelected={(file) => {
-                        setCurrentImage(file)
-                    }} />
-                </div>
-
-                {loading ? (
-                    <div className={`
-            p-0.5 px-3 rounded-sm font-medium`}>
-                        <DotLottieReact
-                            src="https://lottie.host/e580eaa4-d189-480f-a6ce-f8c788dff90d/MP2FjoJFFE.lottie"
-                            className="w-20 p-0"
-                            loop
-                            autoplay
-                        />
-                    </div>
-                ) : (
-                    <button disabled={!currentImage} onClick={handleEditBackground} className={`${currentImage ? '' : 'pointer-events-none saturate-0 opacity-50'} border-1 border-blue-500 transition-all cursor-pointer 
-            hover:bg-blue-500 p-2 px-3 rounded-sm font-medium`}>Salvar fundo</button>
-                )}
-            </div>
-
-            <div className="w-full h-[1px] bg-zinc-600 mt-4"></div>
-
+            
             <div className="flex flex-col gap-4 px-2 items-start">
                 <p className="text-xl mt-2">Filtros</p>
                 <p className="text-md mt-[-12px] mb-1">Efeitos aplicados ao fundo quando uma janela é aberta.</p>
