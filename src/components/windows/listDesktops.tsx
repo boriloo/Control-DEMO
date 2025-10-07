@@ -30,7 +30,7 @@ export default function ListDesktopsWindow() {
             return;
         };
 
-        const q = query(collection(db, "desktops"), where("members", "array-contains", user.uid));
+        const q = query(collection(db, "desktops"), where("membersId", "array-contains", user.uid));
 
         const unsubscribe = onSnapshot(q, (querySnapshot) => {
             const desktopsFromDb = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
@@ -62,7 +62,7 @@ export default function ListDesktopsWindow() {
     }
 
     return (
-        listdt.currentStatus != 'closed' && <div onClick={handleAreaClick} className={`${listdt.currentStatus === 'open' ? returnFilterEffects() : 'pointer-events-none '} 
+        listdt.currentStatus != 'closed' && <div onClick={handleAreaClick} className={`${listdt.currentStatus === 'open' ? returnFilterEffects(user) : 'pointer-events-none '} 
         transition-all duration-500 fixed z-100 w-full h-screen flex justify-center items-center p-4 pb-[50px] cursor-pointer`}>
             <div className={`${listdt.currentStatus === 'open' ? 'scale-100' : 'scale-0'} cursor-default bg-zinc-900 origin-center rounded-md p-4 w-full 
                 max-w-[700px] max-h-full flex flex-col gap-4 overflow-y-auto transition-all relative pb-10 `}>

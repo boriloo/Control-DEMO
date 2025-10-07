@@ -19,7 +19,7 @@ export default function FileWindow() {
 
     return (
 
-        <div onClick={handleAreaClick} className={`${isFullsceen ? 'pb-[40px]' : ' p-2 pb-[50px]'} ${file.currentStatus === "open" ? returnFilterEffects() : 'pointer-events-none'} 
+        <div onClick={handleAreaClick} className={`${isFullsceen ? 'pb-[40px]' : ' p-2 pb-[50px]'} ${file.currentStatus === "open" ? returnFilterEffects(user) : 'pointer-events-none'} 
         fixed z-100 flex-1 flex justify-center items-center w-full h-screen transition-all duration-500 cursor-pointer`}>
             <div className={`${isFullsceen ? 'max-w-full max-h-full' : 'rounded-lg max-w-[1200px] max-h-[700px]'} ${file.currentStatus === "open" ? 'scale-100' : 'scale-0 '} 
                 bg-zinc-900 cursor-default origin-bottom relative transition-all duration-300 flex flex-col w-full h-full overflow-y-auto`}>

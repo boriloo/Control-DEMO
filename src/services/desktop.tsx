@@ -11,6 +11,7 @@ export const createDesktop = async (data: DesktopData): Promise<FullDesktopData>
             type: data.type,
             ownerId: data.ownerId,
             members: data.members,
+            membersId: data.membersId,
             createdAt: serverTimestamp()
         };
 

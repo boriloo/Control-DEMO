@@ -1,3 +1,4 @@
+import { UserProfile } from "firebase/auth";
 import { useUser } from "../context/AuthContext";
 
 export type BasicFilter = 'off' | 'low' | 'high'
@@ -17,11 +18,8 @@ export interface LoginData {
   password: string;
 }
 
-
-
-export const returnFilterEffects = () => {
-  const { user } = useUser();
-  if (!user) return "bosta";
+export const returnFilterEffects = (user: UserProfile | null) => {
+  if (!user) return;
   let classes = "";
 
   switch (user.filterDark) {

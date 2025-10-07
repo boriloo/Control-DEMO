@@ -130,7 +130,7 @@ export default function NewFileWindow() {
     }
 
     return (
-        <div onClick={handleAreaClick} className={`${newFile.currentStatus === 'open' ? returnFilterEffects() : 'pointer-events-none '} 
+        <div onClick={handleAreaClick} className={`${newFile.currentStatus === 'open' ? returnFilterEffects(user) : 'pointer-events-none '} 
         transition-all duration-500 fixed z-100 w-full h-screen flex justify-center items-center p-4 pb-[50px] cursor-pointer`}>
             <div className={`${newFile.currentStatus === 'open' ? 'scale-100' : 'scale-0'} cursor-default bg-zinc-900 origin-center rounded-md p-4 w-full max-w-[400px] max-h-full flex flex-col gap-4 overflow-y-auto transition-all relative`}>
                 <X onClick={() => { setFileType("folder"); setDrop(false); newFile.closeWindow(); }} size={35} className="absolute top-0 right-0 p-2 rounded-bl-lg cursor-pointer transition-all hover:bg-red-500" />

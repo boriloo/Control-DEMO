@@ -25,8 +25,18 @@ export default function PersonalDesktopWindow({ onFinish }: PersonalProps) {
             const localUrl = URL.createObjectURL(imageSelected)
             setLoading(true)
             if (!imageSelected || !user || !desktopName) return;
-            const newDesktop = await createDesktop({ name: desktopName, type: 'personal', ownerId: user.uid as string, members: [user.uid as string] })
-
+            const newDesktop = await createDesktop({
+                name: desktopName,
+                type: 'personal',
+                ownerId: user.uid as string,
+                members: [{
+                    userId: user.uid as string,
+                    userName: user.name as string,
+                    userImage: user.profileImage as string,
+                    role: 'owner'
+                }],
+                membersId: [user.uid as string]
+            })
             setPercentage(prev => (prev + 16.66))
 
             const storage = getStorage();

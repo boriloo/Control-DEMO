@@ -1,7 +1,8 @@
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword, updateProfile, User, UserProfile } from "firebase/auth"
 import { BasicFilter, ColorFilter, LoginData, RegisterData } from "../types/auth"
 import { auth, db } from "../firebase/config";
-import { doc, getDoc, serverTimestamp, setDoc, updateDoc, } from "firebase/firestore";
+import { collection, doc, getDoc, getDocs, query, serverTimestamp, setDoc, updateDoc, where, writeBatch, } from "firebase/firestore";
+import { MemberType } from "../types/desktop";
 
 export const registerUser = async ({ name, email, password }: RegisterData): Promise<UserProfile> => {
   try {
@@ -117,22 +118,49 @@ export const updateUserProfileImage = async (uid: string, imageURL: string): Pro
     await updateDoc(userRef, {
       profileImage: imageURL
     });
-    const updatedDoc = await getDoc(userRef);
 
+    const updatedDoc = await getDoc(userRef);
     if (!updatedDoc.exists()) {
-      throw new Error("O usuario não foi encontrado após a atualização.");
+      throw new Error("O usuário não foi encontrado após a atualização.");
     }
 
-    const updatedUserData: UserProfile = {
+    const updatedUserData = {
       uid: updatedDoc.id,
-      ...updatedDoc.data() as UserProfile
-    };
+      ...updatedDoc.data()
+    } as UserProfile;
+
+
+    const q = query(
+      collection(db, "desktops"),
+      where("membersId", "array-contains", uid)
+    );
+
+    const querySnapshot = await getDocs(q);
+
+    if (!querySnapshot.empty) {
+      const batch = writeBatch(db);
+
+      querySnapshot.forEach((desktopDoc) => {
+        const members = desktopDoc.data().members as MemberType[];
+
+        const updatedMembers = members.map(member => {
+          if (member.userId === uid) {
+            return { ...member, userImage: imageURL };
+          }
+          return member;
+        });
+
+        batch.update(desktopDoc.ref, { members: updatedMembers });
+      });
+
+      await batch.commit();
+      console.log(`${querySnapshot.size} desktops foram atualizados com a nova imagem.`);
+    }
 
     return updatedUserData;
 
   } catch (error) {
-    console.error("Erro ao atualizar imagem de perfil", error);
+    console.error("Erro ao atualizar imagem de perfil:", error);
     throw error;
   }
 };
-

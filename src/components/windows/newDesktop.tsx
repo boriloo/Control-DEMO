@@ -1,4 +1,4 @@
-import { ExternalLink, Menu, X } from "lucide-react"
+import { X } from "lucide-react"
 import { useWindowContext } from "../../context/WindowContext";
 import { returnFilterEffects } from "../../types/auth";
 import { useUser } from "../../context/AuthContext";
@@ -11,7 +11,6 @@ import { DotLottieReact } from "@lottiefiles/dotlottie-react";
 
 
 export default function NewDesktopWindow() {
-    const { currentDesktop } = useUser();
     const { newdt } = useWindowContext();
     const { user, changeCurrentDesktop, } = useUser();
     const [imageSelected, setImageSelected] = useState<File>()
@@ -26,7 +25,18 @@ export default function NewDesktopWindow() {
             const localUrl = URL.createObjectURL(imageSelected)
             setLoading(true)
             if (!imageSelected || !user || !desktopName) return;
-            const newDesktop = await createDesktop({ name: desktopName, type: desktopType, ownerId: user.uid as string, members: [user.uid as string] })
+            const newDesktop = await createDesktop({
+                name: desktopName,
+                type: desktopType,
+                ownerId: user.uid as string,
+                members: [{
+                    userId: user.uid as string,
+                    userName: user.name as string,
+                    userImage: user.profileImage as string,
+                    role: 'owner'
+                }],
+                membersId: [user.uid as string]
+            })
             const storage = getStorage();
             const storageRef = ref(storage, `desktops/${newDesktop.id}/background`);
             const snapshot = await uploadBytes(storageRef, imageSelected);
@@ -48,7 +58,7 @@ export default function NewDesktopWindow() {
     }
 
     return (
-        newdt.currentStatus != 'closed' && <div onClick={handleAreaClick} className={`${newdt.currentStatus === 'open' ? returnFilterEffects() : 'pointer-events-none '} 
+        newdt.currentStatus != 'closed' && <div onClick={handleAreaClick} className={`${newdt.currentStatus === 'open' ? returnFilterEffects(user) : 'pointer-events-none '} 
         transition-all duration-500 fixed z-100 w-full h-screen flex justify-center items-center p-4 pb-[50px] cursor-pointer`}>
             <div className={`${newdt.currentStatus === 'open' ? 'scale-100' : 'scale-0'} cursor-default bg-zinc-900 origin-center rounded-md p-4 w-full 
                 max-w-[600px] max-h-full flex flex-col gap-4 overflow-y-auto transition-all relative pb-5 `}>
