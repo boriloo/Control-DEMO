@@ -4,17 +4,17 @@ import { FullFileData } from "../services/file";
 
 export type IconTypes = "folder" | "image" | "text" | "link" | "chat" | "calendar"
 
-interface IconProps {
-    id: string;
-    name: string;
-    type: IconTypes;
-    img?: string;
+// interface IconProps {
+//     id: string;
+//     name: string;
+//     type: IconTypes;
+//     img?: string;
 
-}
+// }
 
 export default function Icon(icon: FullFileData) {
     const { root } = useRootContext()
-    const { file, openLink } = useWindowContext();
+    const { file, openLink, imgViewer } = useWindowContext();
     if (icon.type === 'link') {
         console.log(icon)
     }
@@ -29,7 +29,6 @@ export default function Icon(icon: FullFileData) {
 
     const returnImage = (type: IconTypes, img: string | null) => {
         const domain = getDomainFromUrl(icon.url as string)
-        console.log(domain)
         switch (type) {
             case "folder":
                 return "/assets/images/open-folder.png"
@@ -54,15 +53,21 @@ export default function Icon(icon: FullFileData) {
         if (icon.type === 'link') {
             openLink.setUrl(icon.url as string)
             openLink.openWindow()
+        } else if (icon.type === 'image') {
+            imgViewer.setFile(null)
+            imgViewer.openWindow();
+            imgViewer.setFile(icon)
         } else {
             file.openWindow();
         }
     }
 
     return (
-        <div onClick={returnAction} className="group select-none flex flex-col 
+        <div onClick={returnAction} className="group select-none flex flex-col justify-center
         items-center gap-2 w-20 p-1 px-2 rounded-sm transition-all cursor-pointer hover:bg-white/15">
-            <img src={`${returnImage(icon.type, icon.imageUrl ?? null)}`} alt="iconImg" className="rounded-sm pointer-events-none select-none text-shadow-lg max-w-10" />
+            <div className={`${icon.type === 'image' ? '' : 'max-w-10'} flex justify-center items-center  h-12 max-h-12`}>
+                <img src={`${returnImage(icon.type, icon.imageUrl ?? null)}`} alt="iconImg" className="pointer-events-none select-none text-shadow-lg w-full h-full object-contain" />
+            </div>
             <p className="group-hover:bg-black/60 select-none text-[14px] p-1 px-2 bg-black/30 backdrop-blur-sm transition-all rounded-md truncate max-w-19">{icon.name}</p>
         </div>
     )

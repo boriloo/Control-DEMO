@@ -27,6 +27,9 @@ export const createFile = async (data: FileData): Promise<FullFileData> => {
         if (data.imageUrl !== undefined) {
             filePayload.imageUrl = data.imageUrl;
         }
+        if (data.extension !== undefined) {
+            filePayload.extension = data.extension;
+        }
         if (data.sizeInBytes !== undefined) {
             filePayload.sizeInBytes = data.sizeInBytes;
         }

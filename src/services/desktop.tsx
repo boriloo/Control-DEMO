@@ -82,7 +82,7 @@ export const getDesktopById = async (desktopId: string): Promise<FullDesktopData
 
 export const getDesktopsByMember = async (memberId: string): Promise<FullDesktopData[]> => {
     try {
-        const q = query(collection(db, "desktops"), where("members", "array-contains", memberId));
+        const q = query(collection(db, "desktops"), where("membersId", "array-contains", memberId));
         const querySnapshot = await getDocs(q);
         const desktops: FullDesktopData[] = querySnapshot.docs.map(doc => ({
             id: doc.id,

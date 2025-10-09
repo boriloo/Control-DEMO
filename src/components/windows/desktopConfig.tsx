@@ -9,9 +9,11 @@ import { getDownloadURL, getStorage, ref, uploadBytes } from "firebase/storage";
 import { deleteDesktopById, FullDesktopData, getDesktopById, getDesktopsByMember, updateDesktopBackground } from "../../services/desktop";
 import { doc, onSnapshot } from "firebase/firestore";
 import { db } from "../../firebase/config";
+import { useAppContext } from "../../context/AppContext";
 
 
 export default function DesktopConfigWindow() {
+    const { callToast } = useAppContext();
     const { user, currentDesktop, changeCurrentDesktop, setHasDesktops } = useUser();
     const { dtConfig } = useWindowContext();
     const [loading, setLoading] = useState<boolean>(false)
@@ -121,10 +123,11 @@ export default function DesktopConfigWindow() {
     const deleteDesktopFunction = async () => {
         if (currentDesktop?.id === dtConfig.desktop?.id) {
             const desktops = await getDesktopsByMember(user?.uid as string);
-            const filteredDesktops = desktops.filter(desktop => desktop.id !== dtConfig.desktop?.id);
-            if (filteredDesktops.length < 1) {
+            if (desktops.length < 1) {
+                console.log('NAO TEM NENHUM')
                 setHasDesktops(false)
             } else {
+                console.log('ACHAMOS')
                 changeCurrentDesktop(desktops[0])
             }
         }
@@ -132,6 +135,7 @@ export default function DesktopConfigWindow() {
         setConfirmDelete(false)
         dtConfig.closeWindow()
         dtConfig.setDesktop(null)
+        callToast({ message: 'Desktop excluído!', type: 'success' })
     }
 
 
@@ -291,7 +295,7 @@ export default function DesktopConfigWindow() {
                                                 rounded-full w-12 h-12`} />
                                             <div className="flex flex-col">
                                                 <p className="text-lg flex gap-1 items-end">{member.userName} {member.userId === user.uid && (
-                                                    <p className="text-[15px] opacity-60 mb-0.5">(você)</p>)}</p>
+                                                    <span className="text-[15px] opacity-60 mb-0.5">(você)</span>)}</p>
                                                 <p className="text-md opacity-80 mt-[-5px]">{member.role}</p>
                                             </div>
                                         </div>

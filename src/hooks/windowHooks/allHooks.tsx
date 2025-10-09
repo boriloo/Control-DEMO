@@ -1,6 +1,7 @@
 import { useConfigHook } from "./configHook";
 import { useDesktopConfigHook } from "./desktopConfig";
 import { useFileHook } from "./fileHook";
+import { useImageViewerHook } from "./imageViewerHook";
 import { useListDesktopHook } from "./listDesktopHook";
 import { useNewDesktopHook } from "./newDesktopHook";
 import { useNewFileHook } from "./newFileHook";
@@ -17,5 +18,6 @@ export function useAllWindows() {
         newdt: useNewDesktopHook(),
         openLink: useOpenLinkHook(),
         dtConfig: useDesktopConfigHook(),
+        imgViewer: useImageViewerHook(),
     };
 }

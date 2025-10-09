@@ -1,15 +1,46 @@
-import { createContext, useContext, ReactNode, useCallback } from "react";
+import { createContext, useContext, ReactNode, useCallback, useState, useEffect, useRef } from "react";
 import { useWindowContext } from "./WindowContext";
+
+type ToastType = "success" | "error" | "message"
+
+interface Toast {
+    message: string,
+    type: ToastType
+}
 
 interface AppContextType {
     minimazeAllWindows: () => void;
     closeAllWindows: () => void;
+    callToast: ({ message, type }: Toast) => void;
+    toastOpen: boolean;
+    toast: Toast;
 };
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
 
 export const AppProvider = ({ children }: { children: ReactNode }) => {
-    const { file, profile, newFile, config, listdt, newdt, openLink, dtConfig } = useWindowContext()
+    const { file, profile, newFile, config, listdt, newdt, openLink, dtConfig, imgViewer } = useWindowContext()
+    const [toastOpen, setToastOpen] = useState<boolean>(false)
+    const [toast, setToast] = useState<Toast>({ message: 'Hmmm...', type: 'message' })
+    const timeoutRef = useRef<NodeJS.Timeout | null>(null)
+
+    const callToast = ({ message, type }: Toast) => {
+        if (timeoutRef.current) {
+            clearTimeout(timeoutRef.current);
+            timeoutRef.current = null;
+        }
+        setToastOpen(false);
+
+        setTimeout(() => {
+            setToast({ message, type });
+            setToastOpen(true);
+
+            timeoutRef.current = setTimeout(() => {
+                setToastOpen(false);
+                timeoutRef.current = null;
+            }, 4000);
+        }, 10);
+    };
 
     const minimazeAllWindows = useCallback(() => {
         config.minimizeWindow()
@@ -20,6 +51,7 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
         newdt.closeWindow()
         openLink.closeWindow()
         dtConfig.closeWindow()
+        imgViewer.minimizeWindow()
     }, []);
 
     const closeAllWindows = useCallback(() => {
@@ -31,10 +63,11 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
         newdt.closeWindow()
         openLink.closeWindow()
         dtConfig.closeWindow()
+        imgViewer.closeWindow()
     }, []);
 
 
-    return <AppContext.Provider value={{ minimazeAllWindows, closeAllWindows }}>{children}</AppContext.Provider>;
+    return <AppContext.Provider value={{ minimazeAllWindows, closeAllWindows, callToast, toastOpen, toast }}>{children}</AppContext.Provider>;
 };
 
 export const useAppContext = () => {

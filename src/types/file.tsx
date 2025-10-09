@@ -16,6 +16,7 @@ export interface FileData {
     content?: string;
     url?: string;
     imageUrl?: string;
+    extension?: string;
     sizeInBytes?: number;
     path: PathSegment[];
 }

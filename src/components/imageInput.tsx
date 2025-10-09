@@ -1,6 +1,5 @@
 import { useCallback, useState, useEffect } from 'react';
 import { useDropzone } from 'react-dropzone';
-import { useUser } from '../context/AuthContext';
 import { Upload } from 'lucide-react';
 import { useWindowContext } from '../context/WindowContext';
 

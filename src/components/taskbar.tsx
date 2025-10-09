@@ -3,6 +3,7 @@ import { useWindowContext } from "../context/WindowContext";
 
 
 export default function TaskBar() {
+    const { callToast } = useAppContext();
     const { profile, config } = useWindowContext();
     const { minimazeAllWindows } = useAppContext();
 
@@ -17,8 +18,7 @@ export default function TaskBar() {
                 profile.openWindow()
             }} src="/assets/images/profile.png" alt="profile" className=" p-1.5 px-2 w-11 transition-all cursor-pointer hover:bg-zinc-500/30" />
             <img onClick={() => {
-                minimazeAllWindows()
-                profile.openWindow()
+                callToast({ message: 'blablabnlas', type: 'message' })
             }} src="/assets/images/users.png" alt="users" className=" p-1.5 px-2 w-11 transition-all cursor-pointer hover:bg-zinc-500/30" />
         </div>
     )

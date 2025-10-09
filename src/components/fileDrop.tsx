@@ -2,12 +2,17 @@ import { useCallback, useState } from 'react';
 import { useDropzone, FileRejection } from 'react-dropzone';
 import { UploadCloud, FileImage, X } from 'lucide-react';
 
-export function FileDropzone() {
+type ClickableImageInputProps = {
+    onFileSelected: (file: File) => void;
+};
+
+export function FileDropzone({ onFileSelected }: ClickableImageInputProps) {
     const [previewFile, setPreviewFile] = useState<File | null>(null);
 
     const onDrop = useCallback((acceptedFiles: File[], fileRejections: FileRejection[]) => {
         if (acceptedFiles.length > 0) {
             setPreviewFile(acceptedFiles[0]);
+            onFileSelected(acceptedFiles[0]);
         }
         if (fileRejections.length > 0) {
             alert(`O ficheiro ${fileRejections[0].file.name} não é um tipo de imagem válido.`);
@@ -31,11 +36,11 @@ export function FileDropzone() {
             <div className="w-full h-full flex flex-col">
                 <h3 className="text-lg font-semibold mb-2">Imagem Selecionada</h3>
                 <div className="flex-1 overflow-y-auto">
-                    <div key={previewFile.name} className="flex items-center justify-between bg-zinc-700 p-2 rounded-md relative overflow-hidden">
-                        <div className="flex items-center gap-3">
-                            <FileImage className="w-6 h-6 text-blue-400" />
-                            <span className="text-sm truncate">{previewFile.name}</span>
-                        </div>
+                    <div key={previewFile.name} className="flex items-center justify-start gap-1 pr-11 bg-zinc-700 p-2 rounded-md relative overflow-hidden">
+
+                        <FileImage size={25} className="text-blue-400" />
+                        <span className="text-sm truncate">{previewFile.name}</span>
+
                         <button onClick={removeFile} className='absolute right-0 w-10 flex justify-center items-center h-full text-zinc-400 cursor-pointer transition-all hover:bg-red-500 hover:text-white'>
                             <X />
                         </button>

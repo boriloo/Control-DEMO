@@ -8,9 +8,11 @@ import { getDownloadURL, getStorage, ref, uploadBytes } from "firebase/storage";
 import { ClickableImageInput } from "../imageInput";
 import { DesktopType } from "../../types/desktop";
 import { DotLottieReact } from "@lottiefiles/dotlottie-react";
+import { useAppContext } from "../../context/AppContext";
 
 
 export default function NewDesktopWindow() {
+    const { callToast } = useAppContext();
     const { newdt } = useWindowContext();
     const { user, changeCurrentDesktop, } = useUser();
     const [imageSelected, setImageSelected] = useState<File>()
@@ -46,6 +48,7 @@ export default function NewDesktopWindow() {
             changeCurrentDesktop(updatedDesktop)
             setLoading(false)
             newdt.closeWindow();
+            callToast({ message: 'Novo Desktop criado!', type: 'success' })
         } catch (err) {
             console.log('Erro ao criar: ', err)
             setLoading(false)

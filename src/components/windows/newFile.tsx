@@ -6,6 +6,7 @@ import { returnFilterEffects } from "../../types/auth";
 import { FileType } from "../../types/file";
 import { createFile } from "../../services/file";
 import { useUser } from "../../context/AuthContext";
+import { getDownloadURL, getStorage, ref, uploadBytes } from "firebase/storage";
 
 export default function NewFileWindow() {
     const { user, currentDesktop } = useUser();
@@ -14,6 +15,7 @@ export default function NewFileWindow() {
     const [drop, setDrop] = useState<boolean>(false)
     const [name, setName] = useState<string | null>(null)
     const [url, setUrl] = useState<string | null>(null)
+    const [imageSelected, setImageSelected] = useState<File>()
 
     const normalizeUrl = (inputUrl: string | null): string | null => {
         if (!inputUrl) return null;
@@ -76,7 +78,18 @@ export default function NewFileWindow() {
                 break;
 
             case 'image':
+                if (!imageSelected) return;
+                const filenameParts = imageSelected.name.split('.');
+                const extension = filenameParts.length > 1 ? filenameParts.pop()?.toLowerCase() : '';
 
+                const storage = getStorage();
+                const storageRef = ref(storage, `desktops/${currentDesktop.id}/${user.uid}-${Date.now()}.${extension}`);
+                const snapshot = await uploadBytes(storageRef, imageSelected);
+                const downloadURL = await getDownloadURL(snapshot.ref);
+
+                finalPayload.extension = extension;
+                finalPayload.imageUrl = downloadURL
+                finalPayload.sizeInBytes = new Blob([imageSelected]).size;
                 break;
 
             case 'folder':
@@ -173,23 +186,28 @@ export default function NewFileWindow() {
                             Outro
                         </div> */}
                     </div>
-                    {fileType === 'image' && (<FileDropzone />)}
+                    {fileType === 'image' && (<FileDropzone onFileSelected={(file) => {
+                        setImageSelected(file)
+                    }} />)}
                     <div className="flex flex-col gap-1">
                         <p>Nome</p>
                         <div className="flex flex-col">
-                            <input onChange={(e) => setName(e.target.value)} type="text" className="border-none outline-[1.5px] p-1 px-2 outline-transparent transition-all cursor-pointer hover:bg-zinc-700 rounded-sm focus:outline-blue-500 focus:cursor-text" />
+                            <input onChange={(e) => setName(e.target.value)} type="text" className="border-none outline-[1.5px] p-1 px-2 outline-transparent 
+                            transition-all cursor-pointer hover:bg-zinc-800 rounded-sm focus:outline-blue-500 focus:cursor-text" />
                             <div className="w-full h-[1px] bg-zinc-400"></div>
                         </div>
                     </div>
                     {fileType === 'link' && (<div className="flex flex-col gap-1">
                         <p>URL</p>
                         <div className="flex flex-col">
-                            <input onChange={(e) => setUrl(e.target.value)} type="text" className="border-none outline-[1.5px] p-1 px-2 outline-transparent transition-all cursor-pointer hover:bg-zinc-700 rounded-sm focus:outline-blue-500 focus:cursor-text" />
+                            <input onChange={(e) => setUrl(e.target.value)} type="text" className="border-none outline-[1.5px] p-1 px-2 
+                            outline-transparent transition-all cursor-pointer hover:bg-zinc-700 rounded-sm focus:outline-blue-500 focus:cursor-text" />
                             <div className="w-full h-[1px] bg-zinc-400"></div>
                         </div>
                     </div>)}
                     <div className="flex flex-row w-full justify-end">
-                        <button onClick={handleCreateFile} className="p-1 px-5 text-lg font-medium border-1 border-whit cursor-pointer transition-all hover:text-blue-500 hover:border-blue-500 hover:bg-zinc-900 rounded-md">
+                        <button onClick={handleCreateFile} className="p-1 px-5 text-lg font-medium border-1 border-whit cursor-pointer transition-all 
+                        hover:text-blue-500 hover:border-blue-500 hover:bg-zinc-900 rounded-md">
                             Criar
                         </button>
                     </div>
