@@ -7,8 +7,11 @@ import { FileType } from "../../types/file";
 import { createFile } from "../../services/file";
 import { useUser } from "../../context/AuthContext";
 import { getDownloadURL, getStorage, ref, uploadBytes } from "firebase/storage";
+import { DotLottieReact } from "@lottiefiles/dotlottie-react";
+import { useAppContext } from "../../context/AppContext";
 
 export default function NewFileWindow() {
+    const { callToast } = useAppContext();
     const { user, currentDesktop } = useUser();
     const { newFile } = useWindowContext();
     const [fileType, setFileType] = useState<FileType>('folder')
@@ -16,6 +19,7 @@ export default function NewFileWindow() {
     const [name, setName] = useState<string | null>(null)
     const [url, setUrl] = useState<string | null>(null)
     const [imageSelected, setImageSelected] = useState<File>()
+    const [loading, setLoading] = useState<boolean>(false)
 
     const normalizeUrl = (inputUrl: string | null): string | null => {
         if (!inputUrl) return null;
@@ -34,16 +38,13 @@ export default function NewFileWindow() {
         }
     };
 
-    const handleAreaClick = (e: React.MouseEvent<HTMLElement>) => {
-        if (e.target != e.currentTarget) return;
-        newFile.closeWindow();
-    }
-
     const handleCreateFile = async () => {
         if (!user || !currentDesktop) {
             alert("Erro: Não foi possível identificar o utilizador ou o desktop.");
             return;
         }
+
+        setLoading(true)
 
         const basePayload = {
             desktopId: currentDesktop.id,
@@ -83,10 +84,12 @@ export default function NewFileWindow() {
                 const extension = filenameParts.length > 1 ? filenameParts.pop()?.toLowerCase() : '';
 
                 const storage = getStorage();
-                const storageRef = ref(storage, `desktops/${currentDesktop.id}/${user.uid}-${Date.now()}.${extension}`);
+                const filePath = `desktops/${currentDesktop.id}/${user.uid}-${Date.now()}.${extension}`;
+                const storageRef = ref(storage, filePath);
                 const snapshot = await uploadBytes(storageRef, imageSelected);
                 const downloadURL = await getDownloadURL(snapshot.ref);
 
+                finalPayload.filePath = filePath;
                 finalPayload.extension = extension;
                 finalPayload.imageUrl = downloadURL
                 finalPayload.sizeInBytes = new Blob([imageSelected]).size;
@@ -102,9 +105,13 @@ export default function NewFileWindow() {
         }
         try {
             await createFile(finalPayload);
-            console.log(`Ficheiro do tipo '${fileType}' criado com sucesso!`);
+            setName(null)
         } catch (error) {
             console.error("Falha ao criar o ficheiro:", error);
+        } finally {
+            callToast({ message: 'Arquivo criado com sucesso!', type: 'success' })
+            setLoading(false)
+            newFile.closeWindow()
         }
     };
 
@@ -143,12 +150,12 @@ export default function NewFileWindow() {
     }
 
     return (
-        <div onClick={handleAreaClick} className={`${newFile.currentStatus === 'open' ? returnFilterEffects(user) : 'pointer-events-none '} 
+        <div className={`${newFile.currentStatus === 'open' ? returnFilterEffects(user) : 'pointer-events-none '} 
         transition-all duration-500 fixed z-100 w-full h-screen flex justify-center items-center p-4 pb-[50px] cursor-pointer`}>
             <div className={`${newFile.currentStatus === 'open' ? 'scale-100' : 'scale-0'} cursor-default bg-zinc-900 origin-center rounded-md p-4 w-full max-w-[400px] max-h-full flex flex-col gap-4 overflow-y-auto transition-all relative`}>
-                <X onClick={() => { setFileType("folder"); setDrop(false); newFile.closeWindow(); }} size={35} className="absolute top-0 right-0 p-2 rounded-bl-lg cursor-pointer transition-all hover:bg-red-500" />
+                <X onClick={() => { setFileType("folder"); setDrop(false); newFile.closeWindow(); setName(null); setUrl(null); }} size={35} className="absolute top-0 right-0 p-2 rounded-bl-lg cursor-pointer transition-all hover:bg-red-500" />
                 <h1 className="text-[20px]">Criar um novo arquivo</h1>
-                <div className="flex flex-col gap-3">
+                <div className={`${loading && 'saturate-0 pointer-events-none opacity-60'} flex flex-col gap-3`}>
                     <button onClick={() => setDrop(!drop)} className={`${drop ? 'border-white rounded-t-md' : 'border-blue-500 rounded-md'} flex flex-row gap-2 p-4  border-1  items-center 
                         cursor-pointer transition-all hover:bg-zinc-700`}>
                         <img src={imageReturn()} className="w-7" />
@@ -208,7 +215,12 @@ export default function NewFileWindow() {
                     <div className="flex flex-row w-full justify-end">
                         <button onClick={handleCreateFile} className="p-1 px-5 text-lg font-medium border-1 border-whit cursor-pointer transition-all 
                         hover:text-blue-500 hover:border-blue-500 hover:bg-zinc-900 rounded-md">
-                            Criar
+                            {loading ? <DotLottieReact
+                                src="https://lottie.host/e580eaa4-d189-480f-a6ce-f8c788dff90d/MP2FjoJFFE.lottie"
+                                className="w-15 p-0"
+                                loop
+                                autoplay
+                            /> : 'Criar'}
                         </button>
                     </div>
                 </div>

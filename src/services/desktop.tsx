@@ -122,6 +122,31 @@ export const updateDesktopBackground = async (desktopId: string, imageURL: strin
     }
 };
 
+export const updateDesktopName = async (desktopId: string, desktopName: string): Promise<FullDesktopData> => {
+    try {
+        const desktopRef = doc(db, "desktops", desktopId);
+        await updateDoc(desktopRef, {
+            name: desktopName
+        });
+        const updatedDoc = await getDoc(desktopRef);
+
+        if (!updatedDoc.exists()) {
+            throw new Error("O desktop não foi encontrado após a atualização.");
+        }
+
+        const updatedDesktopData: FullDesktopData = {
+            id: updatedDoc.id,
+            ...updatedDoc.data() as DesktopData
+        };
+
+        return updatedDesktopData;
+
+    } catch (error) {
+        console.error("Erro ao atualizar o nome do desktop:", error);
+        throw error;
+    }
+};
+
 export const deleteDesktopById = async (userId: string, desktopId: string) => {
     try {
         const q = query(

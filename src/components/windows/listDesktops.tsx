@@ -4,7 +4,7 @@ import { returnFilterEffects } from "../../types/auth";
 import { useUser } from "../../context/AuthContext";
 import { useAppContext } from "../../context/AppContext";
 import { useEffect, useState } from "react";
-import { getDesktopById, getDesktopsByMember } from "../../services/desktop";
+import { getDesktopById } from "../../services/desktop";
 import { useTranslation } from "react-i18next";
 import { collection, onSnapshot, query, where } from "firebase/firestore";
 import { db } from "../../firebase/config";

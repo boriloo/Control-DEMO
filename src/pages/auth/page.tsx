@@ -3,7 +3,6 @@ import { Eye, EyeOff, Check } from 'lucide-react';
 import { useForm } from "react-hook-form";
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { registerUser } from "../../services/auth";
 import { useNavigate } from "react-router-dom";
 import { DotLottieReact } from '@lottiefiles/dotlottie-react';
 import { FirebaseError } from "firebase/app";
@@ -39,7 +38,7 @@ const registerSchema = z.object({
 type FormData = z.infer<typeof loginSchema> | z.infer<typeof registerSchema>;
 
 export default function AuthPage() {
-    const { authLoginUser, authRegisterUser, user } = useUser();
+    const { authLoginUser, authRegisterUser } = useUser();
     const navigate = useNavigate();
     const [rememberMe, setRememberMe] = useState<boolean>(false);
     const [seePass, setSeePass] = useState<boolean>(false);

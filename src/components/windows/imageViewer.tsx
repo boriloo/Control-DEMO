@@ -3,13 +3,17 @@ import { useEffect, useState } from "react"
 import { useUser } from "../../context/AuthContext";
 import { useWindowContext } from "../../context/WindowContext";
 import { returnFilterEffects } from "../../types/auth";
+import { deleteFile } from "../../services/file";
+import { useAppContext } from "../../context/AppContext";
 
 export default function ImageViewerWindow() {
+    const { callToast } = useAppContext();
     const { user } = useUser();
     const { imgViewer } = useWindowContext();
     const [isFullsceen, setIsFullscreen] = useState<boolean>(false)
     const [imgFull, setImgFull] = useState<boolean>(false)
     const [downLoading, setDownLoading] = useState<boolean>(false)
+    const [confirmDelete, setConfirmDelete] = useState<boolean>(false)
 
     if (!user) return null;
 
@@ -54,14 +58,48 @@ export default function ImageViewerWindow() {
         }
     }
 
+    const handleDeleteFile = () => {
+        try {
+            deleteFile({ fileId: imgViewer.file?.id, filePath: imgViewer.file?.filePath });
+            setConfirmDelete(false);
+            imgViewer.setFile(null);
+            imgViewer.closeWindow();
+            callToast({ message: 'Arquivo deletado com sucesso!', type: 'success' })
+        } catch (err) {
+            callToast({ message: 'Erro ao excluir arquivo', type: 'error' })
+            throw err
+        }
+
+    }
+
 
     return (
         <div onClick={handleAreaClick} className={`${isFullsceen ? 'pb-[40px]' : ' p-2 pb-[50px]'} ${imgViewer.currentStatus === "open" ? returnFilterEffects(user) : 'pointer-events-none'} 
         fixed z-100 flex-1 flex justify-center items-center w-full h-screen transition-all duration-500 cursor-pointer`}>
 
-            <div className={`${imgFull ? '' : 'scale-60 opacity-0 pointer-events-none'} transition-all w-full min-h-screen fixed inset-0 bg-zinc-950 z-100 pb-10 flex justify-center items-center`}>
+            <div className={`${imgFull ? '' : 'scale-90 opacity-0 pointer-events-none'} transition-all w-full min-h-screen fixed inset-0 bg-zinc-950 z-100 pb-10 flex justify-center items-center`}>
                 <img src={imgViewer.file?.imageUrl} className="max-h-full w-full max-w-full object-contain" />
                 <Minimize2 onClick={() => setImgFull(false)} size={40} className="absolute bottom-10 right-0 p-1 transition-all cursor-pointer hover:bg-zinc-800" />
+            </div>
+
+            <div className={`${confirmDelete ? '' : 'pointer-events-none opacity-0'} transition-all cursor-default fixed top-0 bg-black/70 w-full h-full z-100 flex 
+            justify-center items-center p-2 pb-11`}>
+                <div className="bg-zinc-950 p-3 w-full max-w-[510px] h-full max-h-[180px] rounded-lg border-1 border-zinc-800 overflow-y-auto flex flex-col gap-1">
+                    <p className="text-lg">Tem certeza que deseja excluir esse arquivo?</p>
+                    <p className="text-xl text-red-500">{imgViewer.file?.name}.{imgViewer.file?.extension}</p>
+                    <div className="flex flex-row gap-2 mt-4">
+                        <button onClick={() => { setConfirmDelete(false); }} className="flex-1 p-1 px-5 text-lg text-zinc-300 border-1
+                         border-zinc-300 cursor-pointer transition-all hover:bg-zinc-300/10 hover:text-white rounded-md">
+                            Voltar
+                        </button>
+                        <button disabled={!confirmDelete} onClick={handleDeleteFile}
+                            className={`flex-1 p-1 px-5 text-lg text-red-500 border-1 border-red-500 cursor-pointer transition-all 
+                        hover:bg-red-500 hover:text-white rounded-md`}>
+                            Excluir Arquivo
+                        </button>
+                    </div>
+                    <p className="self-center text-md text-white/60">*Esta ação é irreversível.</p>
+                </div>
             </div>
 
             <div className={`${isFullsceen ? 'max-w-full max-h-full' : 'rounded-lg max-w-[1200px] max-h-[700px]'} ${imgViewer.currentStatus === "open" ? 'scale-100' : 'scale-0 '} 
@@ -98,7 +136,7 @@ export default function ImageViewerWindow() {
                     </div>
 
                     <div className="flex flex-row gap-3 items-center p-2 px-3">
-                        <Trash size={30} className="p-1 transition-all cursor-pointer hover:bg-zinc-700 rounded-sm" />
+                        <Trash onClick={() => setConfirmDelete(true)} size={30} className="p-1 transition-all cursor-pointer hover:bg-zinc-700 rounded-sm" />
                         <div className="h-5 w-[1px] bg-zinc-700"></div>
                         <FolderUp size={30} className="p-1 transition-all cursor-pointer hover:bg-zinc-700 rounded-sm" />
                         <div className="h-5 w-[1px] bg-zinc-700"></div>

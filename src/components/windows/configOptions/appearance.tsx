@@ -5,11 +5,11 @@ import { updateDesktopBackground } from "../../../services/desktop"
 import { getDownloadURL, getStorage, ref, uploadBytes } from "firebase/storage"
 import { DotLottieReact } from "@lottiefiles/dotlottie-react"
 import { BasicFilter, ColorFilter } from "../../../types/auth"
+import { useAppContext } from "../../../context/AppContext"
 
 export default function AppearanceOption() {
-
-    const { user, currentDesktop, changeCurrentDesktop, hasDesktops, authChangeUserFilters } = useUser()
-    const [currentImage, setCurrentImage] = useState<File | null>(null)
+    const { callToast } = useAppContext();
+    const { user, currentDesktop, hasDesktops, authChangeUserFilters } = useUser()
     const [loading, setLoading] = useState<boolean>(false)
     const [darkFilter, setDarkFilter] = useState<BasicFilter>('low')
     const [blurFilter, setBlurFilter] = useState<BasicFilter>('low')
@@ -25,40 +25,17 @@ export default function AppearanceOption() {
 
     if (!currentDesktop) return;
 
-    const handleEditBackground = async () => {
-        if (!currentImage || !currentDesktop) return;
-        try {
-            setLoading(true)
-            const localUrl = URL.createObjectURL(currentImage)
-            const storage = getStorage();
-            const storageRef = ref(storage, `desktops/${currentDesktop.id}/background`);
-            const snapshot = await uploadBytes(storageRef, currentImage);
-            const downloadURL = await getDownloadURL(snapshot.ref);
-            await updateDesktopBackground(currentDesktop.id, downloadURL)
-
-            changeCurrentDesktop({
-                ...currentDesktop,
-                background: localUrl,
-            });
-            setLoading(false)
-            setCurrentImage(null)
-            localStorage.setItem('background', localUrl);
-            console.log('DESTKOP ATUAL ', currentDesktop)
-        } catch (err) {
-            setLoading(false)
-            console.log('ERRO AO ATUALIZAR IMAGEM PELAS CONFIGURAÇÕES: ', err)
-        }
-    }
 
     const handleEditFilters = async () => {
         if (!currentDesktop) return;
         try {
             setLoading(true)
             await authChangeUserFilters(darkFilter, blurFilter, colorFilter)
-            setLoading(false)
+            callToast({ message: 'Filtros alterados com sucesso!', type: 'success' })
         } catch (err) {
-            setLoading(false)
             console.log('ERRO AO ATUALIZAR IMAGEM PELAS CONFIGURAÇÕES: ', err)
+        } finally {
+            setLoading(false)
         }
     }
 
@@ -67,7 +44,7 @@ export default function AppearanceOption() {
         <div className="flex flex-col items-start gap-4 p-4 w-full">
             {hasDesktops && (<h1 className="text-[25px] flex">Desktop atual - {currentDesktop.name} ({currentDesktop.type})</h1>)}
             <div className="w-full h-[1px] bg-zinc-600"></div>
-            
+
             <div className="flex flex-col gap-4 px-2 items-start">
                 <p className="text-xl mt-2">Filtros</p>
                 <p className="text-md mt-[-12px] mb-1">Efeitos aplicados ao fundo quando uma janela é aberta.</p>

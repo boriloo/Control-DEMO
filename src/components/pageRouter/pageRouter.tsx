@@ -2,11 +2,17 @@ import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import AuthPage from "../../pages/auth/page";
 import DashboardPage from "../../pages/dashboard/page";
 import { useUser } from "../../context/AuthContext";
+import { DotLottieReact } from "@lottiefiles/dotlottie-react";
 
-// Seria bom ter um componente de loading para uma melhor UX
 const LoadingScreen = () => (
-    <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
-        <h2>Carregando...</h2>
+    <div className={`bg-black transtion-all duration-500 pointer-events-none fixed z-50 flex flex-col justify-center items-center w-full min-h-screen`}>
+        <p className={`control-text text-[50px] mt-10`}>Control</p>
+        <DotLottieReact
+            src="https://lottie.host/e580eaa4-d189-480f-a6ce-f8c788dff90d/MP2FjoJFFE.lottie"
+            className="w-20 p-0"
+            loop
+            autoplay
+        />
     </div>
 );
 
@@ -16,6 +22,7 @@ export default function PageRouter() {
     if (isLoading) {
         return <LoadingScreen />;
     }
+
     return (
         <BrowserRouter>
             <Routes>

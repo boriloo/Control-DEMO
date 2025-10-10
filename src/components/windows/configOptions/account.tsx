@@ -1,31 +1,17 @@
-import { useEffect, useState } from "react"
+import { useState } from "react"
 import { useUser } from "../../../context/AuthContext"
-import { ClickableImageInput } from "../../imageInput"
-import { updateDesktopBackground } from "../../../services/desktop"
 import { getDownloadURL, getStorage, ref, uploadBytes } from "firebase/storage"
 import { DotLottieReact } from "@lottiefiles/dotlottie-react"
-import { BasicFilter, ColorFilter } from "../../../types/auth"
 import { AvatarImageInput } from "../../avatarInput"
-import { updateUserProfileImage } from "../../../services/auth"
+import { useAppContext } from "../../../context/AppContext"
 
 export default function AccountOption() {
-
-    const { user, currentDesktop, authChangeUserFilters, authChangeUserAvatar } = useUser()
+    const { callToast } = useAppContext();
+    const { user, currentDesktop, authChangeUserAvatar } = useUser()
     const [currentImage, setCurrentImage] = useState<File | null>(null)
     const [loading, setLoading] = useState<boolean>(false)
-    const [darkFilter, setDarkFilter] = useState<BasicFilter>('low')
-    const [blurFilter, setBlurFilter] = useState<BasicFilter>('low')
-    const [colorFilter, setColorFilter] = useState<ColorFilter>('color')
-
-    useEffect(() => {
-        if (!user) return;
-        setDarkFilter(user.filterDark as BasicFilter)
-        setBlurFilter(user.filterBlur as BasicFilter)
-        setColorFilter(user.filterColor as ColorFilter)
-    }, [user])
 
     if (!currentDesktop) return;
-
     const handleEditBackground = async () => {
         if (!currentImage || !currentDesktop) return;
         try {
@@ -36,24 +22,12 @@ export default function AccountOption() {
             const downloadURL = await getDownloadURL(snapshot.ref);
             await authChangeUserAvatar(downloadURL)
 
-            setLoading(false)
             setCurrentImage(null)
-
+            callToast({ message: 'Avatar alterado com sucesso!', type: 'success' })
         } catch (err) {
-            setLoading(false)
             console.log('ERRO AO ATUALIZAR IMAGEM PELAS CONFIGURAÇÕES: ', err)
-        }
-    }
-
-    const handleEditFilters = async () => {
-        if (!currentDesktop) return;
-        try {
-            setLoading(true)
-            await authChangeUserFilters(darkFilter, blurFilter, colorFilter)
+        } finally {
             setLoading(false)
-        } catch (err) {
-            setLoading(false)
-            console.log('ERRO AO ATUALIZAR IMAGEM PELAS CONFIGURAÇÕES: ', err)
         }
     }
 

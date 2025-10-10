@@ -6,7 +6,7 @@ import { returnFilterEffects } from "../../types/auth";
 import { ClickableImageInput } from "../imageInput";
 import { DotLottieReact } from "@lottiefiles/dotlottie-react";
 import { getDownloadURL, getStorage, ref, uploadBytes } from "firebase/storage";
-import { deleteDesktopById, FullDesktopData, getDesktopById, getDesktopsByMember, updateDesktopBackground } from "../../services/desktop";
+import { deleteDesktopById, FullDesktopData, getDesktopById, getDesktopsByMember, updateDesktopBackground, updateDesktopName } from "../../services/desktop";
 import { doc, onSnapshot } from "firebase/firestore";
 import { db } from "../../firebase/config";
 import { useAppContext } from "../../context/AppContext";
@@ -24,7 +24,7 @@ export default function DesktopConfigWindow() {
     const [formattedUserName, setFormattedUserName] = useState<string | null>(null)
     const [formattedDtName, setFormattedDtName] = useState<string | null>(null)
     const [deleteInput, setDeleteInput] = useState<string>('')
-    const [value, setValue] = useState('')
+    const [desktopName, setDesktopName] = useState('')
 
     useEffect(() => {
         const desktopId = dtConfig.desktop?.id;
@@ -37,7 +37,6 @@ export default function DesktopConfigWindow() {
         const desktopRef = doc(db, "desktops", desktopId);
 
         const unsubscribe = onSnapshot(desktopRef, (desktop) => {
-
             if (desktop.exists()) {
                 const desktopData = {
                     id: desktop.id,
@@ -45,7 +44,7 @@ export default function DesktopConfigWindow() {
                 } as FullDesktopData
 
                 setWindowDesktop(desktopData)
-                setValue(desktopData.name)
+                setDesktopName(desktopData.name)
                 const formatUser = (user?.name as string).replace(/ /g, '')
                 setFormattedUserName(formatUser)
                 const formatDt = (desktopData.name).replace(/ /g, '')
@@ -64,13 +63,34 @@ export default function DesktopConfigWindow() {
             unsubscribe();
         };
 
-    }, [dtConfig.desktop])
+    }, [dtConfig.desktop?.id])
 
     if (!user) return null;
 
     const handleAreaClick = (e: React.MouseEvent<HTMLElement>) => {
         if (e.target != e.currentTarget) return;
         dtConfig.closeWindow();
+    }
+
+    const handleEditName = async () => {
+        if (!desktopName || !windowDesktop) return;
+        try {
+            setLoading(true)
+            const updatedDesktop = await updateDesktopName(windowDesktop.id, desktopName)
+            setWindowDesktop(updatedDesktop)
+
+            if (currentDesktop?.id === windowDesktop.id) {
+                changeCurrentDesktop({
+                    ...windowDesktop,
+                    name: desktopName,
+                });
+            }
+            callToast({ message: 'Nome do desktop alterado!', type: 'success' })
+        } catch (err) {
+            console.log('ERRO AO ATUALIZAR NOME PELAS CONFIGURAÇÕES: ', err)
+        } finally {
+            setLoading(false)
+        }
     }
 
 
@@ -89,13 +109,14 @@ export default function DesktopConfigWindow() {
             setCurrentImage(null)
 
             if (currentDesktop?.id === windowDesktop.id) {
+                console.log(windowDesktop)
                 localStorage.setItem('background', localUrl);
                 changeCurrentDesktop({
                     ...windowDesktop,
                     background: localUrl,
                 });
             }
-
+            callToast({ message: 'Fundo do desktop alterado!', type: 'success' })
         } catch (err) {
             console.log('ERRO AO ATUALIZAR IMAGEM PELAS CONFIGURAÇÕES: ', err)
         } finally {
@@ -223,16 +244,28 @@ export default function DesktopConfigWindow() {
 
                             <div className="flex flex-col gap-1 w-full">
                                 <p>Nome do Desktop</p>
-                                <input value={value} onChange={(e) => {
-                                    setValue(e.target.value)
+                                <input value={desktopName} onChange={(e) => {
+                                    setDesktopName(e.target.value)
                                 }} type="text" className="border-1 border-zinc-800 border-b-white/70  outline-none transition-all text-lg hover:bg-zinc-800  
                                 cursor-pointer focus:cursor-text p-0.5 px-1 rounded-t-sm focus:border-blue-500 focus:text-blue-100 w-full max-w-[300px]" />
                             </div>
 
 
-                            <button className="p-1 px-5 text-lg text-blue-500 border-1 border-blue-500 cursor-pointer transition-all hover:bg-blue-500 hover:text-white rounded-md">
-                                Salvar Alterações
-                            </button>
+                            {loading ? (
+                                <div className={`
+            p-0.5 px-3 rounded-sm font-medium`}>
+                                    <DotLottieReact
+                                        src="https://lottie.host/e580eaa4-d189-480f-a6ce-f8c788dff90d/MP2FjoJFFE.lottie"
+                                        className="w-20 p-0"
+                                        loop
+                                        autoplay
+                                    />
+                                </div>
+                            ) : (
+                                <button disabled={!desktopName || loading} onClick={handleEditName} className={`${desktopName != windowDesktop?.name ? '' : 'pointer-events-none saturate-0 opacity-50'} border-1 border-blue-500 transition-all cursor-pointer 
+            hover:bg-blue-500 p-2 px-3 rounded-sm font-medium`}>Alterar Nome</button>
+                            )}
+
 
                             <div className="w-[100%] h-[1px] mt-1 bg-zinc-400/50"></div>
 
@@ -259,7 +292,7 @@ export default function DesktopConfigWindow() {
                                 </div>
                             ) : (
                                 <button disabled={!currentImage} onClick={handleEditBackground} className={`${currentImage ? '' : 'pointer-events-none saturate-0 opacity-50'} border-1 border-blue-500 transition-all cursor-pointer 
-            hover:bg-blue-500 p-2 px-3 rounded-sm font-medium`}>Salvar fundo</button>
+            hover:bg-blue-500 p-2 px-3 rounded-sm font-medium`}>Alterar fundo</button>
                             )}
 
                             <div className="w-[100%] h-[1px] mb-1 bg-zinc-400/50"></div>

@@ -1,6 +1,7 @@
-import { addDoc, collection, doc, getDoc, getDocs, onSnapshot, query, serverTimestamp, Unsubscribe, updateDoc, where } from "firebase/firestore";
+import { addDoc, collection, deleteDoc, doc, getDoc, getDocs, onSnapshot, query, serverTimestamp, Unsubscribe, updateDoc, where } from "firebase/firestore";
 import { FileData } from "../types/file";
 import { db } from "../firebase/config";
+import { deleteObject, getStorage, ref } from "firebase/storage";
 
 export type FullFileData = FileData & { id: string };
 
@@ -29,6 +30,9 @@ export const createFile = async (data: FileData): Promise<FullFileData> => {
         }
         if (data.extension !== undefined) {
             filePayload.extension = data.extension;
+        }
+        if (data.filePath !== undefined) {
+            filePayload.filePath = data.filePath;
         }
         if (data.sizeInBytes !== undefined) {
             filePayload.sizeInBytes = data.sizeInBytes;
@@ -113,18 +117,36 @@ export const updateFilePosition = async (fileId: string, position: { x: number, 
         const updatedDoc = await getDoc(fileRef);
 
         if (!updatedDoc.exists()) {
-            throw new Error("O desktop não foi encontrado após a atualização.");
+            throw new Error("O arquivo não foi encontrado após a atualização.");
         }
 
-        const updatedDesktopData: FullFileData = {
+        const updatedFileData: FullFileData = {
             id: updatedDoc.id,
             ...updatedDoc.data() as FileData
         };
 
-        return updatedDesktopData;
+        return updatedFileData;
 
     } catch (err) {
         throw err;
     }
 }
 
+export const deleteFile = async ({ fileId, filePath }: { fileId?: string; filePath?: string }) => {
+    try {
+        if (!fileId || !filePath) {
+            console.error("ID do arquivo ou caminho não fornecido.");
+            return;
+        }
+
+        const storage = getStorage();
+        const storageRef = ref(storage, filePath);
+        await deleteObject(storageRef);
+
+        const fileRef = doc(db, "files", fileId);
+        await deleteDoc(fileRef);
+
+    } catch (err) {
+        throw err;
+    }
+}
