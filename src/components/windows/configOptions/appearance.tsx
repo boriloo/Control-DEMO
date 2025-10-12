@@ -1,8 +1,5 @@
 import { useEffect, useState } from "react"
 import { useUser } from "../../../context/AuthContext"
-import { ClickableImageInput } from "../../imageInput"
-import { updateDesktopBackground } from "../../../services/desktop"
-import { getDownloadURL, getStorage, ref, uploadBytes } from "firebase/storage"
 import { DotLottieReact } from "@lottiefiles/dotlottie-react"
 import { BasicFilter, ColorFilter } from "../../../types/auth"
 import { useAppContext } from "../../../context/AppContext"

@@ -78,7 +78,7 @@ export default function ImageViewerWindow() {
         fixed z-100 flex-1 flex justify-center items-center w-full h-screen transition-all duration-500 cursor-pointer`}>
 
             <div className={`${imgFull ? '' : 'scale-90 opacity-0 pointer-events-none'} transition-all w-full min-h-screen fixed inset-0 bg-zinc-950 z-100 pb-10 flex justify-center items-center`}>
-                <img src={imgViewer.file?.imageUrl} className="max-h-full w-full max-w-full object-contain" />
+                <img src={imgViewer.file?.url} className="max-h-full w-full max-w-full object-contain" />
                 <Minimize2 onClick={() => setImgFull(false)} size={40} className="absolute bottom-10 right-0 p-1 transition-all cursor-pointer hover:bg-zinc-800" />
             </div>
 
@@ -114,14 +114,14 @@ export default function ImageViewerWindow() {
                 </div>
                 <div className="flex flex-row justify-between p-2 items-center px-3 bg-zinc-900/50">
                     <p className="flex-1"></p>
-                    <p className="flex-1 text-center">{imgViewer.file?.name}.{imgViewer.file?.extension}</p>
+                    <p className="flex-1 text-center">{imgViewer.file?.name}</p>
                     <div className="flex flex-row flex-1 justify-end">
                         <Download onClick={downloadImageSimples} size={30} className={`${downLoading && 'pointer-events-none opacity-60'} p-1 transition-all cursor-pointer hover:bg-zinc-700 rounded-sm`} />
                     </div>
                 </div>
                 <div className={`${downLoading && 'saturate-0 scale-80'} relative transition-all flex-1 overflow-hidden flex justify-center items-center w-full`}>
                     <h1 className={`${!downLoading && 'opacity-0'} pointer-events-none absolute text-[23px] p-2 bg-zinc-900 rounded-md px-5`}>Fazendo Download...</h1>
-                    <img src={imgViewer.file?.imageUrl} className="max-h-full max-w-full object-contain" />
+                    <img src={imgViewer.file?.url} className="h-full max-h-full max-w-full object-contain" />
                 </div>
                 <div className="mt-auto flex flex-row justify-between p-2 items-center bg-zinc-900/50">
                     <div className="flex flex-row gap-4 items-center p-2 px-3">

@@ -1,12 +1,10 @@
 import { ChevronDown, X } from "lucide-react"
 import { useState } from "react"
-import { FileDropzone } from "../fileDrop"
 import { useWindowContext } from "../../context/WindowContext";
 import { returnFilterEffects } from "../../types/auth";
 import { FileType } from "../../types/file";
 import { createFile } from "../../services/file";
 import { useUser } from "../../context/AuthContext";
-import { getDownloadURL, getStorage, ref, uploadBytes } from "firebase/storage";
 import { DotLottieReact } from "@lottiefiles/dotlottie-react";
 import { useAppContext } from "../../context/AppContext";
 
@@ -18,7 +16,6 @@ export default function NewFileWindow() {
     const [drop, setDrop] = useState<boolean>(false)
     const [name, setName] = useState<string | null>(null)
     const [url, setUrl] = useState<string | null>(null)
-    const [imageSelected, setImageSelected] = useState<File>()
     const [loading, setLoading] = useState<boolean>(false)
 
     const normalizeUrl = (inputUrl: string | null): string | null => {
@@ -78,23 +75,6 @@ export default function NewFileWindow() {
                 finalPayload.sizeInBytes = 0;
                 break;
 
-            case 'image':
-                if (!imageSelected) return;
-                const filenameParts = imageSelected.name.split('.');
-                const extension = filenameParts.length > 1 ? filenameParts.pop()?.toLowerCase() : '';
-
-                const storage = getStorage();
-                const filePath = `desktops/${currentDesktop.id}/${user.uid}-${Date.now()}.${extension}`;
-                const storageRef = ref(storage, filePath);
-                const snapshot = await uploadBytes(storageRef, imageSelected);
-                const downloadURL = await getDownloadURL(snapshot.ref);
-
-                finalPayload.filePath = filePath;
-                finalPayload.extension = extension;
-                finalPayload.imageUrl = downloadURL
-                finalPayload.sizeInBytes = new Blob([imageSelected]).size;
-                break;
-
             case 'folder':
                 finalPayload.sizeInBytes = 0;
                 break;
@@ -111,6 +91,8 @@ export default function NewFileWindow() {
         } finally {
             callToast({ message: 'Arquivo criado com sucesso!', type: 'success' })
             setLoading(false)
+            setName(null)
+            setUrl(null)
             newFile.closeWindow()
         }
     };
@@ -123,8 +105,6 @@ export default function NewFileWindow() {
                 return '/assets/images/text-file.png'
             case ('link'):
                 return '/assets/images/link.png'
-            case ('image'):
-                return '/assets/images/image-file.png'
             // case ('other'):
             //     return '/assets/images/other-file.png'
             default:
@@ -140,8 +120,6 @@ export default function NewFileWindow() {
                 return 'Texto'
             case ('link'):
                 return 'Link'
-            case ('image'):
-                return 'Imagem'
             // case ('other'):
             //     return 'Outro'
             default:
@@ -180,12 +158,6 @@ export default function NewFileWindow() {
                             <img src="/assets/images/link.png" className="w-6" />
                             Link
                         </div>
-                        <div onClick={() => { setFileType('image'); setDrop(true) }}
-                            className={`${fileType === 'image' ? 'border-blue-500 text-blue-500' : 'border-transparent'} 
-                            border-1 p-2 flex flex-row gap-4 transition-all hover:bg-zinc-800 rounded-md cursor-pointer select-none`}>
-                            <img src="/assets/images/image-file.png" className="w-6" />
-                            Imagem
-                        </div>
                         {/* <div onClick={() => { setFileType('other'); setDrop(true) }}
                             className={`${fileType === 'other' ? 'border-blue-500 text-blue-500' : 'border-transparent'} 
                             border-1 p-2 flex flex-row gap-4 transition-all hover:bg-zinc-800 rounded-md cursor-pointer select-none`}>
@@ -193,9 +165,6 @@ export default function NewFileWindow() {
                             Outro
                         </div> */}
                     </div>
-                    {fileType === 'image' && (<FileDropzone onFileSelected={(file) => {
-                        setImageSelected(file)
-                    }} />)}
                     <div className="flex flex-col gap-1">
                         <p>Nome</p>
                         <div className="flex flex-col">

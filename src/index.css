@@ -20,8 +20,6 @@ input:-webkit-autofill,
 input:-webkit-autofill:hover,
 input:-webkit-autofill:focus,
 input:-webkit-autofill:active {
-  /* O truque é usar um box-shadow interno grande que funciona como um fundo.
-       Mude a cor (#020617 neste caso, um azul escuro) para a que preferir. */
   box-shadow: 0 0 10px #0051ff7d !important;
 
 }
@@ -38,19 +36,14 @@ input:-webkit-autofill:active {
 
 ::-webkit-scrollbar {
   width: 10px;
-  /* largura da barra vertical */
   height: 10px;
-  /* altura da barra horizontal */
-
 }
 
-/* A "trilha" (fundo da scrollbar) */
 ::-webkit-scrollbar-track {
   background: #0d0d0d;
   border-radius: 10px;
 }
 
-/* O "polegar" (parte que arrasta) */
 ::-webkit-scrollbar-thumb {
   background: #37373a;
   transition: 1s !important;
@@ -58,7 +51,6 @@ input:-webkit-autofill:active {
   border-bottom-right-radius: 4px;
 }
 
-/* Polegar ao passar o mouse */
 ::-webkit-scrollbar-thumb:hover {
   background: #006aff;
 }

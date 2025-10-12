@@ -1,8 +1,11 @@
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
-import AuthPage from "../../pages/auth/page";
+
 import DashboardPage from "../../pages/dashboard/page";
 import { useUser } from "../../context/AuthContext";
 import { DotLottieReact } from "@lottiefiles/dotlottie-react";
+import AuthPage from "../../pages/auth/page";
+import PlansPage from "../../pages/plans/page";
+
 
 const LoadingScreen = () => (
     <div className={`bg-black transtion-all duration-500 pointer-events-none fixed z-50 flex flex-col justify-center items-center w-full min-h-screen`}>
@@ -41,6 +44,7 @@ export default function PageRouter() {
                     path="/dashboard"
                     element={isAuthenticated ? <DashboardPage /> : <Navigate to='/auth' replace />}
                 />
+                {/* <DashboardPage /> */}
             </Routes>
         </BrowserRouter>
     );
