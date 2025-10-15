@@ -105,8 +105,6 @@ export default function NewFileWindow() {
                 return '/assets/images/text-file.png'
             case ('link'):
                 return '/assets/images/link.png'
-            // case ('other'):
-            //     return '/assets/images/other-file.png'
             default:
                 break
         }
@@ -120,8 +118,6 @@ export default function NewFileWindow() {
                 return 'Texto'
             case ('link'):
                 return 'Link'
-            // case ('other'):
-            //     return 'Outro'
             default:
                 break
         }
@@ -130,11 +126,13 @@ export default function NewFileWindow() {
     return (
         <div className={`${newFile.currentStatus === 'open' ? returnFilterEffects(user) : 'pointer-events-none '} 
         transition-all duration-500 fixed z-100 w-full h-screen flex justify-center items-center p-4 pb-[50px] cursor-pointer`}>
-            <div className={`${newFile.currentStatus === 'open' ? 'scale-100' : 'scale-0'} cursor-default bg-zinc-900 origin-center rounded-md p-4 w-full max-w-[400px] max-h-full flex flex-col gap-4 overflow-y-auto transition-all relative`}>
+            <div className={`${newFile.currentStatus === 'open' ? 'scale-100' : 'scale-0'} cursor-default bg-zinc-900 origin-center rounded-md p-4 w-full max-w-[600px] 
+            max-h-full flex flex-col gap-4 overflow-y-auto transition-all relative`}>
                 <X onClick={() => { setFileType("folder"); setDrop(false); newFile.closeWindow(); setName(null); setUrl(null); }} size={35} className="absolute top-0 right-0 p-2 rounded-bl-lg cursor-pointer transition-all hover:bg-red-500" />
-                <h1 className="text-[20px]">Criar um novo arquivo</h1>
+                <h1 className="text-[20px]">Criar um novo item</h1>
                 <div className={`${loading && 'saturate-0 pointer-events-none opacity-60'} flex flex-col gap-3`}>
-                    <button onClick={() => setDrop(!drop)} className={`${drop ? 'border-white rounded-t-md' : 'border-blue-500 rounded-md'} flex flex-row gap-2 p-4  border-1  items-center 
+                    <button onClick={() => setDrop(!drop)} className={`${drop ? 'border-white rounded-t-md' : 'border-blue-500 rounded-md'} flex flex-row gap-2 p-4 
+                    border-1  items-center 
                         cursor-pointer transition-all hover:bg-zinc-700`}>
                         <img src={imageReturn()} className="w-7" />
                         <p className="text-lg">{textReturn()}</p>

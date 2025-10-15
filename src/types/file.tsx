@@ -1,4 +1,4 @@
-export type FileType = "folder" | "text" | "link" | "image"
+export type FileType = "folder" | "text" | "link"
 
 type PathSegment = {
     id: string | null;

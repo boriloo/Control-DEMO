@@ -1,4 +1,4 @@
-import { CircleCheckBig } from "lucide-react";
+import { CircleCheckBig, Sparkles } from "lucide-react";
 import { useState } from "react";
 import { useUser } from "../../context/AuthContext";
 
@@ -14,7 +14,11 @@ export default function PlansPage() {
                 <div className="w-full p-4">
                     <div className="flex flex-row absolute top-10 items-center gap-2">
                         <img src={`${user?.profileImage || "/assets/images/profile.png"}`} className="rounded-full w-11 h-11" />
-                        <h1 className="text-[18px]">{user?.name as string}</h1>
+                        <div className="flex flex-col justify-center">
+                            <h1 className="text-[18px]">{user?.name as string}</h1>
+                            <h1 className="text-[16px] opacity-80">{user?.email as string}</h1>
+                        </div>
+
                     </div>
                 </div>
                 <h1 className=" text-center text-[40px]">Traga mais <span className="text-blue-500">simplicidade</span> <br />ao fluxo dos seus dados.</h1>
@@ -31,8 +35,8 @@ export default function PlansPage() {
                 </div>
 
                 <div className={`${planType === 'free' ? 'bg-blue-500/10' :
-                    planType === 'premium' ? 'bg-blue-500/15 scale-110' :
-                        'bg-blue-500/20 scale-125'} z-0  
+                    planType === 'premium' ? 'bg-blue-500/15 scale-y-110' :
+                        'bg-blue-500/20 scale-y-125'} z-0  
                 transition-all duration-700 w-full max-w-[1300px] h-60 rounded-[100%] blur-3xl`}></div>
 
                 <div className="z-10 flex flex-row gap-4 w-full max-w-[1300px] mt-[-220px] justify-center flex-wrap">
@@ -64,11 +68,15 @@ export default function PlansPage() {
                         </div>
                     </div>
 
-                    <div onClick={() => setPlanType('premium')} className={`${planType === "premium" ? 'scale-102 border-blue-400 bg-zinc-950' : 'border-zinc-800'} transition-all p-4 rounded-md bg-zinc-900 
-                    w-full flex flex-col gap-2 max-w-[350px] border-1 cursor-pointer hover:bg-zinc-950 select-none pb-6`}
+                    <div onClick={() => setPlanType('premium')} className={`${planType === "premium" ? 'scale-102 border-blue-400 bg-zinc-950' : 'border-zinc-800'} 
+                    transition-all p-4 rounded-b-md bg-zinc-900 w-full flex flex-col gap-2 max-w-[350px] border-1 cursor-pointer 
+                    hover:bg-zinc-950 select-none pb-6 relative`}
                         style={{
                             boxShadow: planType === 'premium' ? '0px 0px 20px rgba(19, 105, 242, 0.5)' : ''
                         }}>
+                        <p className="absolute bottom-0 right-0 p-1 px-3 bg-blue-500/80 rounded-tl-lg font-medium text-center gap-2 flex justify-center items-center">
+                            <Sparkles size={18} /> Melhor Oferta
+                        </p>
                         <div className="flex flex-row justify-between items-center gap-2">
                             <p>Para Equipes</p>
                             <div className={`${planType === "premium" ? 'border-blue-500 bg-blue-500' : 'border-zinc-400'} transtion-all duration-300 border-1 w-5 h-5 rounded-full`}></div>
@@ -133,7 +141,7 @@ export default function PlansPage() {
 
                         </div>
                         <div className="w-full h-[1px] bg-zinc-800"></div>
-                        <p className="">Tenha as principais funcionalidades e otimize seu fluxo de desenvolvimento.</p>
+                        <p className="">Torne da plataforma seu núcleo principal de gestão de arquivos para trabalho.</p>
                         <div className="flex flex-row gap-2 items-center mt-5">
                             <CircleCheckBig size={20} className="text-blue-500" />
                             <p>Armazenamento de até 5000 items</p>

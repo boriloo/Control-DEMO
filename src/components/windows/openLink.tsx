@@ -1,10 +1,5 @@
-import { ChevronDown, X } from "lucide-react"
-import { useState } from "react"
-import { FileDropzone } from "../fileDrop"
 import { useWindowContext } from "../../context/WindowContext";
 import { returnFilterEffects } from "../../types/auth";
-import { FileType } from "../../types/file";
-import { createFile } from "../../services/file";
 import { useUser } from "../../context/AuthContext";
 import { useAppContext } from "../../context/AppContext";
 
@@ -12,13 +7,13 @@ export default function OpenLinkWindow({ url }: { url: string | null }) {
     const { user } = useUser();
     const { minimazeAllWindows } = useAppContext();
     const { openLink } = useWindowContext();
-    const [fileType, setFileType] = useState<FileType>('folder')
-    const [drop, setDrop] = useState<boolean>(false)
 
     const handleAreaClick = (e: React.MouseEvent<HTMLElement>) => {
         if (e.target != e.currentTarget) return;
         openLink.closeWindow();
     }
+
+   
 
     return (
         <div onClick={handleAreaClick} className={`${openLink.currentStatus === 'open' ? returnFilterEffects(user) : 'pointer-events-none '} 
@@ -34,7 +29,7 @@ export default function OpenLinkWindow({ url }: { url: string | null }) {
                                 {new URL(url).hostname}
                             </p>
                             <p className="text-[18px] mt-2">URL</p>
-                            <p className="text-[18px] max-w-full p-1 bg-zinc-800 border-1 rounded-md border-zinc-700">
+                            <p className="text-[18px] max-w-full overflow-auto p-1 bg-zinc-800 border-1 rounded-md border-zinc-700">
                                 {url}
                             </p>
                         </>

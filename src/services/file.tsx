@@ -150,3 +150,28 @@ export const deleteFile = async ({ fileId, filePath }: { fileId?: string; filePa
         throw err;
     }
 }
+
+
+export const getFilesByParent = async (userId: string, desktopId: string, parentId: string): Promise<FullFileData[]> => {
+    try {
+        const q = query(
+            collection(db, "files"),
+            where("desktopId", "==", desktopId),
+            where("parentId", "==", parentId),
+            where("usersId", "array-contains", userId)
+        );
+
+        const querySnapshot = await getDocs(q);
+
+        const files: FullFileData[] = querySnapshot.docs.map(doc => ({
+            id: doc.id,
+            ...doc.data()
+        })) as FullFileData[];
+
+        return files;
+
+    } catch (error) {
+        console.error("Erro ao buscar files:", error);
+        throw error;
+    }
+};

@@ -1,4 +1,4 @@
-import { Download, FolderUp, Info, Maximize, Maximize2, Minimize2, Minus, Save, Trash, X } from "lucide-react"
+import { Download, FolderUp, Info, Maximize, Maximize2, Minimize2, Minus, Trash, X } from "lucide-react"
 import { useEffect, useState } from "react"
 import { useUser } from "../../context/AuthContext";
 import { useWindowContext } from "../../context/WindowContext";
@@ -14,12 +14,23 @@ export default function ImageViewerWindow() {
     const [imgFull, setImgFull] = useState<boolean>(false)
     const [downLoading, setDownLoading] = useState<boolean>(false)
     const [confirmDelete, setConfirmDelete] = useState<boolean>(false)
-
-    if (!user) return null;
+    const [driveImage, setDriveImage] = useState<string | null>(null)
 
     useEffect(() => {
         if (imgViewer.currentStatus != "open") {
             setImgFull(false)
+        }
+        if (imgViewer.file?.url?.startsWith('https://drive.google.com')) {
+            const regex = /\/d\/([a-zA-Z0-9_-]+)/;
+            const match = imgViewer.file?.url?.match(regex);
+
+            if (match && match[1]) {
+                const fileId = match[1];
+                setDriveImage(`https://lh3.googleusercontent.com/d/${fileId}=s0`)
+            } else {
+                console.warn("Não foi possível extrair o ID do arquivo do Google Drive.");
+
+            }
         }
     }, [imgViewer.currentStatus])
 
@@ -29,10 +40,10 @@ export default function ImageViewerWindow() {
     }
 
     const downloadImageSimples = async () => {
-        if (!imgViewer.file?.imageUrl || !imgViewer.file?.name) return;
+        if (!imgViewer.file?.url || !imgViewer.file?.name) return;
         try {
             setDownLoading(true)
-            const response = await fetch(imgViewer.file?.imageUrl);
+            const response = await fetch(imgViewer.file?.url);
             if (!response.ok) {
                 throw new Error(`A resposta da rede não foi ok: ${response.statusText}`);
             }
@@ -78,7 +89,7 @@ export default function ImageViewerWindow() {
         fixed z-100 flex-1 flex justify-center items-center w-full h-screen transition-all duration-500 cursor-pointer`}>
 
             <div className={`${imgFull ? '' : 'scale-90 opacity-0 pointer-events-none'} transition-all w-full min-h-screen fixed inset-0 bg-zinc-950 z-100 pb-10 flex justify-center items-center`}>
-                <img src={imgViewer.file?.url} className="max-h-full w-full max-w-full object-contain" />
+                <img src={driveImage ? driveImage : imgViewer.file?.url} className="max-h-full w-full max-w-full object-contain" />
                 <Minimize2 onClick={() => setImgFull(false)} size={40} className="absolute bottom-10 right-0 p-1 transition-all cursor-pointer hover:bg-zinc-800" />
             </div>
 
@@ -121,26 +132,24 @@ export default function ImageViewerWindow() {
                 </div>
                 <div className={`${downLoading && 'saturate-0 scale-80'} relative transition-all flex-1 overflow-hidden flex justify-center items-center w-full`}>
                     <h1 className={`${!downLoading && 'opacity-0'} pointer-events-none absolute text-[23px] p-2 bg-zinc-900 rounded-md px-5`}>Fazendo Download...</h1>
-                    <img src={imgViewer.file?.url} className="h-full max-h-full max-w-full object-contain" />
+                    <img src={driveImage ? driveImage : imgViewer.file?.url} className="h-full max-h-full max-w-full object-contain" />
                 </div>
                 <div className="mt-auto flex flex-row justify-between p-2 items-center bg-zinc-900/50">
                     <div className="flex flex-row gap-4 items-center p-2 px-3">
                         <Info size={30} className={"p-1 transition-all cursor-pointer hover:bg-zinc-700 rounded-sm"} />
                         <div className="h-5 w-[1px] bg-zinc-700"></div>
-                        <div className="flex flex-row flex-1 justify-start">
-                            <div className="flex opacity-65 self-end flex-row gap-2 justify-end items-center">
-                                <Save size={20} />
-                                <p>{imgViewer.file?.sizeInBytes && ((imgViewer.file?.sizeInBytes / 1024) / 1024).toFixed(1)} MB</p>
-                            </div>
-                        </div>
+
                     </div>
 
-                    <div className="flex flex-row gap-3 items-center p-2 px-3">
-                        <Trash onClick={() => setConfirmDelete(true)} size={30} className="p-1 transition-all cursor-pointer hover:bg-zinc-700 rounded-sm" />
+                    <div className="flex flex-row gap-3 items-center p-1 px-3">
+                        <Trash onClick={() => setConfirmDelete(true)} size={40} className="p-2 transition-all cursor-pointer hover:bg-zinc-700 rounded-sm" />
                         <div className="h-5 w-[1px] bg-zinc-700"></div>
-                        <FolderUp size={30} className="p-1 transition-all cursor-pointer hover:bg-zinc-700 rounded-sm" />
+                        <div>
+                            <FolderUp size={40} className="peer p-2 transition-all cursor-pointer hover:bg-zinc-700 rounded-sm" />
+                            <p className="absolute mt-[-78px] ml-[-30px] transition-all bg-zinc-950/50 p-1 px-2 rounded-sm backdrop-blur-sm opacity-0 peer-hover:opacity-100">Mover para</p>
+                        </div>
                         <div className="h-5 w-[1px] bg-zinc-700"></div>
-                        <Maximize2 onClick={() => setImgFull(true)} size={30} className="p-1 transition-all cursor-pointer hover:bg-zinc-700 rounded-sm" />
+                        <Maximize2 onClick={() => setImgFull(true)} size={40} className="p-2 transition-all cursor-pointer hover:bg-zinc-700 rounded-sm" />
                     </div>
                 </div>
             </div>
