@@ -5,7 +5,7 @@ import { FullFileData } from "../services/file";
 
 export default function Icon(icon: FullFileData) {
     const { root } = useRootContext();
-    const { file, openLink, imgViewer } = useWindowContext();
+    const { fileViewer, openLink, imgViewer } = useWindowContext();
     const [imageSrc, setImageSrc] = useState<string>("/assets/images/file.png");
     const [isValidImage, setIsValidImage] = useState<boolean>(true)
     const [driveThumb, setDriveThumb] = useState<string | null>(null)
@@ -82,25 +82,21 @@ export default function Icon(icon: FullFileData) {
 
         if (icon.type === "link") {
             if (!icon.url) return;
-            if (true) {
-                if (isValidImage) {
-                    imgViewer.setFile(icon);
-                    imgViewer.openWindow();
-                } else {
-                    openLink.setUrl(icon.url as string);
-                    openLink.openWindow();
-                }
+            if (isValidImage) {
+                imgViewer.setFile(icon);
+                imgViewer.openWindow();
             } else {
                 openLink.setUrl(icon.url as string);
                 openLink.openWindow();
             }
-        } else {
-            file.openWindow();
+        } else if (icon.type === "folder") {
+            fileViewer.openWindow();
+            fileViewer.setFile(icon)
         }
-    }, [icon.url, isValidImage])
+    }, [icon.url, isValidImage, root])
 
     return (
-        <div onClick={returnAction} className="group select-none flex flex-col justify-center items-center gap-2 w-20 h-full max-h-40 p-1 px-2 rounded-sm cursor-pointer hover:bg-white/15">
+        <div onDoubleClick={returnAction} className="group select-none flex flex-col justify-center items-center gap-2 w-20 h-full max-h-40 p-1 px-2 rounded-sm cursor-pointer hover:bg-white/15">
             <div className={`max-w-13 flex justify-center items-center h-8 max-h-8`}>
                 <img src={!isValidImage || !driveThumb ? imageSrc : driveThumb} alt={icon.name} className="w-full h-full object-contain pointer-events-none select-none" />
             </div>

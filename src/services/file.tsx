@@ -107,6 +107,31 @@ export const listenToFilesByDesktop = (
     return unsubscribe;
 };
 
+export const listenToAllFilesByDesktop = (
+    userId: string,
+    desktopId: string,
+    callback: (files: FullFileData[]) => void
+): Unsubscribe => {
+
+    const q = query(
+        collection(db, "files"),
+        where("desktopId", "==", desktopId),
+        where("usersId", "array-contains", userId)
+    );
+
+    const unsubscribe = onSnapshot(q, (querySnapshot) => {
+        const files = querySnapshot.docs.map(doc => ({
+            id: doc.id,
+            ...doc.data()
+        })) as FullFileData[];
+
+        callback(files);
+    });
+
+    return unsubscribe;
+};
+
+
 export const updateFilePosition = async (fileId: string, position: { x: number, y: number }): Promise<FullFileData> => {
     try {
         const fileRef = doc(db, "files", fileId);
@@ -151,6 +176,29 @@ export const deleteFile = async ({ fileId, filePath }: { fileId?: string; filePa
     }
 }
 
+
+export const getAllFilesByDesktop = async (userId: string, desktopId: string): Promise<FullFileData[]> => {
+    try {
+        const q = query(
+            collection(db, "files"),
+            where("desktopId", "==", desktopId),
+            where("usersId", "array-contains", userId)
+        );
+
+        const querySnapshot = await getDocs(q);
+
+        const files: FullFileData[] = querySnapshot.docs.map(doc => ({
+            id: doc.id,
+            ...doc.data()
+        })) as FullFileData[];
+
+        return files;
+
+    } catch (error) {
+        console.error("Erro ao buscar files:", error);
+        throw error;
+    }
+};
 
 export const getFilesByParent = async (userId: string, desktopId: string, parentId: string): Promise<FullFileData[]> => {
     try {

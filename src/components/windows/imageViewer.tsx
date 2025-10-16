@@ -15,24 +15,29 @@ export default function ImageViewerWindow() {
     const [downLoading, setDownLoading] = useState<boolean>(false)
     const [confirmDelete, setConfirmDelete] = useState<boolean>(false)
     const [driveImage, setDriveImage] = useState<string | null>(null)
+    const [loading, setLoading] = useState<boolean>(false)
 
     useEffect(() => {
         if (imgViewer.currentStatus != "open") {
             setImgFull(false)
         }
         if (imgViewer.file?.url?.startsWith('https://drive.google.com')) {
+            setLoading(true)
             const regex = /\/d\/([a-zA-Z0-9_-]+)/;
             const match = imgViewer.file?.url?.match(regex);
 
             if (match && match[1]) {
                 const fileId = match[1];
                 setDriveImage(`https://lh3.googleusercontent.com/d/${fileId}=s0`)
+                setLoading(false)
             } else {
                 console.warn("Não foi possível extrair o ID do arquivo do Google Drive.");
-
+                setLoading(false)
             }
+        } else {
+            setDriveImage(null)
         }
-    }, [imgViewer.currentStatus])
+    }, [imgViewer.currentStatus, imgViewer.file])
 
     const handleAreaClick = (e: React.MouseEvent<HTMLElement>) => {
         if (e.target != e.currentTarget) return;
@@ -130,10 +135,13 @@ export default function ImageViewerWindow() {
                         <Download onClick={downloadImageSimples} size={30} className={`${downLoading && 'pointer-events-none opacity-60'} p-1 transition-all cursor-pointer hover:bg-zinc-700 rounded-sm`} />
                     </div>
                 </div>
-                <div className={`${downLoading && 'saturate-0 scale-80'} relative transition-all flex-1 overflow-hidden flex justify-center items-center w-full`}>
-                    <h1 className={`${!downLoading && 'opacity-0'} pointer-events-none absolute text-[23px] p-2 bg-zinc-900 rounded-md px-5`}>Fazendo Download...</h1>
-                    <img src={driveImage ? driveImage : imgViewer.file?.url} className="h-full max-h-full max-w-full object-contain" />
-                </div>
+                {!loading && (
+                    <div className={`${downLoading && 'saturate-0 scale-80'} relative transition-all flex-1 overflow-hidden flex justify-center items-center w-full`}>
+                        <h1 className={`${!downLoading && 'opacity-0'} pointer-events-none absolute text-[23px] p-2 bg-zinc-900 rounded-md px-5`}>Fazendo Download...</h1>
+                        <img src={driveImage ? driveImage : imgViewer.file?.url} className="h-full max-h-full max-w-full object-contain" />
+                    </div>
+                )}
+
                 <div className="mt-auto flex flex-row justify-between p-2 items-center bg-zinc-900/50">
                     <div className="flex flex-row gap-4 items-center p-2 px-3">
                         <Info size={30} className={"p-1 transition-all cursor-pointer hover:bg-zinc-700 rounded-sm"} />

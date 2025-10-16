@@ -1,4 +1,4 @@
-import { createContext, useContext, ReactNode, useCallback, useState, useEffect, useRef } from "react";
+import { createContext, useContext, ReactNode, useCallback, useState, useRef } from "react";
 import { useWindowContext } from "./WindowContext";
 
 type ToastType = "success" | "error" | "message"
@@ -19,7 +19,7 @@ interface AppContextType {
 const AppContext = createContext<AppContextType | undefined>(undefined);
 
 export const AppProvider = ({ children }: { children: ReactNode }) => {
-    const { file, profile, newFile, config, listdt, newdt, openLink, dtConfig, imgViewer } = useWindowContext()
+    const { fileViewer, profile, newFile, config, listdt, newdt, openLink, dtConfig, imgViewer } = useWindowContext()
     const [toastOpen, setToastOpen] = useState<boolean>(false)
     const [toast, setToast] = useState<Toast>({ message: 'Hmmm...', type: 'message' })
     const timeoutRef = useRef<NodeJS.Timeout | null>(null)
@@ -44,7 +44,7 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
 
     const minimazeAllWindows = useCallback(() => {
         config.minimizeWindow()
-        file.minimizeWindow()
+        fileViewer.minimizeWindow()
         profile.minimizeWindow()
         newFile.closeWindow()
         listdt.minimizeWindow()
@@ -56,7 +56,7 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
 
     const closeAllWindows = useCallback(() => {
         config.closeWindow()
-        file.closeWindow()
+        fileViewer.closeWindow()
         profile.closeWindow()
         newFile.closeWindow()
         listdt.closeWindow()

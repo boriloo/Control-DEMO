@@ -1,6 +1,6 @@
 import { useRef } from 'react';
 import Draggable, { DraggableData, DraggableEvent } from 'react-draggable';
-import Icon, { IconTypes } from './icon';
+import Icon from './icon';
 import { FullFileData } from '../services/file';
 
 

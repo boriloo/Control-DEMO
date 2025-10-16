@@ -1,12 +1,11 @@
 import { useEffect, useState, useRef, useCallback } from "react";
 import { DraggableData, DraggableEvent } from 'react-draggable';
-import { ArrowDownToLine, ArrowLeftToLine, ArrowRightToLine, ArrowUpToLine, CirclePlus, GripVertical, Search } from "lucide-react";
+import { ArrowDownToLine, ArrowLeftToLine, ArrowRightToLine, ArrowUpToLine, CirclePlus, GripVertical } from "lucide-react";
 import { DraggableIcon } from "../../components/draggableIcon";
 import { useDraggableScroll } from "../../components/dragScroll";
-import { IconTypes } from "../../components/icon";
 import ProfileWindow from "../../components/windows/profile";
 import NewFileWindow from "../../components/windows/newFile";
-import FileWindow from "../../components/windows/file";
+import FileWindow from "../../components/windows/fileViewer";
 import { useUser } from "../../context/AuthContext";
 import TaskBar from "../../components/taskbar";
 import { useWindowContext } from "../../context/WindowContext";
@@ -18,7 +17,7 @@ import SearchBar from "../../components/SearchBar";
 import ListDesktopsWindow from "../../components/windows/listDesktops";
 import NewDesktopWindow from "../../components/windows/newDesktop";
 import { useTranslation } from "react-i18next";
-import { FullFileData, getFilesByDesktop, listenToFilesByDesktop, updateFilePosition } from "../../services/file";
+import { FullFileData, listenToAllFilesByDesktop, listenToFilesByDesktop, updateFilePosition } from "../../services/file";
 import OpenLinkWindow from "../../components/windows/openLink";
 import DesktopConfigWindow from "../../components/windows/desktopConfig";
 import ImageViewerWindow from "../../components/windows/imageViewer";
@@ -48,6 +47,7 @@ export default function DashboardPage() {
     const { newFile, listdt, openLink } = useWindowContext();
     const [start, setStart] = useState<boolean>(false);
     const [desktopFiles, setDesktopFiles] = useState<FullFileData[]>([])
+    const [searchFiles, setSearchFiles] = useState<FullFileData[]>([])
 
     useEffect(() => {
         if (!hasDesktops) return;
@@ -57,20 +57,26 @@ export default function DashboardPage() {
     useEffect(() => {
         if (!user || !currentDesktop?.id) return;
 
-        // Inicia a escuta e recebe a função de limpeza
         const unsubscribe = listenToFilesByDesktop(
             user.uid as string,
             currentDesktop.id,
             (newFiles) => {
-                setDesktopFiles(newFiles); // Atualiza o estado quando há mudança no DB
+                setDesktopFiles(newFiles);
                 console.log('ARQUIVOS ATUALIZADOS EM TEMPO REAL: ', newFiles);
             }
         );
 
-        // Retorna a função de limpeza (unsubscribe) para quando o componente for desmontado
-        return () => unsubscribe();
+        const unsubscribeAll = listenToAllFilesByDesktop(
+            user.uid as string,
+            currentDesktop.id,
+            (newFiles) => {
+                setSearchFiles(newFiles);
+            }
+        );
 
-    }, [currentDesktop?.id, user?.uid]); // Dependências do efeito
+        return () => { unsubscribe(); unsubscribeAll(); };
+
+    }, [currentDesktop?.id, user?.uid]);
 
     const desktopRef = useRef<HTMLDivElement>(null);
     const [contentToRight, setContentToRight] = useState<boolean>(false)
@@ -241,9 +247,9 @@ export default function DashboardPage() {
 
                 <div
                     ref={desktopRef} className="desktop-area flex-1 w-full relative mb-10 p-4 overflow-scroll">
-                    {desktopFiles.map((icon) => (
+                    {desktopFiles.map((icon, index) => (
                         <DraggableIcon
-                            key={2}
+                            key={index}
                             icon={icon}
                             onStart={handleDragStart}
                             onDrag={handleDrag}

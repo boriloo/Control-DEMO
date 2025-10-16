@@ -10,7 +10,7 @@ import { useProfileHook } from "./profileHook";
 
 export function useAllWindows() {
     return {
-        file: useFileHook(),
+        fileViewer: useFileHook(),
         listdt: useListDesktopHook(),
         profile: useProfileHook(),
         config: useConfigHook(),
