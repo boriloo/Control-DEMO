@@ -5,7 +5,7 @@ import { FullFileData } from "../services/file";
 
 export default function Icon(icon: FullFileData) {
     const { root } = useRootContext();
-    const { fileViewer, openLink, imgViewer } = useWindowContext();
+    const { fileViewer, openLink, imgViewer, newFile } = useWindowContext();
     const [imageSrc, setImageSrc] = useState<string>("/assets/images/file.png");
     const [isValidImage, setIsValidImage] = useState<boolean>(true)
     const [driveThumb, setDriveThumb] = useState<string | null>(null)
@@ -79,7 +79,7 @@ export default function Icon(icon: FullFileData) {
 
     const returnAction = useCallback(() => {
         if (!root.canOpenWindow) return;
-
+        newFile.setFile(icon)
         if (icon.type === "link") {
             if (!icon.url) return;
             if (isValidImage) {

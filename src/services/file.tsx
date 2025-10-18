@@ -200,26 +200,28 @@ export const getAllFilesByDesktop = async (userId: string, desktopId: string): P
     }
 };
 
-export const getFilesByParent = async (userId: string, desktopId: string, parentId: string): Promise<FullFileData[]> => {
-    try {
-        const q = query(
-            collection(db, "files"),
-            where("desktopId", "==", desktopId),
-            where("parentId", "==", parentId),
-            where("usersId", "array-contains", userId)
-        );
+export const listenToFilesByParent = (
+    userId: string,
+    desktopId: string,
+    parentId: string,
+    callback: (files: FullFileData[]) => void
+): Unsubscribe => {
 
-        const querySnapshot = await getDocs(q);
+    const q = query(
+        collection(db, "files"),
+        where("desktopId", "==", desktopId),
+        where("parentId", "==", parentId),
+        where("usersId", "array-contains", userId)
+    );
 
-        const files: FullFileData[] = querySnapshot.docs.map(doc => ({
+    const unsubscribe = onSnapshot(q, (querySnapshot) => {
+        const files = querySnapshot.docs.map(doc => ({
             id: doc.id,
             ...doc.data()
         })) as FullFileData[];
 
-        return files;
+        callback(files);
+    });
 
-    } catch (error) {
-        console.error("Erro ao buscar files:", error);
-        throw error;
-    }
+    return unsubscribe;
 };

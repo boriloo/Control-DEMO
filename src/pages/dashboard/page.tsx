@@ -74,7 +74,7 @@ export default function DashboardPage() {
             }
         );
 
-        return () => { unsubscribe(); unsubscribeAll(); };
+        return () => { unsubscribe; unsubscribeAll; };
 
     }, [currentDesktop?.id, user?.uid]);
 
@@ -201,7 +201,10 @@ export default function DashboardPage() {
             <div className={`${start ? 'opacity-100' : 'opacity-0'} transition-opacity duration-1000 flex flex-col w-full h-screen overflow-hidden text-white`}>
                 <div className="flex flex-row flex-wrap justify-between items-center w-full gap-3 p-4">
                     <div className=" w-full max-w-50">
-                        <button onClick={newFile.openWindow}
+                        <button onClick={() => {
+                            newFile.setFile(null)
+                            newFile.openWindow()
+                        }}
                             className="flex flex-row items-center justify-start gap-2 p-1 px-3 cursor-pointer rounded-md bg-black/40 backdrop-blur-md hover:bg-black/65 border-[1px] 
                 border-transparent hover:text-blue-500 hover:border-blue-500 transition-all">
                             <CirclePlus />

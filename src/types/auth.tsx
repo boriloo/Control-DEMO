@@ -1,5 +1,4 @@
 import { UserProfile } from "firebase/auth";
-import { useUser } from "../context/AuthContext";
 
 export type BasicFilter = 'off' | 'low' | 'high'
 export type ColorFilter = 'color' | 'gray'
