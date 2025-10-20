@@ -1,8 +1,10 @@
-import { createUserWithEmailAndPassword, signInWithEmailAndPassword, updateProfile, User, UserProfile } from "firebase/auth"
+import { createUserWithEmailAndPassword, signInWithEmailAndPassword, signInWithPopup, updateProfile, User, UserProfile } from "firebase/auth"
 import { BasicFilter, ColorFilter, LoginData, RegisterData } from "../types/auth"
 import { auth, db } from "../firebase/config";
 import { collection, doc, getDoc, getDocs, query, serverTimestamp, setDoc, updateDoc, where, writeBatch, } from "firebase/firestore";
 import { MemberType } from "../types/desktop";
+import { GoogleAuthProvider } from "firebase/auth";
+const provider = new GoogleAuthProvider();
 
 export const registerUser = async ({ name, email, password }: RegisterData): Promise<UserProfile> => {
   try {
@@ -40,6 +42,7 @@ export const registerUser = async ({ name, email, password }: RegisterData): Pro
 };
 
 
+
 export const loginUser = async ({ email, password }: LoginData): Promise<User> => {
   try {
     const userCredential = await signInWithEmailAndPassword(auth, email, password);
@@ -65,6 +68,27 @@ export const loginUser = async ({ email, password }: LoginData): Promise<User> =
     throw error;
   }
 };
+
+export const LoginUserWithGoogle = async (): Promise<any> => {
+  try {
+    const user = await signInWithPopup(auth, provider)
+      .then((result) => {
+        const credential = GoogleAuthProvider.credentialFromResult(result);
+        const token = credential?.accessToken;
+        return result.user;
+      }).catch((error) => {
+        const errorCode = error.code;
+        const errorMessage = error.message;
+        const email = error.customData.email;
+        const credential = GoogleAuthProvider.credentialFromError(error);
+        throw error;
+      });
+    console.log(user)
+  } catch (err) {
+    throw err;
+  }
+}
+
 
 export const getUserProfile = async (uid: string): Promise<UserProfile> => {
   const userDocRef = doc(db, "users", uid);

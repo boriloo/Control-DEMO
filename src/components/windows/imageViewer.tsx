@@ -5,6 +5,8 @@ import { useWindowContext } from "../../context/WindowContext";
 import { returnFilterEffects } from "../../types/auth";
 import { deleteFile } from "../../services/file";
 import { useAppContext } from "../../context/AppContext";
+import { GoogleAuth } from 'google-auth-library';
+import { google } from 'googleapis';
 
 export default function ImageViewerWindow() {
     const { callToast } = useAppContext();
@@ -21,6 +23,9 @@ export default function ImageViewerWindow() {
         if (imgViewer.currentStatus != "open") {
             setImgFull(false)
         }
+    }, [imgViewer.currentStatus])
+
+    useEffect(() => {
         if (imgViewer.file?.url?.startsWith('https://drive.google.com')) {
             setLoading(true)
             const regex = /\/d\/([a-zA-Z0-9_-]+)/;
@@ -37,41 +42,73 @@ export default function ImageViewerWindow() {
         } else {
             setDriveImage(null)
         }
-    }, [imgViewer.currentStatus, imgViewer.file])
+    }, [imgViewer.file])
 
     const handleAreaClick = (e: React.MouseEvent<HTMLElement>) => {
         if (e.target != e.currentTarget) return;
         imgViewer.closeWindow();
     }
 
+    const convertDriveUrl = (url: string) => {
+        const match = url.match(/\/d\/([^/]+)/);
+        if (match) {
+            return `https://drive.google.com/uc?export=download&id=${match[1]}`;
+        }
+        return url;
+    };
+
     const downloadImageSimples = async () => {
         if (!imgViewer.file?.url || !imgViewer.file?.name) return;
-        try {
-            setDownLoading(true)
-            const response = await fetch(imgViewer.file?.url);
-            if (!response.ok) {
-                throw new Error(`A resposta da rede não foi ok: ${response.statusText}`);
+        if (driveImage) {
+            // try {
+
+            //     const auth = new GoogleAuth({
+            //         scopes: 'https://www.googleapis.com/auth/drive',
+            //     });
+            //     const service = google.drive({ version: 'v3', auth });
+
+            //     const fileId = "1DkRvGJ_xdfDGUh6TUkG4CFWU2cmW0hMn"
+
+            //     const file = await service.files.get({
+            //         fileId,
+            //         alt: 'media',
+            //     });
+            //     return file.status;
+            // } catch (error) {
+            //     console.error('Erro ao tentar baixar link direto:', error);
+            //     alert('Não foi possível baixar. Tente abrir o link em nova aba.');
+            // } finally {
+            //     setDownLoading(false);
+            // }
+        } else {
+            try {
+                setDownLoading(true)
+                const response = await fetch(imgViewer.file?.url);
+                if (!response.ok) {
+                    throw new Error(`A resposta da rede não foi ok: ${response.statusText}`);
+                }
+
+                const blob = await response.blob();
+
+                const url = window.URL.createObjectURL(blob);
+
+                const link = document.createElement('a');
+                link.href = url;
+                link.download = imgViewer.file?.name;
+                document.body.appendChild(link);
+                link.click();
+
+                document.body.removeChild(link);
+                window.URL.revokeObjectURL(url);
+
+            } catch (error) {
+                console.error('Erro ao baixar a imagem:', error);
+                alert('Não foi possível baixar a imagem. Verifique o console para mais detalhes.');
+            } finally {
+                setDownLoading(false)
             }
-
-            const blob = await response.blob();
-
-            const url = window.URL.createObjectURL(blob);
-
-            const link = document.createElement('a');
-            link.href = url;
-            link.download = imgViewer.file?.name;
-            document.body.appendChild(link);
-            link.click();
-
-            document.body.removeChild(link);
-            window.URL.revokeObjectURL(url);
-
-        } catch (error) {
-            console.error('Erro ao baixar a imagem:', error);
-            alert('Não foi possível baixar a imagem. Verifique o console para mais detalhes.');
-        } finally {
-            setDownLoading(false)
         }
+
     }
 
     const handleDeleteFile = () => {

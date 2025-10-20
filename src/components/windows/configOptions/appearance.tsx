@@ -39,7 +39,7 @@ export default function AppearanceOption() {
 
     return (
         <div className="flex flex-col items-start gap-4 p-4 w-full">
-            {hasDesktops && (<h1 className="text-[25px] flex">Desktop atual - {currentDesktop.name} ({currentDesktop.type})</h1>)}
+            {hasDesktops && (<h1 className="text-[25px] flex">Aparência</h1>)}
             <div className="w-full h-[1px] bg-zinc-600"></div>
 
             <div className="flex flex-col gap-4 px-2 items-start">

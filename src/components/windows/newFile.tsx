@@ -2,17 +2,18 @@ import { ChevronDown, X } from "lucide-react"
 import { useState } from "react"
 import { useWindowContext } from "../../context/WindowContext";
 import { returnFilterEffects } from "../../types/auth";
-import { FileType } from "../../types/file";
 import { createFile } from "../../services/file";
 import { useUser } from "../../context/AuthContext";
 import { DotLottieReact } from "@lottiefiles/dotlottie-react";
 import { useAppContext } from "../../context/AppContext";
 
+export type CreateFileType = "folder" | "text" | "link" | "drive"
+
 export default function NewFileWindow() {
     const { callToast } = useAppContext();
     const { user, currentDesktop } = useUser();
     const { newFile } = useWindowContext();
-    const [fileType, setFileType] = useState<FileType>('folder')
+    const [fileType, setFileType] = useState<CreateFileType>('folder')
     const [drop, setDrop] = useState<boolean>(false)
     const [name, setName] = useState<string | null>(null)
     const [url, setUrl] = useState<string | null>(null)
@@ -58,6 +59,14 @@ export default function NewFileWindow() {
 
         if (newFile.file) {
             finalPayload.parentId = newFile.file.id
+            finalPayload.path = [
+                ...newFile.file.path,
+                { id: newFile.file.id, name: newFile.file.name }
+            ]
+            console.log([
+                ...newFile.file.path,
+                { id: newFile.file.id, name: newFile.file.name }
+            ])
         }
 
         switch (fileType) {
@@ -133,7 +142,7 @@ export default function NewFileWindow() {
             <div className={`${newFile.currentStatus === 'open' ? 'scale-100' : 'scale-0'} cursor-default bg-zinc-900 origin-center rounded-md p-4 w-full max-w-[600px] 
             max-h-full flex flex-col gap-4 overflow-y-auto transition-all relative`}>
                 <X onClick={() => { setFileType("folder"); setDrop(false); newFile.closeWindow(); setName(null); setUrl(null); }} size={35} className="absolute top-0 right-0 p-2 rounded-bl-lg cursor-pointer transition-all hover:bg-red-500" />
-                <h1 className="text-[20px] flex gap-1.5">Criar um novo item em <p className="text-blue-500">{newFile.file ? `${newFile.file.name} (${newFile.file.type})` : `${currentDesktop?.name} (Desktop)`}</p></h1>
+                <h1 className="text-[20px] flex gap-1.5">Criar um novo item em <p className="text-blue-500 max-w-50 truncate">{newFile.file ? `${newFile.file.name} (${newFile.file.type})` : `${currentDesktop?.name} (Desktop)`}</p></h1>
                 <div className={`${loading && 'saturate-0 pointer-events-none opacity-60'} flex flex-col gap-3`}>
                     <button onClick={() => setDrop(!drop)} className={`${drop ? 'border-white rounded-t-md' : 'border-blue-500 rounded-md'} flex flex-row gap-2 p-4 
                     border-1  items-center 
@@ -160,11 +169,18 @@ export default function NewFileWindow() {
                             <img src="/assets/images/link.png" className="w-6" />
                             Link
                         </div>
+                        <div onClick={() => { setFileType('drive'); setDrop(true) }}
+                            className={`${fileType === 'drive' ? 'border-blue-500 border-1 bg-blue-500/10' : 'border-transparent'} 
+                             p-2 flex flex-row gap-4 transition-all rounded-md cursor-pointer select-none
+                            bg-gradient-to-r from-blue-500/20 to-transparent hover:bg-blue-500/5`}>
+                            <img src="/assets/images/google-drive.png" className="w-6" />
+                            Google Drive
+                        </div>
                     </div>
                     <div className="flex flex-col gap-1">
                         <p>Nome</p>
                         <div className="flex flex-col">
-                            <input onChange={(e) => setName(e.target.value)} type="text" className="border-none outline-[1.5px] p-1 px-2 outline-transparent 
+                            <input value={name ?? ''} onChange={(e) => setName(e.target.value)} type="text" className="border-none outline-[1.5px] p-1 px-2 outline-transparent 
                             transition-all cursor-pointer hover:bg-zinc-800 rounded-sm focus:outline-blue-500 focus:cursor-text" />
                             <div className="w-full h-[1px] bg-zinc-400"></div>
                         </div>
@@ -172,7 +188,7 @@ export default function NewFileWindow() {
                     {fileType === 'link' && (<div className="flex flex-col gap-1">
                         <p>URL</p>
                         <div className="flex flex-col">
-                            <input onChange={(e) => setUrl(e.target.value)} type="text" className="border-none outline-[1.5px] p-1 px-2 
+                            <input value={url ?? ''} onChange={(e) => setUrl(e.target.value)} type="text" className="border-none outline-[1.5px] p-1 px-2 
                             outline-transparent transition-all cursor-pointer hover:bg-zinc-700 rounded-sm focus:outline-blue-500 focus:cursor-text" />
                             <div className="w-full h-[1px] bg-zinc-400"></div>
                         </div>

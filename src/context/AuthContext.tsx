@@ -44,6 +44,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }, [])
 
 
+
     async function authLoginUser(email: string, password: string, rememberMe: boolean) {
         try {
             const persistenceType = rememberMe
@@ -120,7 +121,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             throw err;
         }
     }
-
 
 
     useEffect(() => {

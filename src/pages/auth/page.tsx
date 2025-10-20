@@ -8,6 +8,7 @@ import { DotLottieReact } from '@lottiefiles/dotlottie-react';
 import { FirebaseError } from "firebase/app";
 import '../../App.css'
 import { useUser } from "../../context/AuthContext";
+import { LoginUserWithGoogle } from "../../services/auth";
 
 const loginSchema = z.object({
     email: z.string().email({ message: "Por favor, insira um e-mail válido." }),
@@ -183,7 +184,7 @@ export default function AuthPage() {
 
                     <div className="flex flex-col gap-2 w-full items-center">
                         <p className="text-lg">Entrar com</p>
-                        <button className="cursor-pointer p-3 w-full flex justify-center items-center max-w-[300px] bg-gray-200 text-white font-bold rounded-lg hover:bg-white transition-colors">
+                        <button onClick={() => LoginUserWithGoogle()} className="cursor-pointer p-3 w-full flex justify-center items-center max-w-[300px] bg-gray-200 text-white font-bold rounded-lg hover:bg-white transition-colors">
                             <img src="/assets/images/google.png" className="w-5 h-5" />
                         </button>
                     </div>

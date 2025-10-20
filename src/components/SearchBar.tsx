@@ -1,12 +1,18 @@
 import { ExternalLink, Search } from "lucide-react";
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useUser } from "../context/AuthContext";
 import { FullFileData, listenToAllFilesByDesktop } from "../services/file";
 import { FileType } from "../types/file";
+import { useRootContext } from "../context/RootContext";
+import { useAppContext } from "../context/AppContext";
+import { useWindowContext } from "../context/WindowContext";
 
 export default function SearchBar() {
     const { t } = useTranslation();
+    const { root } = useRootContext();
+    const { minimazeAllWindows } = useAppContext();
+    const { newFile, imgViewer, openLink, fileViewer } = useWindowContext();
     const { user, currentDesktop } = useUser();
     const [allFiles, setAllFiles] = useState<FullFileData[]>([]);
     const [searchTerm, setSearchTerm] = useState<string>('');
@@ -63,7 +69,7 @@ export default function SearchBar() {
 
     function validateImage(url: string): Promise<boolean> {
         return new Promise((resolve) => {
-            let convertedUrl = null
+            let convertedUrl = 'null'
             if (url.startsWith('https://drive.google.com')) {
                 const regex = /\/d\/([a-zA-Z0-9_-]+)/;
                 const match = url.match(regex);
@@ -99,6 +105,17 @@ export default function SearchBar() {
             case 'link':
                 const domain = getDomainFromUrl(fileUrl);
                 if (imageValidations[fileUrl]) {
+                    if (fileUrl?.startsWith('https://drive.google.com')) {
+                        const regex = /\/d\/([a-zA-Z0-9_-]+)/;
+                        const match = fileUrl.match(regex);
+
+                        if (match && match[1]) {
+                            const fileId = match[1];
+                            return `https://lh3.googleusercontent.com/d/${fileId}=w1000`;
+                        } else {
+                            console.warn("Não foi possível extrair o ID do arquivo do Google Drive.");
+                        }
+                    }
                     return fileUrl
                 } else if (domain) {
                     return `https://www.google.com/s2/favicons?domain=${domain}&sz=256`;
@@ -109,6 +126,26 @@ export default function SearchBar() {
                 return '/assets/images/link.png'
         }
     }
+
+    const returnAction = useCallback((file: FullFileData) => {
+        if (!root.canOpenWindow) return;
+
+        newFile.setFile(file)
+        minimazeAllWindows();
+        if (file.type === "link") {
+            if (!file.url) return;
+            if (imageValidations[file.url]) {
+                imgViewer.setFile(file);
+                imgViewer.openWindow();
+            } else {
+                openLink.setUrl(file.url as string);
+                openLink.openWindow();
+            }
+        } else if (file.type === "folder") {
+            fileViewer.openWindow();
+            fileViewer.setFile(file)
+        }
+    }, [imageValidations, root, allFiles])
 
 
 
@@ -122,19 +159,19 @@ export default function SearchBar() {
                             bg-black/40 backdrop-blur-md hover:bg-black/45 focus:bg-black/55 focus:backdrop-blur-lg focus:border-blue-500 rounded-full"
                 placeholder={t("dashboard.search")}
             />
-            <div className={`z-10 absolute transition-all pointer-events-none peer-focus:pointer-events-auto 
-            peer-focus:opacity-100 ${searchTerm.trim() !== '' ? '' : ''} 
+            <div className={`z-10 absolute transition-all pointer-events-none peer-focus:pointer-events-auto hover:pointer-events-auto
+            peer-focus:opacity-100 hover:opacity-100 ${searchTerm.trim() !== '' ? '' : ''} 
             opacity-0 flex flex-col bg-zinc-900 top-10 rounded-md w-full max-h-[300px] overflow-y-auto`}>
                 {filteredFiles.map((file) => (
-                    <div key={file.id} className="min-h-13 group flex flex-row justify-between relative rounded-md cursor-pointer hover:bg-zinc-800 
-                    overflow-hidden transition-all">
+                    <div key={file.id} onClick={() => returnAction(file)} className="min-h-13 group flex flex-row justify-between relative rounded-md 
+                    cursor-pointer hover:bg-zinc-800 overflow-hidden transition-all">
                         <div className="flex flex-row gap-2 p-3 w-full items-center">
                             <img src={imageReturn(file.type, file.url as string)} className="w-7 max-h-5 object-contain" alt={file.name} />
                             <div className="flex flex-col">
-                                <p className="text-[18px]">{file.name}</p>
+                                <p className="text-[18px] max-w-55 truncate">{file.name}</p>
                                 <p className="text-[14px] mt-[-5px] opacity-80">{imageValidations[file.url as string] ? 'imagem' : file.type}</p>
                             </div>
-                            
+
                         </div>
                         <p className="absolute bg-blue-500 h-full right-0 flex items-center justify-end gap-2
                     transition-all text-center font-medium text-lg overflow-hidden max-w-0 w-full group-hover:pr-3 group-hover:max-w-[95px]">

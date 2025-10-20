@@ -82,6 +82,24 @@ export const getFilesByDesktop = async (userId: string, desktopId: string): Prom
     }
 };
 
+export const getFileById = async (fileId: string): Promise<FullFileData> => {
+    try {
+        const docRef = doc(db, "files", fileId);
+        const docSnap = await getDoc(docRef);
+
+        const file: FullFileData = {
+            id: docSnap.id,
+            ...(docSnap.data() as FileData),
+        };
+
+        return file;
+
+    } catch (error) {
+        console.error("Erro ao buscar file:", error);
+        throw error;
+    }
+};
+
 export const listenToFilesByDesktop = (
     userId: string,
     desktopId: string,

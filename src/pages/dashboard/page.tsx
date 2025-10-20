@@ -17,7 +17,7 @@ import SearchBar from "../../components/SearchBar";
 import ListDesktopsWindow from "../../components/windows/listDesktops";
 import NewDesktopWindow from "../../components/windows/newDesktop";
 import { useTranslation } from "react-i18next";
-import { FullFileData, listenToAllFilesByDesktop, listenToFilesByDesktop, updateFilePosition } from "../../services/file";
+import { FullFileData, listenToAllFilesByDesktop, updateFilePosition } from "../../services/file";
 import OpenLinkWindow from "../../components/windows/openLink";
 import DesktopConfigWindow from "../../components/windows/desktopConfig";
 import ImageViewerWindow from "../../components/windows/imageViewer";
@@ -57,24 +57,20 @@ export default function DashboardPage() {
     useEffect(() => {
         if (!user || !currentDesktop?.id) return;
 
-        const unsubscribe = listenToFilesByDesktop(
-            user.uid as string,
-            currentDesktop.id,
-            (newFiles) => {
-                setDesktopFiles(newFiles);
-                console.log('ARQUIVOS ATUALIZADOS EM TEMPO REAL: ', newFiles);
-            }
-        );
 
         const unsubscribeAll = listenToAllFilesByDesktop(
             user.uid as string,
             currentDesktop.id,
             (newFiles) => {
+                const filtered = newFiles.filter((file) =>
+                    file.parentId === null
+                )
+                setDesktopFiles(filtered)
                 setSearchFiles(newFiles);
             }
         );
 
-        return () => { unsubscribe; unsubscribeAll; };
+        return unsubscribeAll;
 
     }, [currentDesktop?.id, user?.uid]);
 
