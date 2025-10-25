@@ -1,6 +1,7 @@
 import { db } from "../firebase/config";
 import { addDoc, collection, deleteDoc, doc, getDoc, getDocs, query, serverTimestamp, updateDoc, where, writeBatch } from "firebase/firestore";
 import { DesktopData } from "../types/desktop";
+import { deleteObject, getStorage, ref } from "firebase/storage";
 
 export type FullDesktopData = DesktopData & { id: string };
 
@@ -149,6 +150,10 @@ export const updateDesktopName = async (desktopId: string, desktopName: string):
 
 export const deleteDesktopById = async (userId: string, desktopId: string) => {
     try {
+        const storage = getStorage();
+        const storageRef = ref(storage, `desktops/${desktopId}/background`);
+        await deleteObject(storageRef);
+
         const q = query(
             collection(db, "files"),
             where("desktopId", "==", desktopId),

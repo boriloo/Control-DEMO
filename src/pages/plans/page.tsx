@@ -18,7 +18,6 @@ export default function PlansPage() {
                             <h1 className="text-[18px]">{user?.name as string}</h1>
                             <h1 className="text-[16px] opacity-80">{user?.email as string}</h1>
                         </div>
-
                     </div>
                 </div>
                 <h1 className=" text-center text-[40px]">Traga mais <span className="text-blue-500">simplicidade</span> <br />ao fluxo dos seus dados.</h1>

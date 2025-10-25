@@ -118,6 +118,8 @@ export default function NewFileWindow() {
                 return '/assets/images/text-file.png'
             case ('link'):
                 return '/assets/images/link.png'
+            case ('drive'):
+                return '/assets/images/google-drive.png'
             default:
                 break
         }
@@ -131,6 +133,8 @@ export default function NewFileWindow() {
                 return 'Texto'
             case ('link'):
                 return 'Link'
+            case ('drive'):
+                return 'Google Drive'
             default:
                 break
         }
@@ -177,14 +181,16 @@ export default function NewFileWindow() {
                             Google Drive
                         </div>
                     </div>
-                    <div className="flex flex-col gap-1">
-                        <p>Nome</p>
-                        <div className="flex flex-col">
-                            <input value={name ?? ''} onChange={(e) => setName(e.target.value)} type="text" className="border-none outline-[1.5px] p-1 px-2 outline-transparent 
+                    {fileType !== 'drive' && (
+                        <div className="flex flex-col gap-1">
+                            <p>Nome</p>
+                            <div className="flex flex-col">
+                                <input value={name ?? ''} onChange={(e) => setName(e.target.value)} type="text" className="border-none outline-[1.5px] p-1 px-2 outline-transparent 
                             transition-all cursor-pointer hover:bg-zinc-800 rounded-sm focus:outline-blue-500 focus:cursor-text" />
-                            <div className="w-full h-[1px] bg-zinc-400"></div>
+                                <div className="w-full h-[1px] bg-zinc-400"></div>
+                            </div>
                         </div>
-                    </div>
+                    )}
                     {fileType === 'link' && (<div className="flex flex-col gap-1">
                         <p>URL</p>
                         <div className="flex flex-col">

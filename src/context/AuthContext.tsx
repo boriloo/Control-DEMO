@@ -6,11 +6,11 @@ import {
     useEffect,
     useCallback,
 } from "react";
-import { getUserProfile, loginUser, registerUser, updateUserFilters, updateUserProfileImage } from "../services/auth";
+import { getUserProfile, loginUser, registerUser, updateUserFilters, updateUserName, updateUserProfileImage } from "../services/auth";
 import { browserLocalPersistence, browserSessionPersistence, onAuthStateChanged, setPersistence, signOut, UserProfile } from "firebase/auth";
 import { auth } from "../firebase/config";
 import { useAppContext } from "./AppContext";
-import { FullDesktopData, getDesktopById, getDesktopsByOwner } from "../services/desktop";
+import { FullDesktopData, getDesktopById, getDesktopsByMember } from "../services/desktop";
 import { BasicFilter, ColorFilter } from "../types/auth";
 
 
@@ -24,6 +24,7 @@ interface UserContextProps {
     authLogoutUser: () => Promise<void>;
     authChangeUserAvatar: (imageURL: string) => void;
     authChangeUserFilters: (filterDark: BasicFilter, filterBlur: BasicFilter, filterColor: ColorFilter) => Promise<void>;
+    authChangeUserName: (username: string) => void;
     isLoading: boolean;
     hasDesktops: boolean;
     setHasDesktops: (value: boolean) => void;
@@ -122,6 +123,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         }
     }
 
+    async function authChangeUserName(username: string) {
+        try {
+            if (!user) return;
+            const updatedUser = await updateUserName(
+                user.uid as string,
+                username
+            );
+            setUser(updatedUser)
+        } catch (err) {
+            throw err
+        }
+    }
 
     useEffect(() => {
         const unsubscribe = onAuthStateChanged(auth, async (user) => {
@@ -134,7 +147,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             try {
                 const item = localStorage.getItem("last-desktop");
                 if (item === null) {
-                    const desktops = await getDesktopsByOwner(user.uid as string);
+                    const desktops = await getDesktopsByMember(user.uid as string);
                     if (desktops.length > 0) {
                         setHasDesktops(true);
                         changeCurrentDesktop(desktops[0]);
@@ -148,7 +161,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
                 if (userProfile) setUser(userProfile);
             } catch (err) {
                 localStorage.removeItem("last-desktop")
-                alert(err);
             } finally {
                 setIsLoading(false);
             }
@@ -170,6 +182,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
                 authLoginUser,
                 authChangeUserFilters,
                 authRegisterUser,
+                authChangeUserName,
                 isLoading,
                 authLogoutUser,
                 hasDesktops,

@@ -2,7 +2,7 @@ import './App.css'
 import { AppProvider } from "./context/AppContext";
 import { WindowProvider } from "./context/WindowContext";
 import { AuthProvider } from "./context/AuthContext";
-import PageRouter from "./components/pageRouter/pageRouter";
+import PageRouter from "./pages/pageRouter/pageRouter";
 import { RootProvider } from './context/RootContext';
 import Toast from './components/toast/toast';
 

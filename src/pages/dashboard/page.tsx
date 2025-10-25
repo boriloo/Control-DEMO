@@ -21,6 +21,7 @@ import { FullFileData, listenToAllFilesByDesktop, updateFilePosition } from "../
 import OpenLinkWindow from "../../components/windows/openLink";
 import DesktopConfigWindow from "../../components/windows/desktopConfig";
 import ImageViewerWindow from "../../components/windows/imageViewer";
+import SocialWindow from "../../components/windows/social";
 
 
 const findNextAvailablePosition = (icons: FullFileData[], containerWidth: number): { x: number; y: number } | null => {
@@ -47,7 +48,6 @@ export default function DashboardPage() {
     const { newFile, listdt, openLink } = useWindowContext();
     const [start, setStart] = useState<boolean>(false);
     const [desktopFiles, setDesktopFiles] = useState<FullFileData[]>([])
-    const [searchFiles, setSearchFiles] = useState<FullFileData[]>([])
 
     useEffect(() => {
         if (!hasDesktops) return;
@@ -66,7 +66,6 @@ export default function DashboardPage() {
                     file.parentId === null
                 )
                 setDesktopFiles(filtered)
-                setSearchFiles(newFiles);
             }
         );
 
@@ -193,6 +192,7 @@ export default function DashboardPage() {
             <NewDesktopWindow />
             <DesktopConfigWindow />
             <ImageViewerWindow />
+            <SocialWindow />
             <OpenLinkWindow url={openLink.url as string} />
             <div className={`${start ? 'opacity-100' : 'opacity-0'} transition-opacity duration-1000 flex flex-col w-full h-screen overflow-hidden text-white`}>
                 <div className="flex flex-row flex-wrap justify-between items-center w-full gap-3 p-4">

@@ -1,10 +1,10 @@
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 
-import DashboardPage from "../../pages/dashboard/page";
+import DashboardPage from "../dashboard/page";
 import { useUser } from "../../context/AuthContext";
 import { DotLottieReact } from "@lottiefiles/dotlottie-react";
-import AuthPage from "../../pages/auth/page";
-import PlansPage from "../../pages/plans/page";
+import AuthPage from "../auth/page";
+import PlansPage from "../plans/page";
 
 
 const LoadingScreen = () => (

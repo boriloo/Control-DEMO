@@ -4,6 +4,7 @@ import { createDesktop, updateDesktopBackground } from "../../services/desktop";
 import { getDownloadURL, getStorage, ref, uploadBytes } from "firebase/storage"
 import { useUser } from "../../context/AuthContext";
 import { DotLottieReact } from "@lottiefiles/dotlottie-react";
+import { LogOut } from "lucide-react";
 
 interface PersonalProps {
     onFinish: (boolean: true) => void;
@@ -11,7 +12,7 @@ interface PersonalProps {
 
 
 export default function PersonalDesktopWindow({ onFinish }: PersonalProps) {
-    const { user, changeCurrentDesktop } = useUser();
+    const { user, changeCurrentDesktop, authLogoutUser } = useUser();
     const [imageSelected, setImageSelected] = useState<File>()
     const [desktopName, setDesktopName] = useState<string | null>()
     const [loading, setLoading] = useState<boolean>(false)
@@ -75,8 +76,9 @@ export default function PersonalDesktopWindow({ onFinish }: PersonalProps) {
 
     return (
         <div
-            className={`${done2 ? '' : 'bg-zinc-900'} absolute z-200  w-full min-h-screen flex justify-center items-center p-4`}>
-            <div className={`${done2 ? 'opacity-0 pointer-events-none' : done ? 'opacity-100' : 'opacity-0 pointer-events-none'} transition-all duration-500 absolute z-200 bg-zinc-900 w-full min-h-screen flex justify-center items-center p-4`}>
+            className={`${done2 ? '' : 'bg-zinc-900'} absolute z-200  w-full min-h-screen flex justify-center items-center p-8`}>
+            <div className={`${done2 ? 'opacity-0 pointer-events-none' : done ? 'opacity-100' : 'opacity-0 pointer-events-none'} transition-all duration-500 
+            absolute z-200 bg-zinc-900 w-full min-h-screen flex justify-center items-center p-4`}>
                 <h1 className={`${done ? 'opacity-100 mt-0' : 'opacity-0 mt-7'} transition-all duration-700 text-[40px] text-center`}>Tudo pronto. <br /> Aproveite :)</h1>
             </div>
             {loading ?
@@ -95,6 +97,18 @@ export default function PersonalDesktopWindow({ onFinish }: PersonalProps) {
                 </div>)
                 :
                 (<div className="flex flex-col items-start w-full max-w-[1000px] gap-8">
+                    <div className="flex flex-row items-center gap-3">
+                        <img src={`${user?.profileImage || "/assets/images/profile.png"}`} className="rounded-full w-11 h-11" />
+                        <div className="flex flex-col justify-center">
+                            <h1 className="text-[18px]">{user?.name as string}</h1>
+                            <h1 className="text-[16px] opacity-80">{user?.email as string}</h1>
+                        </div>
+                        <button onClick={authLogoutUser} className="flex flex-row gap-2 items-center ml-1 mt-1 text-[18px] 
+                                    p-2 border-[1.5px] border-white/50 cursor-pointer rounded-md bg-zinc-950/50 text-white transition-all hover:border-red-500 hover:text-red-500">
+                            <LogOut size={18} />
+                        </button>
+                    </div>
+
                     <h1 className="text-[55px] gap-1">Crie seu primeiro <p className="text-blue-500">Desktop</p></h1>
                     <div className="flex flex-col gap-1 w-full">
                         <p className="text-xl">Nome</p>

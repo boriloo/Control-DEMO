@@ -4,6 +4,7 @@ import { Pencil } from 'lucide-react';
 import 'react-image-crop/dist/ReactCrop.css';
 import ReactCrop, { type Crop } from 'react-image-crop';
 import { useUser } from '../context/AuthContext';
+import { DotLottieReact } from '@lottiefiles/dotlottie-react';
 
 type AvatarImageInputProps = {
     currentImageUrl?: string;
@@ -13,6 +14,7 @@ type AvatarImageInputProps = {
 export function AvatarImageInput({ onFileSelected, currentImageUrl }: AvatarImageInputProps) {
     const { user } = useUser();
     const [preview, setPreview] = useState<string | null>(currentImageUrl || null);
+    const [loading, setLoading] = useState<boolean>(false)
     const [originalImage, setOriginalImage] = useState<string | null>(null); // Nova state para imagem original
     const [crop, setCrop] = useState<Crop>({
         unit: '%',
@@ -136,6 +138,7 @@ export function AvatarImageInput({ onFileSelected, currentImageUrl }: AvatarImag
     const handleConfirmCrop = async () => {
         if (imgRef.current && crop.width && crop.height) {
             try {
+                setLoading(true)
                 const croppedBlob = await getCroppedImage(imgRef.current, crop);
 
                 if (preview && preview !== currentImageUrl && preview !== originalImage) {
@@ -155,6 +158,8 @@ export function AvatarImageInput({ onFileSelected, currentImageUrl }: AvatarImag
             } catch (error) {
                 console.error('Erro ao processar crop:', error);
                 alert('Erro ao processar a imagem. Tente novamente.');
+            } finally {
+                setLoading(false)
             }
         }
     };
@@ -210,18 +215,35 @@ export function AvatarImageInput({ onFileSelected, currentImageUrl }: AvatarImag
                         </div>
                         <div className="flex gap-4 flex-shrink-0 pb-18">
                             <button
+                                disabled={loading}
                                 onClick={handleCancelCrop}
                                 className="px-6 py-2 border-1 border-zinc-300 text-zinc-300 cursor-pointer rounded-lg hover:bg-zinc-950 hover:border-red-500 hover:text-red-500 transition"
                             >
                                 Cancelar
                             </button>
-                            <button
-                                onClick={handleConfirmCrop}
-                                className="px-6 py-2 border-1 border-zinc-300 text-zinc-300 cursor-pointer rounded-lg hover:border-blue-500 hover:text-white hover:bg-blue-500 transition"
-                                disabled={!crop.width || !crop.height}
-                            >
-                                Confirmar
-                            </button>
+                            {loading ? (
+                                <button
+                                    onClick={handleConfirmCrop}
+                                    className="px-6 py-2 border-1 border-zinc-300 text-zinc-300 cursor-pointer rounded-lg hover:border-blue-500 hover:text-white hover:bg-blue-500 transition"
+                                    disabled={!crop.width || !crop.height}
+                                >
+                                    <DotLottieReact
+                                        src="https://lottie.host/e580eaa4-d189-480f-a6ce-f8c788dff90d/MP2FjoJFFE.lottie"
+                                        className="w-15 p-0"
+                                        loop
+                                        autoplay
+                                    />
+                                </button>
+                            ) : (
+                                <button
+                                    onClick={handleConfirmCrop}
+                                    className="px-6 py-2 border-1 border-zinc-300 text-zinc-300 cursor-pointer rounded-lg hover:border-blue-500 hover:text-white hover:bg-blue-500 transition"
+                                    disabled={!crop.width || !crop.height}
+                                >
+                                    Confirmar
+                                </button>
+                            )}
+
                         </div>
                     </div>
                 </div>

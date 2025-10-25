@@ -1,10 +1,13 @@
-import { createUserWithEmailAndPassword, signInWithEmailAndPassword, signInWithPopup, updateProfile, User, UserProfile } from "firebase/auth"
+import { createUserWithEmailAndPassword, signInWithEmailAndPassword, updateProfile, User, UserProfile } from "firebase/auth"
 import { BasicFilter, ColorFilter, LoginData, RegisterData } from "../types/auth"
 import { auth, db } from "../firebase/config";
 import { collection, doc, getDoc, getDocs, query, serverTimestamp, setDoc, updateDoc, where, writeBatch, } from "firebase/firestore";
 import { MemberType } from "../types/desktop";
 import { GoogleAuthProvider } from "firebase/auth";
 const provider = new GoogleAuthProvider();
+provider.setCustomParameters({
+  prompt: 'select_account'
+});
 
 export const registerUser = async ({ name, email, password }: RegisterData): Promise<UserProfile> => {
   try {
@@ -69,26 +72,6 @@ export const loginUser = async ({ email, password }: LoginData): Promise<User> =
   }
 };
 
-export const LoginUserWithGoogle = async (): Promise<any> => {
-  try {
-    const user = await signInWithPopup(auth, provider)
-      .then((result) => {
-        const credential = GoogleAuthProvider.credentialFromResult(result);
-        const token = credential?.accessToken;
-        return result.user;
-      }).catch((error) => {
-        const errorCode = error.code;
-        const errorMessage = error.message;
-        const email = error.customData.email;
-        const credential = GoogleAuthProvider.credentialFromError(error);
-        throw error;
-      });
-    console.log(user)
-  } catch (err) {
-    throw err;
-  }
-}
-
 
 export const getUserProfile = async (uid: string): Promise<UserProfile> => {
   const userDocRef = doc(db, "users", uid);
@@ -106,6 +89,32 @@ export const getUserProfile = async (uid: string): Promise<UserProfile> => {
 
   return userProfile;
 };
+
+
+export const getUserByEmail = async (email: string): Promise<UserProfile> => {
+
+  const q = query(
+    collection(db, "users"),
+    where("email", "==", email)
+  );
+
+  const querySnapshot = await getDocs(q);
+
+  if (querySnapshot.empty) {
+    throw new Error("Perfil de utilizador não encontrado no Firestore.");
+  }
+
+  const userDoc = querySnapshot.docs[0];
+
+
+  const userProfile: UserProfile = {
+    uid: userDoc.id,
+    ...userDoc.data() as Omit<UserProfile, 'uid'>
+  };
+
+  return userProfile;
+};
+
 
 export const updateUserFilters = async (uid: string, filterDark: BasicFilter, filterBlur: BasicFilter, filterColor: ColorFilter): Promise<UserProfile> => {
   try {
@@ -185,6 +194,58 @@ export const updateUserProfileImage = async (uid: string, imageURL: string): Pro
 
   } catch (error) {
     console.error("Erro ao atualizar imagem de perfil:", error);
+    throw error;
+  }
+};
+
+export const updateUserName = async (userId: string, userName: string): Promise<UserProfile> => {
+  try {
+    const userRef = doc(db, "users", userId);
+    await updateDoc(userRef, {
+      name: userName
+    });
+    const updatedDoc = await getDoc(userRef);
+
+    if (!updatedDoc.exists()) {
+      throw new Error("O user não foi encontrado após a atualização.");
+    }
+
+    const updatedUserData: UserProfile = {
+      uid: updatedDoc.id,
+      ...updatedDoc.data() as Omit<UserProfile, 'uid'>
+    };
+
+    const q = query(
+      collection(db, "desktops"),
+      where("membersId", "array-contains", userId)
+    );
+
+    const querySnapshot = await getDocs(q);
+
+    if (!querySnapshot.empty) {
+      const batch = writeBatch(db);
+
+      querySnapshot.forEach((desktopDoc) => {
+        const members = desktopDoc.data().members as MemberType[];
+
+        const updatedMembers = members.map(member => {
+          if (member.userId === userId) {
+            return { ...member, userName: userName };
+          }
+          return member;
+        });
+
+        batch.update(desktopDoc.ref, { members: updatedMembers });
+      });
+
+      await batch.commit();
+      console.log(`${querySnapshot.size} desktops foram atualizados com a nova imagem.`);
+    }
+
+    return updatedUserData;
+
+  } catch (error) {
+    console.error("Erro ao atualizar o nome do user:", error);
     throw error;
   }
 };

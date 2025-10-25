@@ -50,10 +50,28 @@ export default function ProfileWindow() {
                     </div>
 
                     <div className="flex flex-col items-center gap-1">
-                        <h1 className="text-[25px]">{user.name as string} </h1>
+                        <h1
+                            style={{
+                                fontSize: '28px',
+                                color: 'transparent',
+                                backgroundClip: 'text',
+                                WebkitBackgroundClip: 'text',
+                                backgroundImage: 'linear-gradient(to right, #389fff, #2563eb, #389fff)',
+
+                                backgroundSize: '200% auto',
+
+                                animation: 'gradient-x 5s linear infinite'
+                            }}>{user.name as string} </h1>
+
+                        {/* <h1 className="text-[28px] bg-clip-text text-transparent bg-gradient-to-r from-blue-400 via-blue-600 to-blue-400">{user.name as string} </h1> */}
                         <p className="text-[14px]">{user.email as string}</p>
+                       
+                        <p className="mt-2 text-blue-500 bg-gradient-to-r from-black via-black to-blue-950 text-[16px] p-[1px] px-2 rounded-sm font-bold">PRO</p>
                     </div>
                     <div className="w-[90%] h-[1px] bg-zinc-400"></div>
+                    <div className="flex flex-row">
+
+                    </div>
                 </div>
 
 
@@ -62,7 +80,16 @@ export default function ProfileWindow() {
                     <p>Sair</p>
                     <LogOut size={18} />
                 </button>
+
             </div>
+            <style>{`@keyframes gradient-x {
+                0% {
+                    background-position: 0% 50%;
+                }
+                100% {
+                    background-position: 200% 50%;
+                }
+            }`}</style>
         </div >
     )
 }

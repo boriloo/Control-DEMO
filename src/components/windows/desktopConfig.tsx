@@ -142,21 +142,31 @@ export default function DesktopConfigWindow() {
 
 
     const deleteDesktopFunction = async () => {
-        if (currentDesktop?.id === dtConfig.desktop?.id) {
-            const desktops = await getDesktopsByMember(user?.uid as string);
-            if (desktops.length < 1) {
-                console.log('NAO TEM NENHUM')
-                setHasDesktops(false)
-            } else {
-                console.log('ACHAMOS')
-                changeCurrentDesktop(desktops[0])
+        try {
+            if (currentDesktop?.id === dtConfig.desktop?.id) {
+
+                const desktops = await getDesktopsByMember(user?.uid as string);
+
+                const otherDesktops = desktops.filter(d => d.id !== dtConfig.desktop?.id);
+
+                if (otherDesktops.length === 0) {
+                    setHasDesktops(false);
+                } else {
+                    changeCurrentDesktop(otherDesktops[0]);
+                }
             }
+
+            await deleteDesktopById(user.uid as string, dtConfig.desktop?.id as string);
+            setDeleteInput('')
+            setConfirmDelete(false);
+            dtConfig.closeWindow();
+            dtConfig.setDesktop(null);
+            callToast({ message: 'Desktop excluído!', type: 'success' });
+
+        } catch (err) {
+            console.error("Erro ao deletar desktop:", err);
+            callToast({ message: 'Erro ao excluir desktop.', type: 'error' });
         }
-        deleteDesktopById(user.uid as string, dtConfig.desktop?.id as string)
-        setConfirmDelete(false)
-        dtConfig.closeWindow()
-        dtConfig.setDesktop(null)
-        callToast({ message: 'Desktop excluído!', type: 'success' })
     }
 
 
@@ -323,7 +333,7 @@ export default function DesktopConfigWindow() {
                                     <div key={member.userId} className="flex flex-row w-full justify-between items-center bg-zinc-900 
                                     p-3 px-3 rounded-md group hover:bg-zinc-800/70 transition-all select-none">
                                         <div className="flex flex-row gap-2 items-center">
-                                            <img src={`${member.userImage}`} className={`
+                                            <img src={`${member.userImage ?? 'assets/images/profile.png'}`} className={`
                                                 ${member.role === 'owner' && 'shadow-[0px_0px_10px_5px] shadow-blue-500/30 border-2 border-blue-400'} 
                                                 rounded-full w-12 h-12`} />
                                             <div className="flex flex-col">
