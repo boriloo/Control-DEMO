@@ -64,18 +64,13 @@ export default function Icon(icon: FullFileData) {
             if (icon.type === "text") return setImageSrc("/assets/images/text-file.png");
 
             if (icon.type === "link") {
-
                 if (isValidImage) {
-                    console.log('é imagem valida')
                     if (driveThumb) {
-                        console.log('é do drive')
                         setImageSrc(driveThumb)
                     } else {
-                        console.log('é link de imagem', icon.url)
                         setImageSrc(icon.url as string)
                     }
                 } else {
-                    console.log('nao é imagem valida')
                     const domain = getDomainFromUrl(icon.url as string);
                     return setImageSrc(`https://www.google.com/s2/favicons?domain=${domain}&sz=256`);
                 }
@@ -95,6 +90,7 @@ export default function Icon(icon: FullFileData) {
                 imgViewer.openWindow();
             } else {
                 openLink.setUrl(icon.url as string);
+                openLink.setBackPath(false);
                 openLink.openWindow();
             }
         } else if (icon.type === "folder") {
@@ -105,11 +101,11 @@ export default function Icon(icon: FullFileData) {
 
 
     return (
-        <div onDoubleClick={returnAction} className="group select-none flex flex-col justify-center items-center gap-2 w-20 h-full max-h-40 p-1 px-2 rounded-sm cursor-pointer hover:bg-white/15">
+        <div onDoubleClick={returnAction} className="transition-all duration-300 group select-none flex flex-col justify-center items-center gap-2 w-20 h-full max-h-40 p-1 px-2 rounded-sm cursor-pointer hover:bg-white/15">
             <div className={`max-w-13 flex justify-center items-center h-8 max-h-8`}>
                 <img src={imageSrc} alt={icon.name} className="w-full h-full object-contain pointer-events-none select-none" />
             </div>
-            <p className="group-hover:bg-black/60 text-[14px] p-1 bg-black/30 backdrop-blur-sm rounded-md line-clamp-2 text-center max-w-19">{icon.name}</p>
+            <p className="group-hover:bg-black/60 text-[14px] p-1 bg-black/30 backdrop-blur-sm rounded-md line-clamp-2 text-center max-w-19 transition-all">{icon.name}</p>
         </div>
     );
 }

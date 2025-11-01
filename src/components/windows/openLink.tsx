@@ -1,11 +1,9 @@
 import { useWindowContext } from "../../context/WindowContext";
 import { returnFilterEffects } from "../../types/auth";
 import { useUser } from "../../context/AuthContext";
-import { useAppContext } from "../../context/AppContext";
 
 export default function OpenLinkWindow({ url }: { url: string | null }) {
     const { user } = useUser();
-    const { minimazeAllWindows } = useAppContext();
     const { openLink } = useWindowContext();
 
     const handleAreaClick = (e: React.MouseEvent<HTMLElement>) => {
@@ -13,13 +11,13 @@ export default function OpenLinkWindow({ url }: { url: string | null }) {
         openLink.closeWindow();
     }
 
-   
+
 
     return (
         <div onClick={handleAreaClick} className={`${openLink.currentStatus === 'open' ? returnFilterEffects(user) : 'pointer-events-none '} 
         transition-all duration-500 fixed z-110 w-full h-screen flex justify-center items-center p-4 pb-[50px] cursor-pointer`}>
-            <div className={`${openLink.currentStatus === 'open' ? 'scale-100' : 'scale-0'} cursor-default bg-zinc-900 
-                origin-center rounded-md p-4 w-full max-w-[700px] max-h-full flex flex-col gap-4 overflow-y-auto transition-all relative`}>
+            <div className={`${openLink.currentStatus === 'open' ? 'scale-100' : 'scale-0'} cursor-default bg-zinc-900 shadow-[inset_0_5px_10px_rgba(255,255,255,0.05),0_5px_10px_rgba(0,0,0,0.3)]
+             origin-center rounded-md p-4 w-full max-w-[700px] max-h-full flex flex-col gap-4 overflow-y-auto transition-all relative`}>
                 <h1 className="text-[20px]">Aviso - Você será redirecionado à outra página</h1>
                 <div className="flex flex-col gap-1">
                     {url && (
@@ -48,7 +46,7 @@ export default function OpenLinkWindow({ url }: { url: string | null }) {
                             </button>
                             <button onClick={() => {
                                 window.open(url as string, '_blank')?.focus();
-                                minimazeAllWindows()
+                                openLink.closeWindow();
                             }} className="p-1 px-5 text-lg text-blue-500 border-1 border-blue-500 cursor-pointer transition-all hover:bg-blue-500 hover:text-white rounded-md">
                                 Acessar
                             </button>

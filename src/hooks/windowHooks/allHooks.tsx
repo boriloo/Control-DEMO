@@ -7,6 +7,7 @@ import { useNewDesktopHook } from "./newDesktopHook";
 import { useNewFileHook } from "./newFileHook";
 import { useOpenLinkHook } from "./openLinkHook";
 import { useProfileHook } from "./profileHook";
+import { useSocialHook } from "./socialHook";
 
 export function useAllWindows() {
     return {
@@ -19,5 +20,6 @@ export function useAllWindows() {
         openLink: useOpenLinkHook(),
         dtConfig: useDesktopConfigHook(),
         imgViewer: useImageViewerHook(),
+        social: useSocialHook(),
     };
 }

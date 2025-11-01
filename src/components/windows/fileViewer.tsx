@@ -98,6 +98,7 @@ export default function FileWindow() {
 
     const handleCreateFile = () => {
         newFile.openWindow()
+        newFile.setFile(fileViewer.file)
     }
 
     const handlePathClick = async (pathId: string | null) => {

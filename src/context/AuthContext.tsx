@@ -13,6 +13,7 @@ import { useAppContext } from "./AppContext";
 import { FullDesktopData, getDesktopById, getDesktopsByMember } from "../services/desktop";
 import { BasicFilter, ColorFilter } from "../types/auth";
 import { createUserEmailRef } from "../services/email";
+import { registerPublicUser, updatePublicUserProfileImage } from "../services/public";
 
 
 interface UserContextProps {
@@ -73,6 +74,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             await setPersistence(auth, persistenceType);
 
             const user: UserProfile = await registerUser({ name, email, password, filterDark, filterBlur, filterColor });
+            await registerPublicUser(user.uid as string, name, email)
             await createUserEmailRef(email)
             const userProfile = await getUserProfile(user.uid as string)
             setUser(userProfile);
@@ -119,6 +121,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
                 user.uid as string,
                 imageURl
             );
+            await updatePublicUserProfileImage(updatedUser.uid as string, imageURl)
             setUser(updatedUser)
         } catch (err) {
             throw err;

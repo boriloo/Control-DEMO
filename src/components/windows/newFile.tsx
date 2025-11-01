@@ -144,8 +144,9 @@ export default function NewFileWindow() {
         <div className={`${newFile.currentStatus === 'open' ? returnFilterEffects(user) : 'pointer-events-none '} 
         transition-all duration-500 fixed z-200 w-full h-screen flex justify-center items-center p-4 pb-[50px] cursor-pointer`}>
             <div className={`${newFile.currentStatus === 'open' ? 'scale-100' : 'scale-0'} cursor-default bg-zinc-900 origin-center rounded-md p-4 w-full max-w-[600px] 
-            max-h-full flex flex-col gap-4 overflow-y-auto transition-all relative`}>
-                <X onClick={() => { setFileType("folder"); setDrop(false); newFile.closeWindow(); setName(null); setUrl(null); }} size={35} className="absolute top-0 right-0 p-2 rounded-bl-lg cursor-pointer transition-all hover:bg-red-500" />
+            max-h-full flex flex-col gap-4 overflow-y-auto transition-all relative shadow-[inset_0_5px_10px_rgba(255,255,255,0.05),0_5px_10px_rgba(0,0,0,0.3)]`}>
+                <X onClick={() => { setFileType("folder"); setDrop(false); newFile.closeWindow(); setName(null); setUrl(null); }} size={35} 
+                className="absolute top-0 right-0 p-2 rounded-bl-lg cursor-pointer transition-all hover:bg-red-500" />
                 <h1 className="text-[20px] flex gap-1.5">Criar um novo item em <p className="text-blue-500 max-w-50 truncate">{newFile.file ? `${newFile.file.name} (${newFile.file.type})` : `${currentDesktop?.name} (Desktop)`}</p></h1>
                 <div className={`${loading && 'saturate-0 pointer-events-none opacity-60'} flex flex-col gap-3`}>
                     <button onClick={() => setDrop(!drop)} className={`${drop ? 'border-white rounded-t-md' : 'border-blue-500 rounded-md'} flex flex-row gap-2 p-4 

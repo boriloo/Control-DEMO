@@ -5,6 +5,6 @@ type FriendUser = {
 }
 
 export interface RelationData {
-    user: { senderId: FriendUser, receiverId: FriendUser }
+    user: { sender: FriendUser, receiver: FriendUser }
     status: 'accepted' | 'pending' | 'blocked'
 }

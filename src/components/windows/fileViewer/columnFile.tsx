@@ -68,12 +68,13 @@ export default function ColumnFile({ file, animationKey, index, imageValidations
         newFile.setFile(file)
         if (file.type === "link") {
             if (!file.url) return;
-            minimazeAllWindows();
             if (imageValidations[file.url]) {
+                minimazeAllWindows();
                 imgViewer.setFile(file);
                 imgViewer.openWindow();
             } else {
                 openLink.setUrl(file.url as string);
+                openLink.setBackPath(true);
                 openLink.openWindow();
             }
         } else if (file.type === "folder") {

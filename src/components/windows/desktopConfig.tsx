@@ -242,7 +242,7 @@ export default function DesktopConfigWindow() {
                             <p className="p-1 px-3 mt-5 bg-zinc-950/50 border-1 border-zinc-600 rounded-full">{windowDesktop?.members.length}
                                 {windowDesktop?.members.length && windowDesktop?.members.length > 1 ? ' Membros' : ' Membro'}</p>
                         </div>
-                        <div className="p-2 flex flex-col bg-zinc-900 border-1 border-zinc-800 rounded-lg w-full max-w-[300px]">
+                        <div className="p-2 flex flex-col bg-zinc-950/60 backdrop-blur-[2px] border-1 border-zinc-800 rounded-lg w-full max-w-[300px]">
                             <p>Espaço Ocupado</p>
                             <h1 className="text-[30px]">178 mb</h1>
                         </div>
@@ -331,7 +331,7 @@ export default function DesktopConfigWindow() {
                             <div className="flex flex-col w-full gap-3 mt-3 max-h-[570px] overflow-y-auto">
                                 {windowDesktop?.members.map((member) =>
                                     <div key={member.userId} className="flex flex-row w-full justify-between items-center bg-zinc-900 
-                                    p-3 px-3 rounded-md group hover:bg-zinc-800/70 transition-all select-none">
+                                    p-3 px-3 rounded-md group hover:bg-zinc-800/70 transition-all select-none inset-shadow-sm inset-shadow-zinc-800 shadow-md">
                                         <div className="flex flex-row gap-2 items-center">
                                             <img src={`${member.userImage ?? 'assets/images/profile.png'}`} className={`
                                                 ${member.role === 'owner' && 'shadow-[0px_0px_10px_5px] shadow-blue-500/30 border-2 border-blue-400'} 
