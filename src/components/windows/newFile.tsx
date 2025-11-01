@@ -150,7 +150,7 @@ export default function NewFileWindow() {
                 <div className={`${loading && 'saturate-0 pointer-events-none opacity-60'} flex flex-col gap-3`}>
                     <button onClick={() => setDrop(!drop)} className={`${drop ? 'border-white rounded-t-md' : 'border-blue-500 rounded-md'} flex flex-row gap-2 p-4 
                     border-1  items-center 
-                        cursor-pointer transition-all hover:bg-zinc-700`}>
+                        cursor-pointer transition-all hover:bg-zinc-800`}>
                         <img src={imageReturn()} className="w-7" />
                         <p className="text-lg">{textReturn()}</p>
                         <ChevronDown size={26} className={`${drop ? '' : 'rotate-180 text-blue-500'} transition-all ml-auto`} />
@@ -158,18 +158,18 @@ export default function NewFileWindow() {
                     <div className={`${drop ? 'max-h-full' : 'max-h-0 py-0'} p-2 transition-all overflow-hidden flex flex-col bg-zinc-950 mt-[-10px] gap-2 rounded-b-xl`}>
                         <div onClick={() => { setFileType('folder'); setDrop(true) }}
                             className={`${fileType === 'folder' ? 'border-blue-500 text-blue-500' : 'border-transparent'} 
-                            border-1 p-2 flex flex-row gap-4 transition-all hover:bg-zinc-800 rounded-md cursor-pointer select-none`}>
+                            border-1 p-2 flex flex-row gap-4 transition-all hover:bg-zinc-900 rounded-md cursor-pointer select-none`}>
                             <img src="/assets/images/open-folder.png" className="w-6" />
                             Pasta
                         </div>
                         <div onClick={() => { setFileType('text'); setDrop(true) }} className={`${fileType === 'text' ? 'border-blue-500 text-blue-500' : 'border-transparent'} 
-                            border-1 p-2 flex flex-row gap-4 transition-all hover:bg-zinc-800 rounded-md cursor-pointer select-none`}>
+                            border-1 p-2 flex flex-row gap-4 transition-all hover:bg-zinc-900 rounded-md cursor-pointer select-none`}>
                             <img src="/assets/images/text-file.png" className="w-6" />
                             Texto
                         </div>
                         <div onClick={() => { setFileType('link'); setDrop(true) }}
                             className={`${fileType === 'link' ? 'border-blue-500 text-blue-500' : 'border-transparent'} 
-                            border-1 p-2 flex flex-row gap-4 transition-all hover:bg-zinc-800 rounded-md cursor-pointer select-none`}>
+                            border-1 p-2 flex flex-row gap-4 transition-all hover:bg-zinc-900 rounded-md cursor-pointer select-none`}>
                             <img src="/assets/images/link.png" className="w-6" />
                             Link
                         </div>

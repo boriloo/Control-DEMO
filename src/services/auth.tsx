@@ -91,28 +91,15 @@ export const getUserProfile = async (uid: string): Promise<UserProfile> => {
 };
 
 
-export const getUserByEmail = async (email: string): Promise<UserProfile> => {
+export const userWithEmailExists = async (email: string): Promise<boolean> => {
 
-  const q = query(
-    collection(db, "users"),
-    where("email", "==", email)
-  );
+  const emailDoc = await getDoc(doc(db, "emails", email))
 
-  const querySnapshot = await getDocs(q);
-
-  if (querySnapshot.empty) {
-    throw new Error("Perfil de utilizador não encontrado no Firestore.");
+  if (!emailDoc.exists()) {
+    return false;
   }
 
-  const userDoc = querySnapshot.docs[0];
-
-
-  const userProfile: UserProfile = {
-    uid: userDoc.id,
-    ...userDoc.data() as Omit<UserProfile, 'uid'>
-  };
-
-  return userProfile;
+  return true;
 };
 
 

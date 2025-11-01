@@ -42,58 +42,68 @@ export default function AppearanceOption() {
             {hasDesktops && (<h1 className="text-[25px] flex">Aparência</h1>)}
             <div className="w-full h-[1px] bg-zinc-600"></div>
 
-            <div className="flex flex-col gap-4 px-2 items-start">
+            <div className="flex flex-col gap-4 px-2 items-start w-full">
                 <p className="text-xl mt-2">Filtros</p>
                 <p className="text-md mt-[-12px] mb-1">Efeitos aplicados ao fundo quando uma janela é aberta.</p>
 
+                <div className="flex flex-row gap-3 w-full flex-wrap">
+                    <div className="flex flex-col gap-1 flex-1 bg-zinc-800 p-3 pb-4 rounded-md inset-shadow-sm inset-shadow-zinc-700 shadow-md min-w-40">
+                        <p className="text-[18px] mb-2">Filtro escuro</p>
+                        <div className="flex flex-col gap-2">
+                            <div onClick={() => setDarkFilter('off')} className={`${darkFilter === 'off' ? 'bg-blue-950/70 hover:bg-blue-950 border-blue-500' :
+                                'bg-zinc-900/50 hover:bg-zinc-900 border-transparent'} border-1 flex flex-row gap-2 items-center transition-all p-2 cursor-pointer  rounded-md`}>
+                                <div className={`${darkFilter === 'off' ? 'bg-blue-500 border-blue-500' : ''} transition-all w-5 h-5 border-1 rounded-full`}></div>
+                                <p>Desativado</p>
+                            </div>
+                            <div onClick={() => setDarkFilter('low')} className={`${darkFilter === 'low' ? 'bg-blue-950/70 hover:bg-blue-950 border-blue-500' :
+                                'bg-zinc-900/50 hover:bg-zinc-900 border-transparent'} border-1 flex flex-row gap-2 items-center transition-all p-2 cursor-pointer  rounded-md`}>
+                                <div className={`${darkFilter === "low" ? 'bg-blue-500 border-blue-500' : ''} transition-all w-5 h-5 border-1 rounded-full`}></div>
+                                <p>Pouco</p>
+                            </div>
+                            <div onClick={() => setDarkFilter('high')} className={`${darkFilter === 'high' ? 'bg-blue-950/70 hover:bg-blue-950 border-blue-500' :
+                                'bg-zinc-900/50 hover:bg-zinc-900 border-transparent'} border-1 flex flex-row gap-2 items-center transition-all p-2 cursor-pointer  rounded-md`}>
+                                <div className={`${darkFilter === "high" ? 'bg-blue-500 border-blue-500' : ''} transition-all w-5 h-5 border-1 rounded-full`}></div>
+                                <p>Muito</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div className="flex flex-col gap-1 flex-1 bg-zinc-800 p-3 pb-4 rounded-md inset-shadow-sm inset-shadow-zinc-700 shadow-md min-w-40">
+                        <p className="text-[18px] mb-2">Desfoque</p>
+                        <div className="flex flex-col gap-2">
+                            <div onClick={() => setBlurFilter('off')} className={`${blurFilter === 'off' ? 'bg-blue-950/70 hover:bg-blue-950 border-blue-500' :
+                                'bg-zinc-900/50 hover:bg-zinc-900 border-transparent'} border-1 flex flex-row gap-2 items-center transition-all p-2 cursor-pointer  rounded-md`}>
+                                <div className={`${blurFilter === 'off' ? 'bg-blue-500 border-blue-500' : ''} transition-all w-5 h-5 border-1 rounded-full`}></div>
+                                <p>Desativado</p>
+                            </div>
+                            <div onClick={() => setBlurFilter('low')} className={`${blurFilter === 'low' ? 'bg-blue-950/70 hover:bg-blue-950 border-blue-500' :
+                                'bg-zinc-900/50 hover:bg-zinc-900 border-transparent'} border-1 flex flex-row gap-2 items-center transition-all p-2 cursor-pointer  rounded-md`}>
+                                <div className={`${blurFilter === "low" ? 'bg-blue-500 border-blue-500' : ''} transition-all w-5 h-5 border-1 rounded-full`}></div>
+                                <p>Pouco</p>
+                            </div>
+                            <div onClick={() => setBlurFilter('high')} className={`${blurFilter === 'high' ? 'bg-blue-950/70 hover:bg-blue-950 border-blue-500' :
+                                'bg-zinc-900/50 hover:bg-zinc-900 border-transparent'} border-1 flex flex-row gap-2 items-center transition-all p-2 cursor-pointer  rounded-md`}>
+                                <div className={`${blurFilter === "high" ? 'bg-blue-500 border-blue-500' : ''} transition-all w-5 h-5 border-1 rounded-full`}></div>
+                                <p>Muito</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div className="flex flex-col gap-1 flex-1 bg-zinc-800 p-3 pb-4 rounded-md inset-shadow-sm inset-shadow-zinc-700 shadow-md min-w-40">
+                        <p className="text-[18px] mb-2">Saturação</p>
+                        <div className="flex flex-col gap-2">
+                            <div onClick={() => setColorFilter('color')} className={`${colorFilter === 'color' ? 'bg-blue-950/70 hover:bg-blue-950 border-blue-500' :
+                                'bg-zinc-900/50 hover:bg-zinc-900 border-transparent'} border-1 flex flex-row gap-2 items-center transition-all p-2 cursor-pointer  rounded-md`}>
+                                <div className={`${colorFilter === "color" ? 'bg-blue-500 border-blue-500' : ''} transition-all w-5 h-5 border-1 rounded-full`}></div>
+                                <p>Cor</p>
+                            </div>
+                            <div onClick={() => setColorFilter('gray')} className={`${colorFilter === 'gray' ? 'bg-blue-950/70 hover:bg-blue-950 border-blue-500' :
+                                'bg-zinc-900/50 hover:bg-zinc-900 border-transparent'} border-1 flex flex-row gap-2 items-center transition-all p-2 cursor-pointer  rounded-md`}>
+                                <div className={`${colorFilter === "gray" ? 'bg-blue-500 border-blue-500' : ''} transition-all w-5 h-5 border-1 rounded-full`}></div>
+                                <p>Preto e Branco</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
 
-                <div className="flex flex-col gap-1">
-                    <p className="text-lg">Filtro escuro</p>
-                    <div className="flex flex-row gap-4">
-                        <div onClick={() => setDarkFilter('off')} className={`flex flex-row gap-2 items-center transition-all p-2 cursor-pointer hover:bg-zinc-800 rounded-md`}>
-                            <div className={`${darkFilter === 'off' ? 'bg-blue-500 border-blue-500' : ''} transition-all w-5 h-5 border-1 rounded-full`}></div>
-                            <p>Desativado</p>
-                        </div>
-                        <div onClick={() => setDarkFilter("low")} className={`flex flex-row gap-2 items-center transition-all p-2 cursor-pointer hover:bg-zinc-800 rounded-md`}>
-                            <div className={`${darkFilter === "low" ? 'bg-blue-500 border-blue-500' : ''} transition-all w-5 h-5 border-1 rounded-full`}></div>
-                            <p>Pouco</p>
-                        </div>
-                        <div onClick={() => setDarkFilter("high")} className={`flex flex-row gap-2 items-center transition-all p-2 cursor-pointer hover:bg-zinc-800 rounded-md`}>
-                            <div className={`${darkFilter === "high" ? 'bg-blue-500 border-blue-500' : ''} transition-all w-5 h-5 border-1 rounded-full`}></div>
-                            <p>Muito</p>
-                        </div>
-                    </div>
-                </div>
-                <div className="flex flex-col gap-1">
-                    <p className="text-lg">Desfoque</p>
-                    <div className="flex flex-row gap-4">
-                        <div onClick={() => setBlurFilter('off')} className={`flex flex-row gap-2 items-center transition-all p-2 cursor-pointer hover:bg-zinc-800 rounded-md`}>
-                            <div className={`${blurFilter === 'off' ? 'bg-blue-500 border-blue-500' : ''} transition-all w-5 h-5 border-1 rounded-full`}></div>
-                            <p>Desativado</p>
-                        </div>
-                        <div onClick={() => setBlurFilter("low")} className={`flex flex-row gap-2 items-center transition-all p-2 cursor-pointer hover:bg-zinc-800 rounded-md`}>
-                            <div className={`${blurFilter === "low" ? 'bg-blue-500 border-blue-500' : ''} transition-all w-5 h-5 border-1 rounded-full`}></div>
-                            <p>Pouco</p>
-                        </div>
-                        <div onClick={() => setBlurFilter("high")} className={`flex flex-row gap-2 items-center transition-all p-2 cursor-pointer hover:bg-zinc-800 rounded-md`}>
-                            <div className={`${blurFilter === "high" ? 'bg-blue-500 border-blue-500' : ''} transition-all w-5 h-5 border-1 rounded-full`}></div>
-                            <p>Muito</p>
-                        </div>
-                    </div>
-                </div>
-                <div className="flex flex-col gap-1">
-                    <p className="text-lg">Saturação</p>
-                    <div className="flex flex-row gap-4">
-                        <div onClick={() => setColorFilter("color")} className={`flex flex-row gap-2 items-center transition-all p-2 cursor-pointer hover:bg-zinc-800 rounded-md`}>
-                            <div className={`${colorFilter === "color" ? 'bg-blue-500 border-blue-500' : ''} transition-all w-5 h-5 border-1 rounded-full`}></div>
-                            <p>Cor</p>
-                        </div>
-                        <div onClick={() => setColorFilter("gray")} className={`flex flex-row gap-2 items-center transition-all p-2 cursor-pointer hover:bg-zinc-800 rounded-md`}>
-                            <div className={`${colorFilter === "gray" ? 'bg-blue-500 border-blue-500' : ''} transition-all w-5 h-5 border-1 rounded-full`}></div>
-                            <p>Preto e Branco</p>
-                        </div>
-                    </div>
-                </div>
 
                 {loading ? (
                     <div className={`

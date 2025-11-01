@@ -91,7 +91,8 @@ export default function ListDesktopsWindow() {
                     <p className="text-lg mt-2">{t("listdt.others")}</p>
                     {allDesktops.length >= 1 ?
                         allDesktops.map((desktop) => (
-                            <div key={desktop.id} className="group flex flex-row w-full p-3 justify-between items-center rounded-sm border border-white/30 transition-all hover:bg-zinc-950">
+                            <div key={desktop.id} className="group flex flex-row w-full p-3 justify-between items-center 
+                            rounded-sm border border-white/30 transition-all hover:bg-zinc-950">
                                 <h1 className="text-lg">
                                     {desktop.name} ({desktop.type})
                                 </h1>

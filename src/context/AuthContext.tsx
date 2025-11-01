@@ -12,6 +12,7 @@ import { auth } from "../firebase/config";
 import { useAppContext } from "./AppContext";
 import { FullDesktopData, getDesktopById, getDesktopsByMember } from "../services/desktop";
 import { BasicFilter, ColorFilter } from "../types/auth";
+import { createUserEmailRef } from "../services/email";
 
 
 interface UserContextProps {
@@ -72,6 +73,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             await setPersistence(auth, persistenceType);
 
             const user: UserProfile = await registerUser({ name, email, password, filterDark, filterBlur, filterColor });
+            await createUserEmailRef(email)
             const userProfile = await getUserProfile(user.uid as string)
             setUser(userProfile);
 

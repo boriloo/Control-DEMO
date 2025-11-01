@@ -97,7 +97,7 @@ export default function PersonalDesktopWindow({ onFinish }: PersonalProps) {
                 </div>)
                 :
                 (<div className="flex flex-col items-start w-full max-w-[1000px] gap-8">
-                    <div className="flex flex-row items-center gap-3">
+                    <div className="flex flex-row items-center gap-3 p-3 rounded-lg bg-zinc-800 inset-shadow-sm inset-shadow-zinc-700 shadow-md">
                         <img src={`${user?.profileImage || "/assets/images/profile.png"}`} className="rounded-full w-11 h-11" />
                         <div className="flex flex-col justify-center">
                             <h1 className="text-[18px]">{user?.name as string}</h1>

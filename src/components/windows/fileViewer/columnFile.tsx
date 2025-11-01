@@ -86,7 +86,8 @@ export default function ColumnFile({ file, animationKey, index, imageValidations
         <div
             key={`${file.id}-${animationKey}`}
             onClick={() => returnAction()}
-            className="group flex flex-row p-3 gap-3 rounded-md bg-zinc-900 transition-all cursor-pointer hover:bg-zinc-800/85 animate-slideIn opacity-0 items-center"
+            className="group flex flex-row p-3 gap-3 rounded-md bg-zinc-900 transition-all cursor-pointer hover:bg-zinc-800/85 animate-slideIn opacity-0 items-center
+            inset-shadow-sm inset-shadow-zinc-700 shadow-md min-w-40"
             style={{
                 animationDelay: `${index * 120}ms`,
                 animationFillMode: 'forwards'
@@ -97,7 +98,7 @@ export default function ColumnFile({ file, animationKey, index, imageValidations
                 <p className="text-[18px] w-full max-w-70 truncate">{file.name}</p>
                 <p className="text-[14px] mt-[-5px] opacity-80">{imageValidations[file.url as string] ? 'imagem' : file.type}</p>
             </div>
-            <p className="ml-[-5px] p-1 px-2 opacity-0 transition-all rounded-md group-hover:opacity-100 group-hover:ml-2 text-blue-500 bg-blue-500/10">Clique para abrir</p>
+            <p className="ml-[-5px] p-1 px-2 opacity-0 transition-all rounded-md group-hover:opacity-100 group-hover:ml-2 text-blue-500 bg-blue-800/15">Clique para abrir</p>
             <div className="ml-auto flex flex-row gap-3">
                 <Menu className="cursor-pointer transition-all opacity-0 scale-75 group-hover:scale-100 group-hover:opacity-100 hover:bg-blue-500/15 
                                         hover:border-blue-500 hover:text-blue-500 w-9 h-9 p-1.5 bg-white/5 border border-white/40 rounded-md" />

@@ -150,15 +150,21 @@ export default function FileWindow() {
                             </div>
                         </div>
                         <div className="flex flex-row gap-2 flex-1 max-w-65">
-                            <div onClick={handleCreateFile} className="flex flex-col items-center p-2 px-4 gap-1 border-1 w-full max-w-20 cursor-pointer border-zinc-500/40 transition-all rounded-md hover:bg-zinc-800/90 hover:border-white/70">
+                            <div onClick={handleCreateFile} className="flex flex-col items-center p-2 px-4 gap-1 bg-zinc-800 w-full max-w-20 
+                            cursor-pointer border-zinc-500/40 transition-all rounded-md hover:bg-zinc-700/80 hover:border-white/70
+                            inset-shadow-sm inset-shadow-zinc-600 shadow-md hover:inset-shadow-zinc-500">
                                 <Plus size={25} />
                                 Criar
                             </div>
-                            <div className="flex flex-col items-center p-2 px-4 gap-1 border-1 w-full max-w-20 cursor-pointer border-zinc-500/40 transition-all rounded-md hover:bg-blue-600/10 hover:text-blue-500 hover:border-blue-500">
+                            <div className="flex flex-col items-center p-2 px-4 gap-1 bg-zinc-800 w-full max-w-20 cursor-pointer 
+                            border-zinc-500/40 transition-all rounded-md hover:bg-blue-600/10 hover:text-blue-500 hover:border-blue-500
+                            inset-shadow-sm inset-shadow-zinc-600 shadow-md hover:inset-shadow-blue-900">
                                 <ExternalLink size={25} />
                                 Abrir
                             </div>
-                            <div className="flex flex-col items-center p-2 px-4 gap-1 border-1 w-full max-w-20 cursor-pointer border-zinc-500/40 transition-all rounded-md hover:bg-red-600/20 hover:text-red-500 hover:border-red-500">
+                            <div className="flex flex-col items-center p-2 px-4 gap-1 bg-zinc-800 w-full max-w-20 cursor-pointer 
+                            border-zinc-500/40 transition-all rounded-md hover:bg-red-600/20 hover:text-red-500 hover:border-red-500
+                            inset-shadow-sm inset-shadow-zinc-600 shadow-md hover:inset-shadow-red-900">
                                 <Trash size={25} />
                                 Excluir
                             </div>

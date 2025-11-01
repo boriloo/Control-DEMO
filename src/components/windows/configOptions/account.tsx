@@ -57,11 +57,14 @@ export default function AccountOption() {
         <div className="flex flex-col items-start gap-4 p-4 w-full">
             <h1 className="text-[25px] flex">Sua Conta</h1>
             <div className="w-full h-[1px] bg-zinc-600"></div>
-            <p className="text-xl">Avatar</p>
-            <div className={`${loading ? 'pointer-events-none saturate-0 opacity-60 scale-80' : ''} origin-left transition-all w-full`}>
-                <AvatarImageInput onFileSelected={(file) => {
-                    setCurrentImage(file)
-                }} />
+            <div className="flex flex-col gap-3 p-3 rounded-xl bg-zinc-800 inset-shadow-sm inset-shadow-zinc-700 shadow-md min-w-40">
+                <p className="text-xl">Avatar</p>
+                <div className={`${loading ? 'pointer-events-none saturate-0 opacity-60 scale-80' : ''} origin-center flex justify-center transition-all w-full`}>
+                    <AvatarImageInput onFileSelected={(file) => {
+                        setCurrentImage(file)
+                    }} />
+                </div>
+
             </div>
 
             {loading ? (
@@ -79,12 +82,12 @@ export default function AccountOption() {
             hover:bg-blue-500 p-2 px-3 rounded-sm font-medium`}>Aplicar avatar</button>
             )}
             <div className="w-full h-[1px] bg-zinc-600 mt-4"></div>
-            <div className="flex flex-col gap-3 w-full">
+            <div className="flex flex-col gap-3 p-3 rounded-md bg-zinc-800 inset-shadow-sm inset-shadow-zinc-700 shadow-md min-w-40">
                 <p className="text-xl">Nome de exibição</p>
                 <input value={username} onChange={(e) => {
                     setUsername(e.target.value)
-                }} type="text" className="border-1 border-zinc-800 border-b-white/70  outline-none transition-all text-lg hover:bg-zinc-800  
-                                cursor-pointer focus:cursor-text p-0.5 px-1 rounded-t-sm focus:border-blue-500 focus:text-blue-100 w-full max-w-[300px]" />
+                }} type="text" className="border-1 border-zinc-800 border-b-white/70  outline-none transition-all text-lg hover:bg-zinc-700/60  
+                                cursor-pointer focus:cursor-text p-0.5 px-1.5 rounded-t-sm focus:border-blue-500 focus:text-blue-100 w-full max-w-[300px]" />
             </div>
 
 

@@ -49,7 +49,7 @@ export default function ConfigWindow() {
                     </div>
                 </div>
                 <div className="flex flex-row w-full h-full">
-                    <div className="group bg-zinc-950 h-auto flex flex-col gap-2 p-4 select-none">
+                    <div className="group bg-zinc-950/70 h-auto flex flex-col gap-2 p-4 select-none">
                         <div onClick={() => config.setCurrentTab('account')} className={`${config.currentTab === 'account' ? 'bg-blue-500 hover:bg-blue-600' : 'hover:bg-zinc-800'} 
                             flex flex-row w-full items-center cursor-pointer rounded-md p-2 gap-0 transition-all hover:gap-1`}>
                             <User />
