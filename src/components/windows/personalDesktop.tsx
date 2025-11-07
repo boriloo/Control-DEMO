@@ -81,6 +81,17 @@ export default function PersonalDesktopWindow({ onFinish }: PersonalProps) {
             absolute z-200 bg-zinc-900 w-full min-h-screen flex justify-center items-center p-4`}>
                 <h1 className={`${done ? 'opacity-100 mt-0' : 'opacity-0 mt-7'} transition-all duration-700 text-[40px] text-center`}>Tudo pronto. <br /> Aproveite :)</h1>
             </div>
+            <div className={`${user ? 'opacity-0' : 'opacity-100'} bg-black transtion-all duration-500 pointer-events-none fixed z-50 flex 
+            flex-col justify-center items-center w-full min-h-screen`}>
+                <p className={`control-text text-[50px]`}>Control</p>
+                <DotLottieReact
+                    src="https://lottie.host/e580eaa4-d189-480f-a6ce-f8c788dff90d/MP2FjoJFFE.lottie"
+                    className="w-20 p-0"
+                    loop
+                    autoplay
+                />
+                <p className={`control-text text-[20px] opacity-80`}>(Se isso persistir recarregue a página)</p>
+            </div>
             {loading ?
                 (<div className={`${done2 ? 'opacity-0' : ''} flex flex-col gap-2 items-center w-full max-w-[600px]`}>
                     <DotLottieReact
@@ -90,7 +101,7 @@ export default function PersonalDesktopWindow({ onFinish }: PersonalProps) {
                         autoplay
                     />
                     <h1 className="text-[30px] text-center">Seu desktop está sendo feito...</h1>
-                    <div className="mt-2 w-full h-6 bg-zinc-300 rounded-md overflow-hidden relative">
+                    <div className="mt-2 w-full h-2 bg-black rounded-md overflow-hidden relative">
                         <div style={{ width: `${percentage}%` }} className={`absolute h-full transition-all duration-150 bg-blue-500`}>
                         </div>
                     </div>

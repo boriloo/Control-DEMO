@@ -1,4 +1,4 @@
-import { doc, setDoc } from "firebase/firestore";
+import { doc, getDoc, setDoc } from "firebase/firestore";
 import { db } from "../firebase/config";
 
 export const createUserEmailRef = async (email: string) => {
@@ -13,4 +13,14 @@ export const createUserEmailRef = async (email: string) => {
         console.error("Erro ao registrar ref do email do user", error);
         throw error;
     }
+};
+
+export const userWithEmailExists = async (email: string): Promise<boolean> => {
+    const emailDoc = await getDoc(doc(db, "emails", email))
+
+    if (!emailDoc.exists()) {
+        return false;
+    }
+
+    return true;
 };

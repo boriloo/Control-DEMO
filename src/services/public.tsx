@@ -1,5 +1,5 @@
 import { User, UserProfile } from "firebase/auth";
-import { doc, getDoc, setDoc, updateDoc } from "firebase/firestore";
+import { collection, doc, getDoc, getDocs, query, setDoc, updateDoc, where } from "firebase/firestore";
 import { db } from "../firebase/config";
 
 export const registerPublicUser = async (uid: string, name: string, email: string): Promise<UserProfile> => {
@@ -51,3 +51,23 @@ export const updatePublicUserProfileImage = async (uid: string, imageURL: string
         throw error;
     }
 };
+
+
+export const getPublicUserByEmail = async (email: string): Promise<UserProfile> => {
+    try {
+        const q = query(collection(db, "public-users"), where("email", "==", email));
+        const querySnapshot = await getDocs(q);
+        const user: UserProfile[] = querySnapshot.docs.map(doc => ({
+            id: doc.id,
+            ...doc.data()
+        })) as UserProfile[];
+
+        return user[0];
+
+    } catch (error) {
+        console.error("Erro ao buscar usuario publico por email:", error);
+        throw error;
+    }
+};
+
+

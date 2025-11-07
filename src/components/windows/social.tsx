@@ -4,6 +4,8 @@ import { useUser } from "../../context/AuthContext";
 import { useWindowContext } from "../../context/WindowContext";
 import { returnFilterEffects } from "../../types/auth";
 import { userWithEmailExists } from "../../services/auth";
+import { createRelation } from "../../services/relations";
+import { getPublicUserByEmail } from "../../services/public";
 
 type section = "friends" | "pending" | "blocked"
 
@@ -48,7 +50,23 @@ export default function SocialWindow() {
                 return;
             }
 
-            alert('tem sim!!')
+            const UserReceiver = await getPublicUserByEmail(email)
+
+            if (!user) return;
+            await createRelation({
+                sender: {
+                    id: user.uid as string,
+                    name: user.name as string,
+                    imageUrl: user.profileImage as string
+                },
+                receiver: {
+                    id: UserReceiver.uid as string,
+                    name: UserReceiver.name as string,
+                    imageUrl: UserReceiver.profileImage as string
+                },
+                blockerId: null,
+                status: 'pending'
+            })
 
         } catch (err) {
 

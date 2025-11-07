@@ -53,12 +53,12 @@ export default function PlansPage() {
 
                         <div className="w-full h-[1px] bg-zinc-800"></div>
                         <p className="">Conheça a plataforma e comece a gerenciar suas conexões.</p>
-                        <div className="flex flex-row gap-2 items-center mt-5">
-                            <CircleCheckBig size={20} className="text-blue-500" />
-                            <p>Armazenamento de até 25 items</p>
+                        <div className="flex flex-row gap-2 items-start mt-5">
+                            <CircleCheckBig size={20} className="text-blue-500 mt-1" />
+                            <p>Armazenamento de até 125 items</p>
                         </div>
-                        <div className="flex flex-row gap-2 items-center">
-                            <CircleCheckBig size={20} className="text-blue-500" />
+                        <div className="flex flex-row gap-2 items-start">
+                            <CircleCheckBig size={20} className="text-blue-500 mt-1" />
                             <p>1 Desktop pessoal</p>
                         </div>
                         <div className="flex flex-row gap-2 items-start">
@@ -68,7 +68,7 @@ export default function PlansPage() {
                     </div>
 
                     <div onClick={() => setPlanType('premium')} className={`${planType === "premium" ? 'scale-102 border-blue-400 bg-zinc-950' : 'border-zinc-800'} 
-                    transition-all p-4 rounded-b-md bg-zinc-900 w-full flex flex-col gap-2 max-w-[350px] border-1 cursor-pointer 
+                    transition-all p-4 rounded-md bg-zinc-900 w-full flex flex-col gap-2 max-w-[350px] border-1 cursor-pointer overflow-hidden
                     hover:bg-zinc-950 select-none pb-6 relative`}
                         style={{
                             boxShadow: planType === 'premium' ? '0px 0px 20px rgba(19, 105, 242, 0.5)' : ''
@@ -91,33 +91,37 @@ export default function PlansPage() {
                         </div>
                         <div className="w-full h-[1px] bg-zinc-800"></div>
                         <p className="">Tenha as principais funcionalidades e otimize seu fluxo de desenvolvimento.</p>
-                        <div className="flex flex-row gap-2 items-center mt-5">
-                            <CircleCheckBig size={20} className="text-blue-500" />
-                            <p>Armazenamento de até 1000 items</p>
-                        </div>
-                        <div className="flex flex-row gap-2 items-center">
-                            <CircleCheckBig size={20} className="text-blue-500" />
-                            <p>1 Desktop pessoal</p>
-                        </div>
-                        <div className="flex flex-row gap-2 items-center">
-                            <CircleCheckBig size={20} className="text-blue-500" />
-                            <p>2 Desktops equipe (máximo 5 membros)</p>
+                        <div className="flex flex-row gap-2 items-start mt-5">
+                            <CircleCheckBig size={20} className="text-blue-500 min-w-5.5 mt-1" />
+                            <p>Armazenamento de até 3000 items</p>
                         </div>
                         <div className="flex flex-row gap-2 items-start">
-                            <CircleCheckBig size={20} className="text-blue-500" />
+                            <CircleCheckBig size={20} className="text-blue-500 mt-1" />
+                            <p>1 Desktop pessoal</p>
+                        </div>
+                        <div className="flex flex-row gap-2 items-start">
+                            <CircleCheckBig size={20} className="text-blue-500 mt-1" />
+                            <p>3 Desktops equipe</p>
+                        </div>
+                        <div className="flex flex-row gap-2 items-start">
+                            <CircleCheckBig size={20} className="text-blue-500 mt-1" />
+                            <p>Até 15 colaboradores no total</p>
+                        </div>
+                        <div className="flex flex-row gap-2 items-start">
+                            <CircleCheckBig size={20} className="text-blue-500 mt-1" />
                             <p>Gerenciamento de Desktop compartilhado</p>
                         </div>
                         <div className="flex flex-row gap-2 items-start">
-                            <CircleCheckBig size={20} className="text-blue-500 w-5.5" />
+                            <CircleCheckBig size={20} className="text-blue-500 min-w-5.5 mt-1" />
                             <p>Imagens de fundo do Desktop com alta resolução</p>
                         </div>
                         <div className="flex flex-row gap-2 items-start">
-                            <CircleCheckBig size={20} className="text-blue-500 w-5.5" />
+                            <CircleCheckBig size={20} className="text-blue-500 min-w-5.5 mt-1" />
                             <p>Integração com Google Drive</p>
                         </div>
-                        <div className="flex flex-row gap-2 items-start">
-                            <CircleCheckBig size={20} className="text-blue-500 w-5.5" />
-                            <p>Acesso a Widgets</p>
+                        <div className="flex flex-row gap-2 items-start saturate-0 opacity-75">
+                            <CircleCheckBig size={20} className="text-blue-500 min-w-5.5 mt-1" />
+                            <p>Acesso a Widgets (Em breve)</p>
                         </div>
                     </div>
 
@@ -141,40 +145,44 @@ export default function PlansPage() {
                         </div>
                         <div className="w-full h-[1px] bg-zinc-800"></div>
                         <p className="">Torne da plataforma seu núcleo principal de gestão de arquivos para trabalho.</p>
-                        <div className="flex flex-row gap-2 items-center mt-5">
-                            <CircleCheckBig size={20} className="text-blue-500" />
+                        <div className="flex flex-row gap-2 items-start mt-5">
+                            <CircleCheckBig size={20} className="text-blue-500 mt-1" />
                             <p>Armazenamento de até 5000 items</p>
                         </div>
-                        <div className="flex flex-row gap-2 items-center">
-                            <CircleCheckBig size={20} className="text-blue-500" />
+                        <div className="flex flex-row gap-2 items-start">
+                            <CircleCheckBig size={20} className="text-blue-500 mt-1" />
                             <p>2 Desktops pessoais</p>
                         </div>
                         <div className="flex flex-row gap-2 items-start">
-                            <CircleCheckBig size={20} className="text-blue-500 w-5.5" />
-                            <p>4 Desktops equipe (máximo 15 membros)</p>
+                            <CircleCheckBig size={20} className="text-blue-500 min-w-5.5 mt-1" />
+                            <p>6 Desktops equipe</p>
                         </div>
                         <div className="flex flex-row gap-2 items-start">
-                            <CircleCheckBig size={20} className="text-blue-500" />
+                            <CircleCheckBig size={20} className="text-blue-500 mt-1" />
+                            <p>Até 75 colaboradores no total</p>
+                        </div>
+                        <div className="flex flex-row gap-2 items-start">
+                            <CircleCheckBig size={20} className="text-blue-500 mt-1" />
                             <p>Gerenciamento de Desktop compartilhado</p>
                         </div>
                         <div className="flex flex-row gap-2 items-start">
-                            <CircleCheckBig size={20} className="text-blue-500 w-5.5" />
+                            <CircleCheckBig size={20} className="text-blue-500 min-w-5.5 mt-1" />
                             <p>Imagens de fundo do Desktop com altíssima resolução</p>
                         </div>
                         <div className="flex flex-row gap-2 items-start">
-                            <CircleCheckBig size={20} className="text-blue-500 w-5.5" />
+                            <CircleCheckBig size={20} className="text-blue-500 min-w-5.5 mt-1" />
                             <p>Integração com Google Drive</p>
                         </div>
-                        <div className="flex flex-row gap-2 items-start">
-                            <CircleCheckBig size={20} className="text-blue-500 w-5.5" />
-                            <p>Acesso a Widgets</p>
+                        <div className="flex flex-row gap-2 items-start saturate-0 opacity-75">
+                            <CircleCheckBig size={20} className="text-blue-500 min-w-5.5 mt-1" />
+                            <p>Acesso a Widgets (Em breve)</p>
                         </div>
-                        <div className="flex flex-row gap-2 items-start">
-                            <CircleCheckBig size={20} className="text-blue-500 w-5.5" />
-                            <p>Personalização de items</p>
+                        <div className="flex flex-row gap-2 items-start saturate-0 opacity-75">
+                            <CircleCheckBig size={20} className="text-blue-500 min-w-5.5 mt-1" />
+                            <p>Personalização de items (Em breve)</p>
                         </div>
-                        <div className="flex flex-row gap-2 items-start">
-                            <CircleCheckBig size={20} className="text-blue-500 w-5.5" />
+                        <div className="flex flex-row gap-2 items-start saturate-0 opacity-75">
+                            <CircleCheckBig size={20} className="text-blue-500 min-w-5.5 mt-1" />
                             <p>Criação de comunidades (Em breve)</p>
                         </div>
                     </div>

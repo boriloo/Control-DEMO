@@ -10,6 +10,7 @@ import { deleteDesktopById, FullDesktopData, getDesktopById, getDesktopsByMember
 import { doc, onSnapshot } from "firebase/firestore";
 import { db } from "../../firebase/config";
 import { useAppContext } from "../../context/AppContext";
+import { FullFileData, listenToAllFilesByDesktop } from "../../services/file";
 
 
 export default function DesktopConfigWindow() {
@@ -25,6 +26,22 @@ export default function DesktopConfigWindow() {
     const [formattedDtName, setFormattedDtName] = useState<string | null>(null)
     const [deleteInput, setDeleteInput] = useState<string>('')
     const [desktopName, setDesktopName] = useState('')
+    const [allFiles, setAllFiles] = useState<FullFileData[]>([]);
+
+    useEffect(() => {
+        if (!user || !currentDesktop?.id) return;
+
+        const unsubscribeAll = listenToAllFilesByDesktop(
+            user.uid as string,
+            currentDesktop.id,
+            (newFiles) => {
+                setAllFiles(newFiles);
+            }
+        );
+
+        return () => unsubscribeAll();
+
+    }, [currentDesktop?.id, user?.uid]);
 
     useEffect(() => {
         const desktopId = dtConfig.desktop?.id;
@@ -150,7 +167,9 @@ export default function DesktopConfigWindow() {
                 const otherDesktops = desktops.filter(d => d.id !== dtConfig.desktop?.id);
 
                 if (otherDesktops.length === 0) {
-                    setHasDesktops(false);
+                    setTimeout(() => {
+                        setHasDesktops(false);
+                    }, 1000)
                 } else {
                     changeCurrentDesktop(otherDesktops[0]);
                 }
@@ -242,9 +261,12 @@ export default function DesktopConfigWindow() {
                             <p className="p-1 px-3 mt-5 bg-zinc-950/50 border-1 border-zinc-600 rounded-full">{windowDesktop?.members.length}
                                 {windowDesktop?.members.length && windowDesktop?.members.length > 1 ? ' Membros' : ' Membro'}</p>
                         </div>
-                        <div className="p-2 flex flex-col bg-zinc-950/60 backdrop-blur-[2px] border-1 border-zinc-800 rounded-lg w-full max-w-[300px]">
+                        <div className="p-2 pb-3 flex flex-col bg-zinc-950/60 backdrop-blur-[2px] border-1 border-zinc-800 rounded-lg min-w-[300px]">
                             <p>Espaço Ocupado</p>
-                            <h1 className="text-[30px]">178 mb</h1>
+                            <h1 className="text-[30px]">{allFiles.length} / 10 mil items</h1>
+                            <div className="w-full bg-zinc-950 h-1 mt-2 rounded-md overflow-hidden">
+                                <div className="bg-blue-500 w-[34%] h-full"></div>
+                            </div>
                         </div>
                     </div>
                     <div className="flex flex-row gap-6 p-2 mt-[80px] items-start">
