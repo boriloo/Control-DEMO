@@ -5,8 +5,6 @@ import { useWindowContext } from "../../context/WindowContext";
 import { returnFilterEffects } from "../../types/auth";
 import { deleteFile } from "../../services/file";
 import { useAppContext } from "../../context/AppContext";
-import { GoogleAuth } from 'google-auth-library';
-import { google } from 'googleapis';
 
 export default function ImageViewerWindow() {
     const { callToast } = useAppContext();
@@ -49,13 +47,13 @@ export default function ImageViewerWindow() {
         imgViewer.closeWindow();
     }
 
-    const convertDriveUrl = (url: string) => {
-        const match = url.match(/\/d\/([^/]+)/);
-        if (match) {
-            return `https://drive.google.com/uc?export=download&id=${match[1]}`;
-        }
-        return url;
-    };
+    // const convertDriveUrl = (url: string) => {
+    //     const match = url.match(/\/d\/([^/]+)/);
+    //     if (match) {
+    //         return `https://drive.google.com/uc?export=download&id=${match[1]}`;
+    //     }
+    //     return url;
+    // };
 
     const downloadImageSimples = async () => {
         if (!imgViewer.file?.url || !imgViewer.file?.name) return;

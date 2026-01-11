@@ -24,22 +24,22 @@ import ImageViewerWindow from "../../components/windows/imageViewer";
 import SocialWindow from "../../components/windows/social";
 
 
-const findNextAvailablePosition = (icons: FullFileData[], containerWidth: number): { x: number; y: number } | null => {
-    const GRID_SIZE = 100;
-    const occupiedPositions = new Set(
-        icons.map(icon => `${icon.position.x},${icon.position.y}`)
-    );
+// const findNextAvailablePosition = (icons: FullFileData[], containerWidth: number): { x: number; y: number } | null => {
+//     const GRID_SIZE = 100;
+//     const occupiedPositions = new Set(
+//         icons.map(icon => `${icon.position.x},${icon.position.y}`)
+//     );
 
-    for (let y = 0; y > -1; y += GRID_SIZE) {
-        for (let x = 0; x < containerWidth - 80; x += GRID_SIZE) {
-            const currentPosition = `${x},${y}`;
-            if (!occupiedPositions.has(currentPosition)) {
-                return { x, y };
-            }
-        }
-    }
-    return null;
-};
+//     for (let y = 0; y > -1; y += GRID_SIZE) {
+//         for (let x = 0; x < containerWidth - 80; x += GRID_SIZE) {
+//             const currentPosition = `${x},${y}`;
+//             if (!occupiedPositions.has(currentPosition)) {
+//                 return { x, y };
+//             }
+//         }
+//     }
+//     return null;
+// };
 
 export default function DashboardPage() {
     const { t } = useTranslation();

@@ -4,7 +4,6 @@ import DashboardPage from "../dashboard/page";
 import { useUser } from "../../context/AuthContext";
 import { DotLottieReact } from "@lottiefiles/dotlottie-react";
 import AuthPage from "../auth/page";
-import PlansPage from "../plans/page";
 
 
 const LoadingScreen = () => (
