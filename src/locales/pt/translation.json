@@ -1,9 +1,8 @@
 {
     "dashboard": {
         "create": "Criar",
-        "search": "Pesquisar"        
+        "search": "Pesquisar"
     },
-    
     "listdt": {
         "title": "Seus Desktops",
         "current": "Atual",
