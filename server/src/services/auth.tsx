@@ -1,8 +1,8 @@
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword, updateProfile, User, UserProfile } from "firebase/auth"
-import { BasicFilter, ColorFilter, LoginData, RegisterData } from "../types/auth"
-import { auth, db } from "../firebase/config";
+import { BasicFilter, ColorFilter, LoginData, RegisterData } from "../../../client/src/types/auth"
+import { auth, db } from "../../../client/src/firebase/config";
 import { collection, doc, getDoc, getDocs, query, serverTimestamp, setDoc, updateDoc, where, writeBatch, } from "firebase/firestore";
-import { MemberType } from "../types/desktop";
+import { MemberType } from "../../../client/src/types/desktop";
 import { GoogleAuthProvider } from "firebase/auth";
 const provider = new GoogleAuthProvider();
 provider.setCustomParameters({
