@@ -3,10 +3,11 @@ import { useEffect, useState } from "react"
 import { useWindowContext } from "../../context/WindowContext"
 import { useUser } from "../../context/AuthContext";
 import { returnFilterEffects } from "../../types/auth";
-import { FullFileData, getFileById, listenToFilesByParent } from "../../services/file";
+// import { FullFileData, getFileById, listenToFilesByParent } from "../../services/file";
 import ColumnFile from "./fileViewer/columnFile";
 import { useAppContext } from "../../context/AppContext";
 import { DotLottieReact } from "@lottiefiles/dotlottie-react";
+import { FullFileData } from "../../types/file";
 
 export default function FileWindow() {
     const { minimazeAllWindows } = useAppContext();
@@ -22,19 +23,19 @@ export default function FileWindow() {
 
     useEffect(() => {
         if (!fileViewer.file?.desktopId || !fileViewer.file?.id || !user) return;
-        const unsubscribe = listenToFilesByParent(
-            user.uid as string,
-            fileViewer.file?.desktopId,
-            fileViewer.file?.id,
-            (newFiles: FullFileData[]) => {
-                const typeOrder = { folder: 0, link: 1, text: 2 };
-                const sortedArray = newFiles.sort((a, b) => {
-                    return typeOrder[a.type] - typeOrder[b.type];
-                });
-                setInternalFiles(sortedArray);
-            }
-        );
-        return unsubscribe;
+        // const unsubscribe = listenToFilesByParent(
+        //     user.uid as string,
+        //     fileViewer.file?.desktopId,
+        //     fileViewer.file?.id,
+        //     (newFiles: FullFileData[]) => {
+        //         const typeOrder = { folder: 0, link: 1, text: 2 };
+        //         const sortedArray = newFiles.sort((a, b) => {
+        //             return typeOrder[a.type] - typeOrder[b.type];
+        //         });
+        //         setInternalFiles(sortedArray);
+        //     }
+        // );
+        // return unsubscribe;
 
     }, [fileViewer.file, user?.uid]);
 
@@ -108,8 +109,8 @@ export default function FileWindow() {
         }
         try {
             setLoading(true)
-            const file = await getFileById(pathId)
-            fileViewer.setFile(file)
+            // const file = await getFileById(pathId)
+            // fileViewer.setFile(file)
         } catch (err) {
             throw err
         } finally {

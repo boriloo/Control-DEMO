@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useWindowStatus } from "../windowHook";
-import { FullFileData } from "../../services/file";
+import { FullFileData } from "../../types/file";
+
 
 export const useFileHook = () => {
     const { currentStatus, openWindow, minimizeWindow, closeWindow } = useWindowStatus();

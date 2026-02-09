@@ -1,4 +1,4 @@
-import { UserProfile } from "firebase/auth";
+// import { UserProfile } from "firebase/auth";
 
 export type BasicFilter = 'off' | 'low' | 'high'
 export type ColorFilter = 'color' | 'gray'
@@ -17,7 +17,7 @@ export interface LoginData {
   password: string;
 }
 
-export const returnFilterEffects = (user: UserProfile | null) => {
+export const returnFilterEffects = (user: any | null) => {
   if (!user) return;
   let classes = "";
 

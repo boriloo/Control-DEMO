@@ -3,7 +3,7 @@ import { useEffect, useState } from "react"
 import { useUser } from "../../context/AuthContext";
 import { useWindowContext } from "../../context/WindowContext";
 import { returnFilterEffects } from "../../types/auth";
-import { deleteFile } from "../../services/file";
+// import { deleteFile } from "../../services/file";
 import { useAppContext } from "../../context/AppContext";
 
 export default function ImageViewerWindow() {
@@ -111,7 +111,7 @@ export default function ImageViewerWindow() {
 
     const handleDeleteFile = () => {
         try {
-            deleteFile({ fileId: imgViewer.file?.id, filePath: imgViewer.file?.filePath });
+            // deleteFile({ fileId: imgViewer.file?.id, filePath: imgViewer.file?.filePath });
             setConfirmDelete(false);
             imgViewer.setFile(null);
             imgViewer.closeWindow();

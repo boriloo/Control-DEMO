@@ -22,7 +22,7 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
     const { fileViewer, profile, newFile, config, listdt, newdt, openLink, dtConfig, imgViewer, social } = useWindowContext()
     const [toastOpen, setToastOpen] = useState<boolean>(false)
     const [toast, setToast] = useState<Toast>({ message: 'Hmmm...', type: 'message' })
-    const timeoutRef = useRef<NodeJS.Timeout | null>(null)
+    const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
     const callToast = ({ message, type }: Toast) => {
         if (timeoutRef.current) {

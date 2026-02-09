@@ -4,10 +4,10 @@ import { returnFilterEffects } from "../../types/auth";
 import { useUser } from "../../context/AuthContext";
 import { useAppContext } from "../../context/AppContext";
 import { useEffect, useState } from "react";
-import { getDesktopById } from "../../services/desktop";
+// import { getDesktopById } from "../../services/desktop";
 import { useTranslation } from "react-i18next";
-import { collection, onSnapshot, query, where } from "firebase/firestore";
-import { db } from "../../firebase/config";
+// import { collection, onSnapshot, query, where } from "firebase/firestore";
+// import { db } from "../../firebase/config";
 
 
 
@@ -30,33 +30,33 @@ export default function ListDesktopsWindow() {
             return;
         };
 
-        const q = query(collection(db, "desktops"), where("membersId", "array-contains", user.uid));
+        // const q = query(collection(db, "desktops"), where("membersId", "array-contains", user.uid));
 
-        const unsubscribe = onSnapshot(q, (querySnapshot) => {
-            const desktopsFromDb = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        // const unsubscribe = onSnapshot(q, (querySnapshot) => {
+        //     const desktopsFromDb = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
 
-            const otherDesktops = desktopsFromDb.filter(desktop => desktop.id !== currentDesktop?.id);
-            setAllDesktops(otherDesktops);
-        }, (error) => {
-            console.error("Erro ao ouvir os desktops:", error);
-        });
+        //     const otherDesktops = desktopsFromDb.filter(desktop => desktop.id !== currentDesktop?.id);
+        //     setAllDesktops(otherDesktops);
+        // }, (error) => {
+        //     console.error("Erro ao ouvir os desktops:", error);
+        // });
 
-        return () => unsubscribe();
+        // return () => unsubscribe();
 
     }, [user, currentDesktop?.id]);
 
     const handleChangeDesktop = async (id: string) => {
         setLoading(true)
         try {
-            const newDesktop = await getDesktopById(id)
-            changeCurrentDesktop(newDesktop)
+            // const newDesktop = await getDesktopById(id)
+            // changeCurrentDesktop(newDesktop)
             localStorage.setItem('last-desktop', id);
         } catch (err) {
             console.log(err)
             throw err
         } finally {
             setTimeout(() => {
-                setLoading(false)
+                setLoading(false)   
             }, 1000)
         }
     }

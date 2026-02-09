@@ -3,9 +3,9 @@ import { useEffect, useState } from "react"
 import { useUser } from "../../context/AuthContext";
 import { useWindowContext } from "../../context/WindowContext";
 import { returnFilterEffects } from "../../types/auth";
-import { userWithEmailExists } from "../../services/auth";
-import { createRelation } from "../../services/relations";
-import { getPublicUserByEmail } from "../../services/public";
+// import { userWithEmailExists } from "../../services/auth";
+// import { createRelation } from "../../services/relations";
+// import { getPublicUserByEmail } from "../../services/public";
 
 type section = "friends" | "pending" | "blocked"
 
@@ -43,30 +43,30 @@ export default function SocialWindow() {
     const handleSendFriendRequest = async (email: string) => {
         try {
             setError(null)
-            const receiver = await userWithEmailExists(email)
+            // const receiver = await userWithEmailExists(email)
 
-            if (!receiver) {
-                setError("Este usuário não existe ou não aceita pedidos de amizade.")
-                return;
-            }
+            // if (!receiver) {
+            //     setError("Este usuário não existe ou não aceita pedidos de amizade.")
+            //     return;
+            // }
 
-            const UserReceiver = await getPublicUserByEmail(email)
+            // const UserReceiver = await getPublicUserByEmail(email)
 
-            if (!user) return;
-            await createRelation({
-                sender: {
-                    id: user.uid as string,
-                    name: user.name as string,
-                    imageUrl: user.profileImage as string
-                },
-                receiver: {
-                    id: UserReceiver.uid as string,
-                    name: UserReceiver.name as string,
-                    imageUrl: UserReceiver.profileImage as string
-                },
-                blockerId: null,
-                status: 'pending'
-            })
+            // if (!user) return;
+            // await createRelation({
+            //     sender: {
+            //         id: user.uid as string,
+            //         name: user.name as string,
+            //         imageUrl: user.profileImage as string
+            //     },
+            //     receiver: {
+            //         id: UserReceiver.uid as string,
+            //         name: UserReceiver.name as string,
+            //         imageUrl: UserReceiver.profileImage as string
+            //     },
+            //     blockerId: null,
+            //     status: 'pending'
+            // })
 
         } catch (err) {
 

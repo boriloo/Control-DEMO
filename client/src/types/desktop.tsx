@@ -1,4 +1,4 @@
-import { Timestamp } from "firebase/firestore";
+// import { Timestamp } from "firebase/firestore";
 
 export type DesktopType = "personal" | "team"
 
@@ -16,5 +16,7 @@ export interface DesktopData {
     members: MemberType[];
     membersId: string[];
     background?: string;
-    createdAt?: Timestamp;
+    createdAt?: Date;
 }
+
+export type FullDesktopData = DesktopData & { id: string };

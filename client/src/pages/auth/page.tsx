@@ -5,7 +5,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { useNavigate } from "react-router-dom";
 import { DotLottieReact } from '@lottiefiles/dotlottie-react';
-import { FirebaseError } from "firebase/app";
+// import { FirebaseError } from "firebase/app";
 import '../../App.css'
 import { useUser } from "../../context/AuthContext";
 
@@ -29,7 +29,7 @@ const registerSchema = z.object({
         .regex(/[0-9]/, { message: "Deve conter pelo menos um número." })
         .regex(/[^a-zA-Z0-9]/, { message: "Deve conter pelo menos um caractere especial." }),
     confirmPassword: z.string()
-}).refine((data) => data.password === data.confirmPassword, {
+}).refine((data: any) => data.password === data.confirmPassword, {
     path: ['password'],
     message: 'As senhas não coincidem',
 });
@@ -73,18 +73,18 @@ export default function AuthPage() {
                 }, 1000)
             } catch (error) {
                 setSent(false)
-                const fbError = error as FirebaseError
-                switch (fbError.code) {
-                    case 'auth/invalid-credential':
-                        setError("Dados inválidos");
-                        break;
-                    case 'auth/too-many-requests':
-                        setError("Muitas tentativas, espere um pouco");
-                        break;
-                    default:
-                        setError("Ocorreu um erro inesperado");
-                        break;
-                }
+                // const fbError = error as FirebaseError
+                // switch (fbError.code) {
+                //     case 'auth/invalid-credential':
+                //         setError("Dados inválidos");
+                //         break;
+                //     case 'auth/too-many-requests':
+                //         setError("Muitas tentativas, espere um pouco");
+                //         break;
+                //     default:
+                //         setError("Ocorreu um erro inesperado");
+                //         break;
+                // }
             }
         } else {
             try {

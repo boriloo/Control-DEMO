@@ -22,3 +22,5 @@ export interface FileData {
     path: PathSegment[];
 }
 
+export type FullFileData = FileData & { id: string };
+

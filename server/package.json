@@ -1,0 +1,17 @@
+{
+  "name": "control-server",
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "server": "nodemon --exec ts-node --project tsconfig.node.json src/server.ts"
+  },
+  "dependencies": {
+    "@types/cors": "^2.8.19",
+    "@types/express": "^5.0.6",
+    "cors": "^2.8.6",
+    "dotenv": "^17.2.4",
+    "express": "^5.2.1",
+    "nodemon": "^3.1.11",
+    "ts-node": "^10.9.2"
+  }
+}

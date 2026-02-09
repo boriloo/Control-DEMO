@@ -2,8 +2,8 @@ import { ExternalLink, Search } from "lucide-react";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useUser } from "../context/AuthContext";
-import { FullFileData, listenToAllFilesByDesktop } from "../services/file";
-import { FileType } from "../types/file";
+// import { FullFileData, listenToAllFilesByDesktop } from "../services/file";
+import { FileType, FullFileData } from "../types/file";
 import { useRootContext } from "../context/RootContext";
 import { useAppContext } from "../context/AppContext";
 import { useWindowContext } from "../context/WindowContext";
@@ -29,15 +29,15 @@ export default function SearchBar() {
     useEffect(() => {
         if (!user || !currentDesktop?.id) return;
 
-        const unsubscribeAll = listenToAllFilesByDesktop(
-            user.uid as string,
-            currentDesktop.id,
-            (newFiles) => {
-                setAllFiles(newFiles);
-            }
-        );
+        // const unsubscribeAll = listenToAllFilesByDesktop(
+        //     user.uid as string,
+        //     currentDesktop.id,
+        //     (newFiles) => {
+        //         setAllFiles(newFiles);
+        //     }
+        // );
 
-        return () => unsubscribeAll();
+        // return () => unsubscribeAll();
 
     }, [currentDesktop?.id, user?.uid]);
 

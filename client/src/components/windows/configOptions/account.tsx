@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react"
 import { useUser } from "../../../context/AuthContext"
-import { getDownloadURL, getStorage, ref, uploadBytes } from "firebase/storage"
+// import { getDownloadURL, getStorage, ref, uploadBytes } from "firebase/storage"
 import { DotLottieReact } from "@lottiefiles/dotlottie-react"
 import { AvatarImageInput } from "../../avatarInput"
 import { useAppContext } from "../../../context/AppContext"
@@ -24,11 +24,11 @@ export default function AccountOption() {
         if (!currentImage || !currentDesktop) return;
         try {
             setLoading(true)
-            const storage = getStorage();
-            const storageRef = ref(storage, `users/${user?.uid}/avatar`);
-            const snapshot = await uploadBytes(storageRef, currentImage);
-            const downloadURL = await getDownloadURL(snapshot.ref);
-            await authChangeUserAvatar(downloadURL)
+            // const storage = getStorage();
+            // const storageRef = ref(storage, `users/${user?.uid}/avatar`);
+            // const snapshot = await uploadBytes(storageRef, currentImage);
+            // const downloadURL = await getDownloadURL(snapshot.ref);
+            // await authChangeUserAvatar(downloadURL)
 
             setCurrentImage(null)
             callToast({ message: 'Avatar alterado com sucesso!', type: 'success' })

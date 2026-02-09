@@ -17,11 +17,12 @@ import SearchBar from "../../components/SearchBar";
 import ListDesktopsWindow from "../../components/windows/listDesktops";
 import NewDesktopWindow from "../../components/windows/newDesktop";
 import { useTranslation } from "react-i18next";
-import { FullFileData, listenToAllFilesByDesktop, updateFilePosition } from "../../services/file";
+// import { FullFileData, listenToAllFilesByDesktop, updateFilePosition } from "../../services/file";
 import OpenLinkWindow from "../../components/windows/openLink";
 import DesktopConfigWindow from "../../components/windows/desktopConfig";
 import ImageViewerWindow from "../../components/windows/imageViewer";
 import SocialWindow from "../../components/windows/social";
+import { FullFileData } from "../../types/file";
 
 
 // const findNextAvailablePosition = (icons: FullFileData[], containerWidth: number): { x: number; y: number } | null => {
@@ -58,18 +59,18 @@ export default function DashboardPage() {
         if (!user || !currentDesktop?.id) return;
 
 
-        const unsubscribeAll = listenToAllFilesByDesktop(
-            user.uid as string,
-            currentDesktop.id,
-            (newFiles) => {
-                const filtered = newFiles.filter((file) =>
-                    file.parentId === null
-                )
-                setDesktopFiles(filtered)
-            }
-        );
+        // const unsubscribeAll = listenToAllFilesByDesktop(
+        //     user.uid as string,
+        //     currentDesktop.id,
+        //     (newFiles) => {
+        //         const filtered = newFiles.filter((file) =>
+        //             file.parentId === null
+        //         )
+        //         setDesktopFiles(filtered)
+        //     }
+        // );
 
-        return unsubscribeAll;
+        // return unsubscribeAll;
 
     }, [currentDesktop?.id, user?.uid]);
 
@@ -139,7 +140,7 @@ export default function DashboardPage() {
         checkOverflow();
         desktopFiles.forEach(async (file) => {
             try {
-                await updateFilePosition(file.id, file.position);
+                // await updateFilePosition(file.id, file.position);
             } catch (error) {
                 console.error(`Erro ao atualizar a posição do arquivo ${file.id}:`, error);
             }

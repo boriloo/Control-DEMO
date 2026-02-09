@@ -5,12 +5,14 @@ import { useWindowContext } from "../../context/WindowContext";
 import { returnFilterEffects } from "../../types/auth";
 import { ClickableImageInput } from "../imageInput";
 import { DotLottieReact } from "@lottiefiles/dotlottie-react";
-import { getDownloadURL, getStorage, ref, uploadBytes } from "firebase/storage";
-import { deleteDesktopById, FullDesktopData, getDesktopById, getDesktopsByMember, updateDesktopBackground, updateDesktopName } from "../../services/desktop";
-import { doc, onSnapshot } from "firebase/firestore";
-import { db } from "../../firebase/config";
+// import { getDownloadURL, getStorage, ref, uploadBytes } from "firebase/storage";
+// import { deleteDesktopById, FullDesktopData, getDesktopById, getDesktopsByMember, updateDesktopBackground, updateDesktopName } from "../../services/desktop";
+// import { doc, onSnapshot } from "firebase/firestore";
+// import { db } from "../../firebase/config";
 import { useAppContext } from "../../context/AppContext";
-import { FullFileData, listenToAllFilesByDesktop } from "../../services/file";
+import { FullFileData } from "../../types/file";
+import { FullDesktopData } from "../../types/desktop";
+// import { FullFileData, listenToAllFilesByDesktop } from "../../services/file";
 
 
 export default function DesktopConfigWindow() {
@@ -31,15 +33,15 @@ export default function DesktopConfigWindow() {
     useEffect(() => {
         if (!user || !currentDesktop?.id) return;
 
-        const unsubscribeAll = listenToAllFilesByDesktop(
-            user.uid as string,
-            currentDesktop.id,
-            (newFiles) => {
-                setAllFiles(newFiles);
-            }
-        );
+        // const unsubscribeAll = listenToAllFilesByDesktop(
+        //     user.uid as string,
+        //     currentDesktop.id,
+        //     (newFiles) => {
+        //         setAllFiles(newFiles);
+        //     }
+        // );
 
-        return () => unsubscribeAll();
+        // return () => unsubscribeAll();
 
     }, [currentDesktop?.id, user?.uid]);
 
@@ -51,34 +53,34 @@ export default function DesktopConfigWindow() {
             return;
         };
 
-        const desktopRef = doc(db, "desktops", desktopId);
+        // const desktopRef = doc(db, "desktops", desktopId);
 
-        const unsubscribe = onSnapshot(desktopRef, (desktop) => {
-            if (desktop.exists()) {
-                const desktopData = {
-                    id: desktop.id,
-                    ...desktop.data()
-                } as FullDesktopData
+        // const unsubscribe = onSnapshot(desktopRef, (desktop) => {
+        //     if (desktop.exists()) {
+        //         const desktopData = {
+        //             id: desktop.id,
+        //             ...desktop.data()
+        //         } as FullDesktopData
 
-                setWindowDesktop(desktopData)
-                setDesktopName(desktopData.name)
-                const formatUser = (user?.name as string).replace(/ /g, '')
-                setFormattedUserName(formatUser)
-                const formatDt = (desktopData.name).replace(/ /g, '')
-                setFormattedDtName(formatDt)
-            }
-            else {
-                console.log("O documento do desktop não existe mais.");
-                setWindowDesktop(null);
-            }
-        }, (error) => {
-            console.error("Erro ao ouvir os desktops:", error);
-        });
+        //         setWindowDesktop(desktopData)
+        //         setDesktopName(desktopData.name)
+        //         const formatUser = (user?.name as string).replace(/ /g, '')
+        //         setFormattedUserName(formatUser)
+        //         const formatDt = (desktopData.name).replace(/ /g, '')
+        //         setFormattedDtName(formatDt)
+        //     }
+        //     else {
+        //         console.log("O documento do desktop não existe mais.");
+        //         setWindowDesktop(null);
+        //     }
+        // }, (error) => {
+        //     console.error("Erro ao ouvir os desktops:", error);
+        // });
 
-        return () => {
-            console.log("Cancelando o listener do desktop.");
-            unsubscribe();
-        };
+        // return () => {
+        //     console.log("Cancelando o listener do desktop.");
+        //     unsubscribe();
+        // };
 
     }, [dtConfig.desktop?.id])
 
@@ -93,8 +95,8 @@ export default function DesktopConfigWindow() {
         if (!desktopName || !windowDesktop) return;
         try {
             setLoading(true)
-            const updatedDesktop = await updateDesktopName(windowDesktop.id, desktopName)
-            setWindowDesktop(updatedDesktop)
+            // const updatedDesktop = await updateDesktopName(windowDesktop.id, desktopName)
+            // setWindowDesktop(updatedDesktop)
 
             if (currentDesktop?.id === windowDesktop.id) {
                 changeCurrentDesktop({
@@ -116,12 +118,12 @@ export default function DesktopConfigWindow() {
         try {
             setLoading(true)
             const localUrl = URL.createObjectURL(currentImage)
-            const storage = getStorage();
-            const storageRef = ref(storage, `desktops/${windowDesktop.id}/background`);
-            const snapshot = await uploadBytes(storageRef, currentImage);
-            const downloadURL = await getDownloadURL(snapshot.ref);
-            const updatedDesktop = await updateDesktopBackground(windowDesktop.id as string, downloadURL)
-            setWindowDesktop(updatedDesktop)
+            // const storage = getStorage();
+            // const storageRef = ref(storage, `desktops/${windowDesktop.id}/background`);
+            // const snapshot = await uploadBytes(storageRef, currentImage);
+            // const downloadURL = await getDownloadURL(snapshot.ref);
+            // const updatedDesktop = await updateDesktopBackground(windowDesktop.id as string, downloadURL)
+            // setWindowDesktop(updatedDesktop)
 
             setCurrentImage(null)
 
@@ -144,8 +146,8 @@ export default function DesktopConfigWindow() {
     const handleChangeDesktop = async (id: string) => {
         setLoading(true)
         try {
-            const newDesktop = await getDesktopById(id)
-            changeCurrentDesktop(newDesktop)
+            // const newDesktop = await getDesktopById(id)
+            // changeCurrentDesktop(newDesktop)
             localStorage.setItem('last-desktop', id);
         } catch (err) {
             console.log(err)
@@ -162,20 +164,20 @@ export default function DesktopConfigWindow() {
         try {
             if (currentDesktop?.id === dtConfig.desktop?.id) {
 
-                const desktops = await getDesktopsByMember(user?.uid as string);
+                // const desktops = await getDesktopsByMember(user?.uid as string);
 
-                const otherDesktops = desktops.filter(d => d.id !== dtConfig.desktop?.id);
+                // const otherDesktops = desktops.filter(d => d.id !== dtConfig.desktop?.id);
 
-                if (otherDesktops.length === 0) {
-                    setTimeout(() => {
-                        setHasDesktops(false);
-                    }, 1000)
-                } else {
-                    changeCurrentDesktop(otherDesktops[0]);
-                }
+                // if (otherDesktops.length === 0) {
+                //     setTimeout(() => {
+                //         setHasDesktops(false);
+                //     }, 1000)
+                // } else {
+                //     changeCurrentDesktop(otherDesktops[0]);
+                // }
             }
 
-            await deleteDesktopById(user.uid as string, dtConfig.desktop?.id as string);
+            // await deleteDesktopById(user.uid as string, dtConfig.desktop?.id as string);
             setDeleteInput('')
             setConfirmDelete(false);
             dtConfig.closeWindow();
@@ -255,7 +257,7 @@ export default function DesktopConfigWindow() {
                 <div className="flex flex-col gap-2 p-4 mt-[80px] z-3">
                     <div className="flex flex-row justify-between gap-2 p-4 items-center flex-wrap">
                         <div className="flex flex-col gap-1 items-start">
-                            <p className="text-[15px] opacity-80">Criado em {windowDesktop?.createdAt?.toDate().toLocaleDateString('pt-BR')}</p>
+                            <p className="text-[15px] opacity-80">Criado em {windowDesktop?.createdAt?.toLocaleDateString('pt-BR')}</p>
                             <h1 className="text-[38px] mt-[-10px]">{windowDesktop?.name}</h1>
                             <p className="text-[18px]">Desktop {windowDesktop?.type}</p>
                             <p className="p-1 px-3 mt-5 bg-zinc-950/50 border-1 border-zinc-600 rounded-full">{windowDesktop?.members.length}

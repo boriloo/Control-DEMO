@@ -1,5 +1,4 @@
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword, updateProfile, User, UserProfile } from "firebase/auth"
-import { BasicFilter, ColorFilter, LoginData, RegisterData } from "../../../client/src/types/auth"
 import { auth, db } from "../../../client/src/firebase/config";
 import { collection, doc, getDoc, getDocs, query, serverTimestamp, setDoc, updateDoc, where, writeBatch, } from "firebase/firestore";
 import { MemberType } from "../../../client/src/types/desktop";
@@ -43,6 +42,8 @@ export const registerUser = async ({ name, email, password }: RegisterData): Pro
     throw error;
   }
 };
+
+export const registerUserService = async({ name, email, password })
 
 
 

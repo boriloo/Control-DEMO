@@ -3,8 +3,8 @@ import { useWindowContext } from "../../context/WindowContext";
 import { returnFilterEffects } from "../../types/auth";
 import { useUser } from "../../context/AuthContext";
 import { useState } from "react";
-import { createDesktop, updateDesktopBackground } from "../../services/desktop";
-import { getDownloadURL, getStorage, ref, uploadBytes } from "firebase/storage";
+// import { createDesktop, updateDesktopBackground } from "../../services/desktop";
+// import { getDownloadURL, getStorage, ref, uploadBytes } from "firebase/storage";
 import { ClickableImageInput } from "../imageInput";
 import { DesktopType } from "../../types/desktop";
 import { DotLottieReact } from "@lottiefiles/dotlottie-react";
@@ -27,25 +27,25 @@ export default function NewDesktopWindow() {
             const localUrl = URL.createObjectURL(imageSelected)
             setLoading(true)
             if (!imageSelected || !user || !desktopName) return;
-            const newDesktop = await createDesktop({
-                name: desktopName,
-                type: desktopType,
-                ownerId: user.uid as string,
-                members: [{
-                    userId: user.uid as string,
-                    userName: user.name as string,
-                    userImage: user.profileImage as string,
-                    role: 'owner'
-                }],
-                membersId: [user.uid as string]
-            })
-            const storage = getStorage();
-            const storageRef = ref(storage, `desktops/${newDesktop.id}/background`);
-            const snapshot = await uploadBytes(storageRef, imageSelected);
-            const downloadURL = await getDownloadURL(snapshot.ref);
-            const updatedDesktop = await updateDesktopBackground(newDesktop.id, downloadURL)
+            // const newDesktop = await createDesktop({
+            //     name: desktopName,
+            //     type: desktopType,
+            //     ownerId: user.uid as string,
+            //     members: [{
+            //         userId: user.uid as string,
+            //         userName: user.name as string,
+            //         userImage: user.profileImage as string,
+            //         role: 'owner'
+            //     }],
+            //     membersId: [user.uid as string]
+            // })
+            // const storage = getStorage();
+            // const storageRef = ref(storage, `desktops/${newDesktop.id}/background`);
+            // const snapshot = await uploadBytes(storageRef, imageSelected);
+            // const downloadURL = await getDownloadURL(snapshot.ref);
+            // const updatedDesktop = await updateDesktopBackground(newDesktop.id, downloadURL)
             localStorage.setItem('background', localUrl);
-            changeCurrentDesktop(updatedDesktop)
+            // changeCurrentDesktop(updatedDesktop)
             setLoading(false)
             newdt.closeWindow();
             callToast({ message: 'Novo Desktop criado!', type: 'success' })

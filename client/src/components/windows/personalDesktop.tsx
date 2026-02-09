@@ -1,7 +1,7 @@
 import { useState } from "react"
 import { ClickableImageInput } from "../imageInput";
-import { createDesktop, updateDesktopBackground } from "../../services/desktop";
-import { getDownloadURL, getStorage, ref, uploadBytes } from "firebase/storage"
+// import { createDesktop, updateDesktopBackground } from "../../services/desktop";
+// import { getDownloadURL, getStorage, ref, uploadBytes } from "firebase/storage"
 import { useUser } from "../../context/AuthContext";
 import { DotLottieReact } from "@lottiefiles/dotlottie-react";
 import { LogOut } from "lucide-react";
@@ -24,39 +24,39 @@ export default function PersonalDesktopWindow({ onFinish }: PersonalProps) {
         if (!imageSelected) return;
         try {
             const localUrl = URL.createObjectURL(imageSelected)
-            setLoading(true)
+            // setLoading(true)
             if (!imageSelected || !user || !desktopName) return;
-            const newDesktop = await createDesktop({
-                name: desktopName,
-                type: 'personal',
-                ownerId: user.uid as string,
-                members: [{
-                    userId: user.uid as string,
-                    userName: user.name as string,
-                    userImage: user.profileImage as string,
-                    role: 'owner'
-                }],
-                membersId: [user.uid as string]
-            })
+            // const newDesktop = await createDesktop({
+            //     name: desktopName,
+            //     type: 'personal',
+            //     ownerId: user.uid as string,
+            //     members: [{
+            //         userId: user.uid as string,
+            //         userName: user.name as string,
+            //         userImage: user.profileImage as string,
+            //         role: 'owner'
+            //     }],
+            //     membersId: [user.uid as string]
+            // })
             setPercentage(prev => (prev + 16.66))
 
-            const storage = getStorage();
-            setPercentage(prev => (prev + 16.66))
+            // const storage = getStorage();
+            // setPercentage(prev => (prev + 16.66))
 
-            const storageRef = ref(storage, `desktops/${newDesktop.id}/background`);
-            setPercentage(prev => (prev + 16.66))
+            // const storageRef = ref(storage, `desktops/${newDesktop.id}/background`);
+            // setPercentage(prev => (prev + 16.66))
 
-            const snapshot = await uploadBytes(storageRef, imageSelected);
-            setPercentage(prev => (prev + 16.66))
+            // const snapshot = await uploadBytes(storageRef, imageSelected);
+            // setPercentage(prev => (prev + 16.66))
 
-            const downloadURL = await getDownloadURL(snapshot.ref);
-            setPercentage(prev => (prev + 16.66))
+            // const downloadURL = await getDownloadURL(snapshot.ref);
+            // setPercentage(prev => (prev + 16.66))
 
-            const updatedDesktop = await updateDesktopBackground(newDesktop.id, downloadURL)
+            // const updatedDesktop = await updateDesktopBackground(newDesktop.id, downloadURL)
 
             localStorage.setItem('background', localUrl);
 
-            changeCurrentDesktop(updatedDesktop)
+            // changeCurrentDesktop(updatedDesktop)
             setPercentage(prev => (prev + 18.66))
             setTimeout(() => {
                 setDone(true)
@@ -70,6 +70,8 @@ export default function PersonalDesktopWindow({ onFinish }: PersonalProps) {
         } catch (err) {
             console.log('Erro ao criar: ', err)
             setLoading(false)
+        } finally {
+            // setLoading(false)
         }
     }
 
@@ -81,6 +83,7 @@ export default function PersonalDesktopWindow({ onFinish }: PersonalProps) {
             absolute z-200 bg-zinc-900 w-full min-h-screen flex justify-center items-center p-4`}>
                 <h1 className={`${done ? 'opacity-100 mt-0' : 'opacity-0 mt-7'} transition-all duration-700 text-[40px] text-center`}>Tudo pronto. <br /> Aproveite :)</h1>
             </div>
+            
             <div className={`${user ? 'opacity-0' : 'opacity-100'} bg-black transtion-all duration-500 pointer-events-none fixed z-50 flex 
             flex-col justify-center items-center w-full min-h-screen`}>
                 <p className={`control-text text-[50px]`}>Control</p>
@@ -90,7 +93,7 @@ export default function PersonalDesktopWindow({ onFinish }: PersonalProps) {
                     loop
                     autoplay
                 />
-                <p className={`control-text text-[20px] opacity-80`}>(Se isso persistir recarregue a página)</p>
+                <p className={`control-text text-[20px] opacity-80`}>(Se essa tela persistir, recarregue a página)</p>
             </div>
             {loading ?
                 (<div className={`${done2 ? 'opacity-0' : ''} flex flex-col gap-2 items-center w-full max-w-[600px]`}>

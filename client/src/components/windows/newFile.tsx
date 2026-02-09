@@ -2,7 +2,7 @@ import { ChevronDown, X } from "lucide-react"
 import { useState } from "react"
 import { useWindowContext } from "../../context/WindowContext";
 import { returnFilterEffects } from "../../types/auth";
-import { createFile } from "../../services/file";
+// import { createFile } from "../../services/file";
 import { useUser } from "../../context/AuthContext";
 import { DotLottieReact } from "@lottiefiles/dotlottie-react";
 import { useAppContext } from "../../context/AppContext";
@@ -97,7 +97,7 @@ export default function NewFileWindow() {
                 return;
         }
         try {
-            await createFile(finalPayload);
+            // await createFile(finalPayload);
             setName(null)
         } catch (error) {
             console.error("Falha ao criar o ficheiro:", error);
