@@ -9,3 +9,8 @@ export interface RegisterData {
     filterBlur: BasicFilter,
     filterColor: ColorFilter,
 }
+
+export interface LoginData {
+    email: string;
+    password: string;
+}
