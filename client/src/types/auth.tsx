@@ -3,6 +3,17 @@
 export type BasicFilter = 'off' | 'low' | 'high'
 export type ColorFilter = 'color' | 'gray'
 
+export interface UserData {
+  id: string;
+  name: string;
+  email: string;
+  filterDark: BasicFilter,
+  filterBlur: BasicFilter,
+  filterColor: ColorFilter,
+  token: string;
+  createdAt: string;
+}
+
 export interface RegisterData {
   name: string;
   email: string;
@@ -15,6 +26,7 @@ export interface RegisterData {
 export interface LoginData {
   email: string;
   password: string;
+  rememberMe: boolean;
 }
 
 export const returnFilterEffects = (user: any | null) => {

@@ -8,6 +8,7 @@ import { DotLottieReact } from '@lottiefiles/dotlottie-react';
 // import { FirebaseError } from "firebase/app";
 import '../../App.css'
 import { useUser } from "../../context/AuthContext";
+import { LoginData } from "../../types/auth";
 
 const loginSchema = z.object({
     email: z.string().email({ message: "Por favor, insira um e-mail válido." }),
@@ -46,6 +47,7 @@ export default function AuthPage() {
     const [loginForm, setLoginForm] = useState<boolean>(true);
     const [error, setError] = useState<string | null>(null)
     const [approved, setApproved] = useState<boolean>(true)
+    
     useEffect(() => {
         setTimeout(() => { setApproved(false) }, 100);
     }, []);
@@ -66,11 +68,13 @@ export default function AuthPage() {
                 setError(null);
                 setSent(true);
                 const loginData = data as z.infer<typeof loginSchema>
-                await authLoginUser(loginData.email, loginData.password, rememberMe);
+                await authLoginUser({ email: loginData.email, password: loginData.password, rememberMe } as LoginData);
                 setApproved(true)
+
                 setTimeout(() => {
                     navigate('/dashboard')
                 }, 1000)
+                console.log('oi')
             } catch (error) {
                 setSent(false)
                 // const fbError = error as FirebaseError
@@ -91,7 +95,10 @@ export default function AuthPage() {
                 setError(null);
                 setSent(true);
                 const registerData = data as z.infer<typeof registerSchema>
-                await authRegisterUser(registerData.name, registerData.email, registerData.password, rememberMe, 'low', 'low', 'color');
+                await authRegisterUser({
+                    name: registerData.name, email: registerData.email, password: registerData.password,
+                    filterDark: 'low', filterBlur: 'low', filterColor: 'color'
+                });
                 setApproved(true)
                 setTimeout(() => {
                     navigate('/dashboard')

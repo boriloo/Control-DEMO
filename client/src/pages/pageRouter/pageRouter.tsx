@@ -35,7 +35,7 @@ export default function PageRouter() {
 
                 <Route
                     path="/auth"
-                    element={!isAuthenticated ? <AuthPage /> : <Navigate to='/dashboard' replace />}
+                    element={isAuthenticated ? <Navigate to='/dashboard' replace /> : <AuthPage />}
                 />
 
 
