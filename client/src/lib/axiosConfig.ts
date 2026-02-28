@@ -25,20 +25,23 @@ api.interceptors.response.use(
     async (error) => {
         const originalRequest = error.config;
 
-        if (error.response?.status === 401 && !originalRequest._retry) {
+        if (error.response?.status === 401 && !originalRequest._retry && !originalRequest.url.includes('/auth/login')) {
             originalRequest._retry = true;
-
+            
             try {
-                const response = await axios.post("http://localhost:3000/auth/refresh", {}, { withCredentials: true });
+                const response = await axios.post("http://localhost:3000/auth/refresh", {}, { 
+                    withCredentials: true
+                });
 
                 const { token } = response.data;
                 localStorage.setItem("accessToken", token);
 
                 originalRequest.headers.Authorization = `Bearer ${token}`;
 
-                return api(originalRequest);
+                return axios(originalRequest); 
             } catch (refreshError) {
-
+             
+                localStorage.removeItem("accessToken");
                 return Promise.reject(refreshError);
             }
         }

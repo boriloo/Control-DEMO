@@ -47,7 +47,7 @@ export default function AuthPage() {
     const [loginForm, setLoginForm] = useState<boolean>(true);
     const [error, setError] = useState<string | null>(null)
     const [approved, setApproved] = useState<boolean>(true)
-    
+
     useEffect(() => {
         setTimeout(() => { setApproved(false) }, 100);
     }, []);
@@ -68,6 +68,7 @@ export default function AuthPage() {
                 setError(null);
                 setSent(true);
                 const loginData = data as z.infer<typeof loginSchema>
+                console.log('REMEMBER ME?', rememberMe)
                 await authLoginUser({ email: loginData.email, password: loginData.password, rememberMe } as LoginData);
                 setApproved(true)
 
