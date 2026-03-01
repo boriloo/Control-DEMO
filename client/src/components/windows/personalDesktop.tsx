@@ -12,7 +12,6 @@ interface PersonalProps {
     onFinish: (boolean: true) => void;
 }
 
-
 export default function PersonalDesktopWindow({ onFinish }: PersonalProps) {
     const { user, changeCurrentDesktop, authLogoutUser } = useUser();
     const [imageSelected, setImageSelected] = useState<File>()
@@ -29,7 +28,7 @@ export default function PersonalDesktopWindow({ onFinish }: PersonalProps) {
             // setLoading(true)
             if (!imageSelected || !user || !desktopName) return;
 
-            await createDesktopService({ name: desktopName, backgroundImage: imageSelected } as CreateDesktopData)
+            const newDesktop = await createDesktopService({ name: desktopName, backgroundImage: imageSelected } as CreateDesktopData)
 
             // setPercentage(prev => (prev + 16.66))
 
@@ -47,7 +46,7 @@ export default function PersonalDesktopWindow({ onFinish }: PersonalProps) {
 
             // const updatedDesktop = await updateDesktopBackground(newDesktop.id, downloadURL)
 
-            localStorage.setItem('background', localUrl);
+            localStorage.setItem('background', newDesktop.backgroundImage);
 
             // changeCurrentDesktop(updatedDesktop)
             setPercentage(prev => (prev + 18.66))

@@ -2,6 +2,7 @@ import axios from "axios";
 
 export const api = axios.create({
     baseURL: `http://localhost:3000`,
+    withCredentials: true
 })
 
 
@@ -27,9 +28,9 @@ api.interceptors.response.use(
 
         if (error.response?.status === 401 && !originalRequest._retry && !originalRequest.url.includes('/auth/login')) {
             originalRequest._retry = true;
-            
+
             try {
-                const response = await axios.post("http://localhost:3000/auth/refresh", {}, { 
+                const response = await axios.post("http://localhost:3000/auth/refresh", {}, {
                     withCredentials: true
                 });
 
@@ -38,9 +39,9 @@ api.interceptors.response.use(
 
                 originalRequest.headers.Authorization = `Bearer ${token}`;
 
-                return axios(originalRequest); 
+                return axios(originalRequest);
             } catch (refreshError) {
-             
+
                 localStorage.removeItem("accessToken");
                 return Promise.reject(refreshError);
             }

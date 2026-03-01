@@ -35,6 +35,8 @@ export const authLoginController = async (req: Request, res: Response) => {
     try {
         const { email, password, rememberMe } = req.body
 
+        console.log(typeof rememberMe, rememberMe);
+
         if (!email || !password || typeof rememberMe !== 'boolean') {
             return res.status(400).json({ error: "Missing fields." });
         }
@@ -80,5 +82,20 @@ export const authRefreshController = async (req: Request, res: Response) => {
         return res.status(200).json(data);
     } catch (err) {
         return res.status(401).json({ error: "Session expired" });
+    }
+}
+
+export const authLogoutController = async (req: Request, res: Response) => {
+    try {
+        res.clearCookie('refreshCookie', {
+            httpOnly: true,
+            secure: false,
+            sameSite: 'strict',
+            path: '/', // MUITO importante
+        });
+
+        return res.status(200).json({ message: 'User logged out' })
+    } catch (err) {
+        return res.status(500).json({ error: err })
     }
 }

@@ -10,16 +10,21 @@ import { CreateDesktopData } from "../types/desktop";
 
 export const createDesktopService = async ({ name, ownerId, backgroundImage }: CreateDesktopData) => {
     const query = `
-    INSERT INTO desktops (name, owner, backgroundImage)
+    INSERT INTO desktops (name, owner_id, background_image)
     VALUES ($1, $2, $3)
-    RETURNING id, name, ownerId, backgroundImage, created_at
+    RETURNING id, name, owner_id, background_image, created_at
     `
 
     const values = [name, ownerId, backgroundImage]
 
     const response = await pool.query(query, values)
 
-    return response.rows[0]
+    const desktop = response.rows[0]
+
+    return {
+        ...desktop,
+        backgroundImage: desktop.background_image.toString('base64')
+    }
 
 }
 

@@ -3,10 +3,12 @@ import { createDesktopService } from "../services/desktopService";
 import { CreateDesktopData } from "../types/desktop";
 
 export const createDesktopController = async (req: Request, res: Response) => {
-    const ownerId = (req as any).userId
+    const ownerId = (req as any).userId;
 
     try {
-        const { name, backgroundImage } = req.body
+        const { name } = req.body;
+
+        const backgroundImage = req.file?.buffer;
 
         if (!name || !ownerId || !backgroundImage) {
             return res.status(400).json({ error: "Missing fields." });
@@ -18,7 +20,7 @@ export const createDesktopController = async (req: Request, res: Response) => {
 
     } catch (err: any) {
 
-        return res.status(500).json({ error: "Server Error." })
+        return res.status(500).json({ error: err })
     }
 
 }

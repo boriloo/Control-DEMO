@@ -48,6 +48,9 @@ export const authLoginService = async ({ email, password, rememberMe }: LoginDat
     const secret = process.env.JWT_SECRET;
     const refreshSecret = process.env.JWT_REFRESH_SECRET;
 
+    console.log("refreshSecret:", refreshSecret);
+
+
     const token = jwt.sign(
         { id: user.id, email: user.email },
         secret as string,
@@ -92,3 +95,5 @@ export const authRefreshService = async (cookieToken: string) => {
         throw new Error("Invalid refresh token");
     }
 }
+
+

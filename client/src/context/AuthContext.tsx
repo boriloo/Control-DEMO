@@ -12,7 +12,7 @@ import {
 import { useAppContext } from "./AppContext";
 // import { FullDesktopData, getDesktopById, getDesktopsByMember } from "../services/desktop";
 import { BasicFilter, ColorFilter, LoginData, RegisterData, UserData } from "../types/auth";
-import { authLoginService, authRefreshService, authRegisterService } from "../services/authServices";
+import { authLoginService, authLogoutService, authRefreshService, authRegisterService } from "../services/authServices";
 import { api } from "../lib/axiosConfig";
 import { getMeService } from "../services/userServices";
 // import { createUserEmailRef } from "../services/email";
@@ -118,7 +118,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     async function authLogoutUser() {
         try {
             closeAllWindows()
-            // signOut(auth)
+            await authLogoutService();
             setIsAuthenticated(false)
             setUser(null)
             setHasDesktops(false)
