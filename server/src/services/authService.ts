@@ -8,9 +8,10 @@ import { UserData } from "../types/user";
 // Service for registering users
 export const authRegisterService = async ({ name, email, password }: RegisterData) => {
 
-    const userExists = await pool.query('SELECT * FROM users WHERE email = $1', [email])
+    const response = await pool.query('SELECT * FROM users WHERE email = $1', [email])
+    const userExists = response.rows.length > 0
 
-    if (userExists.rows.length > 0) {
+    if (!userExists) {
         throw new Error("User already exists.")
     }
 
@@ -77,10 +78,9 @@ export const authRefreshService = async (cookieToken: string) => {
     const refreshSecret = process.env.JWT_REFRESH_SECRET;
 
     try {
- 
+
         const decoded = jwt.verify(cookieToken, refreshSecret as string) as { id: string, email: string };
 
-        // 2. Se for válido, gera um NOVO Access Token (curto)
         const newToken = jwt.sign(
             { id: decoded.id, email: decoded.email },
             process.env.JWT_SECRET as string,

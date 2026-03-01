@@ -44,7 +44,7 @@ export const authLoginController = async (req: Request, res: Response) => {
         if (user.refreshToken) {
             res.cookie('refreshCookie', user.refreshToken, {
                 httpOnly: true,
-                secure: true,
+                secure: false,
                 sameSite: 'strict',
                 maxAge: daysInMilliseconds(30)
             })

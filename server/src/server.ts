@@ -5,6 +5,7 @@ import { authRouter } from "./routes/authRouter"
 import { userRouter } from "./routes/userRouter";
 import { authMiddleware } from "./middlewares/authMiddleware";
 import cookieParser from 'cookie-parser';
+import { desktopRouter } from "./routes/desktopRouter";
 
 
 const app = express();
@@ -25,3 +26,4 @@ app.listen(port, () => {
 
 app.use("/auth", authRouter)
 app.use("/user", authMiddleware, userRouter)
+app.use("/desktop", authMiddleware, desktopRouter)

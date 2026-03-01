@@ -5,6 +5,8 @@ import { ClickableImageInput } from "../imageInput";
 import { useUser } from "../../context/AuthContext";
 import { DotLottieReact } from "@lottiefiles/dotlottie-react";
 import { LogOut } from "lucide-react";
+import { createDesktopService } from "../../services/desktopServices";
+import { CreateDesktopData } from "../../types/desktop";
 
 interface PersonalProps {
     onFinish: (boolean: true) => void;
@@ -26,19 +28,10 @@ export default function PersonalDesktopWindow({ onFinish }: PersonalProps) {
             const localUrl = URL.createObjectURL(imageSelected)
             // setLoading(true)
             if (!imageSelected || !user || !desktopName) return;
-            // const newDesktop = await createDesktop({
-            //     name: desktopName,
-            //     type: 'personal',
-            //     ownerId: user.uid as string,
-            //     members: [{
-            //         userId: user.uid as string,
-            //         userName: user.name as string,
-            //         userImage: user.profileImage as string,
-            //         role: 'owner'
-            //     }],
-            //     membersId: [user.uid as string]
-            // })
-            setPercentage(prev => (prev + 16.66))
+
+            await createDesktopService({ name: desktopName, backgroundImage: imageSelected } as CreateDesktopData)
+
+            // setPercentage(prev => (prev + 16.66))
 
             // const storage = getStorage();
             // setPercentage(prev => (prev + 16.66))
@@ -83,7 +76,7 @@ export default function PersonalDesktopWindow({ onFinish }: PersonalProps) {
             absolute z-200 bg-zinc-900 w-full min-h-screen flex justify-center items-center p-4`}>
                 <h1 className={`${done ? 'opacity-100 mt-0' : 'opacity-0 mt-7'} transition-all duration-700 text-[40px] text-center`}>Tudo pronto. <br /> Aproveite :)</h1>
             </div>
-            
+
             <div className={`${user ? 'opacity-0' : 'opacity-100'} bg-black transtion-all duration-500 pointer-events-none fixed z-50 flex 
             flex-col justify-center items-center w-full min-h-screen`}>
                 <p className={`control-text text-[50px]`}>Control</p>
@@ -131,10 +124,11 @@ export default function PersonalDesktopWindow({ onFinish }: PersonalProps) {
                     </div>
                     <div className="flex flex-col gap-2 w-full max-w-[1000px]">
                         <p className="text-lg">Tela de fundo</p>
+
                         <ClickableImageInput onFileSelected={(file) => {
                             setImageSelected(file)
-                            console.log(imageSelected)
                         }} />
+
                     </div>
 
                     <button onClick={handleSubmit} disabled={!imageSelected || !desktopName} className={`${!imageSelected || !desktopName ? 'pointer-events-none saturate-0 opacity-40' : ''}

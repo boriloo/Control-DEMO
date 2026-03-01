@@ -14,7 +14,7 @@ import { useAppContext } from "./AppContext";
 import { BasicFilter, ColorFilter, LoginData, RegisterData, UserData } from "../types/auth";
 import { authLoginService, authRefreshService, authRegisterService } from "../services/authServices";
 import { api } from "../lib/axiosConfig";
-import { getMeService } from "../services/userService";
+import { getMeService } from "../services/userServices";
 // import { createUserEmailRef } from "../services/email";
 // import { registerPublicUser, updatePublicUserProfileImage } from "../services/public";
 

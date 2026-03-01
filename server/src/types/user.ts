@@ -1,7 +1,7 @@
 export type BasicFilter = 'off' | 'low' | 'high'
 export type ColorFilter = 'color' | 'gray'
 
-export interface UserData {
+export type UserData = {
     id: string;
     name: string;
     email: string;
