@@ -72,7 +72,7 @@ export default function DashboardPage() {
 
         // return unsubscribeAll;
 
-    }, [currentDesktop?.id, user?.uid]);
+    }, [currentDesktop?.id, user?.id]);
 
     const desktopRef = useRef<HTMLDivElement>(null);
     const [contentToRight, setContentToRight] = useState<boolean>(false)
@@ -182,7 +182,7 @@ export default function DashboardPage() {
                 style={{ backgroundImage: `url(${localStorage.getItem('background')})` }}></div>)}
             {hasDesktops && (<div className={`${start ? 'opacity-100 ' : 'blur-3xl opacity-0'} transition-[opacity,filter] duration-1500 scale-101 flex min-h-screen w-full fixed 
              bg-cover bg-center z-[-1]`}
-                style={{ backgroundImage: `url(${currentDesktop?.background})` }}></div>)}
+                style={{ backgroundImage: `url(${currentDesktop?.backgroundImage})` }}></div>)}
             {hasDesktops ? '' : (<PersonalDesktopWindow onFinish={(bool) => setHasDesktops(bool)} />)}
 
             <ConfigWindow />
@@ -209,9 +209,18 @@ export default function DashboardPage() {
                         </button>
                     </div>
                     <SearchBar />
-                    <div onClick={listdt.openWindow} className="flex flex-row items-center justify-between gap-2 p-1 px-3 cursor-pointer rounded-md bg-black/40 backdrop-blur-md hover:bg-black/65 border-[1px] 
+
+                    {/* VERSÃO LANÇAMENTO */}
+
+                    {/* <div onClick={listdt.openWindow} className="flex flex-row items-center justify-between gap-2 p-1 px-3 cursor-pointer rounded-md bg-black/40 backdrop-blur-md hover:bg-black/65 border-[1px] 
                 border-white hover:text-blue-500 hover:border-blue-500 transition-all w-full max-w-50 select-none">
                         <p className="text-lg truncate">{currentDesktop?.name} ({currentDesktop?.type})</p>
+                        <GripVertical />
+                    </div> */}
+
+                    <div onClick={listdt.openWindow} className="flex flex-row items-center justify-between gap-2 p-1 px-3 cursor-pointer rounded-md bg-black/40 backdrop-blur-md hover:bg-black/65 border-[1px] 
+                border-white hover:text-blue-500 hover:border-blue-500 transition-all w-full max-w-50 select-none">
+                        <p className="text-lg truncate">{currentDesktop?.name}</p>
                         <GripVertical />
                     </div>
                 </div>

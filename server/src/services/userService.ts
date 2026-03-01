@@ -16,3 +16,5 @@ export const getMeService = async (id: string) => {
 
     return userWithoutPassword as UserData;
 }
+
+

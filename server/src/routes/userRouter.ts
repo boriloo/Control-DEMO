@@ -6,12 +6,13 @@ export const userRouter = Router()
 // GET ALL USER DATA
 userRouter.get("/me", getMeController)
 
+// GET DESKTOPS BY OWNER ID
+userRouter.get("/desktop/owner", (req, res) => {
+
+})
+
 // UPDATE USER DATA
 userRouter.patch("/", (req, res) => {
 
 })
 
-// GET DESKTOP BY OWNER ID
-userRouter.get("/:id/desktop", (req, res) => {
-
-})

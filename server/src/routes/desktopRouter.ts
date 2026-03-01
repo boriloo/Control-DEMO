@@ -1,6 +1,7 @@
 import { Router } from "express"
-import { createDesktopController } from "../controllers/desktopController"
+import { createDesktopController, getDesktopByIdController, getDesktopByOwnerController } from "../controllers/desktopController"
 import multer from 'multer';
+import { isDesktopsOwner, isSingleDesktopOwner } from "../middlewares/desktopMiddleware";
 const storage = multer.memoryStorage(); // Mantém o arquivo na RAM como Buffer
 const upload = multer({ storage });
 
@@ -10,9 +11,10 @@ export const desktopRouter = Router()
 desktopRouter.post("/", upload.single('backgroundImage'), createDesktopController)
 
 // GET DESKTOP BY ID
-desktopRouter.get("/:desktopId", (req, res) => {
+desktopRouter.get("/:id", isSingleDesktopOwner, getDesktopByIdController)
 
-})
+// GET DESKTOP BY OWNER
+desktopRouter.get("/", isDesktopsOwner, getDesktopByOwnerController)
 
 // UPDATE DESKTOP 
 desktopRouter.patch("/:desktopId", (req, res) => {

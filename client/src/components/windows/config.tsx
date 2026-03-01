@@ -13,9 +13,9 @@ export default function ConfigWindow() {
     const { config } = useWindowContext();
     const [isFullsceen, setIsFullscreen] = useState<boolean>(false)
 
-    useEffect(() => {
-        console.log('estado atual de user: ', user)
-    }, [user])
+    // useEffect(() => {
+    //     console.log('estado atual de user: ', user)
+    // }, [user])
 
     const handleAreaClick = (e: React.MouseEvent<HTMLElement>) => {
         if (e.target != e.currentTarget) return;

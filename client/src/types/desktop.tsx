@@ -4,6 +4,13 @@ export type CreateDesktopData = {
     backgroundImage: File,
 }
 
+export type DesktopData = {
+    id: string,
+    name: string,
+    backgroundImage: string,
+    createdAt: Date
+}
+
 // import { Timestamp } from "firebase/firestore";
 
 // export type DesktopType = "personal" | "team"

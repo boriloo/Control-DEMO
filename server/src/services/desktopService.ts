@@ -23,14 +23,50 @@ export const createDesktopService = async ({ name, ownerId, backgroundImage }: C
 
     return {
         ...desktop,
-        backgroundImage: desktop.background_image.toString('base64')
+        background_image: desktop.background_image.toString('base64')
     }
 
 }
 
 //GET DESKTOP BY ID
 
+export const getDesktopByIdService = async (id: string) => {
+    const response = await pool.query("SELECT * FROM desktops WHERE id = $1", [id])
+    const desktopExists = response.rows.length > 0
+
+    if (!desktopExists) {
+        throw new Error("Desktop doesn't exist.")
+    }
+
+    const desktop = response.rows[0]
+
+    return {
+        ...desktop,
+        background_image: desktop.background_image.toString('base64')
+    }
+
+}
+
+
 //GET DESKTOPS BY OWNER ID
+
+export const getDesktopByOwnerService = async (ownerId: string) => {
+    const response = await pool.query("SELECT * FROM desktops WHERE owner_id = $1", [ownerId])
+    const desktopExists = response.rows.length > 0
+
+    if (!desktopExists) {
+        throw new Error("No desktops were found.")
+    }
+
+    const desktops = response.rows
+
+    return desktops.map((desktop) => ({
+        ...desktop,
+        background_image: desktop.background_image ? desktop.background_image.toString('base64') : null
+    }))
+
+}
+
 
 //GET DESKTOPS BY MEMBER
 

@@ -21,9 +21,9 @@ const LoadingScreen = () => (
 export default function PageRouter() {
     const { isAuthenticated, isLoading } = useUser();
 
-    // if (isLoading) {
-    //     return <LoadingScreen />;
-    // }
+    if (isLoading) {
+        return <LoadingScreen />;
+    }
 
     return (
         <BrowserRouter>

@@ -15,13 +15,15 @@ import { BasicFilter, ColorFilter, LoginData, RegisterData, UserData } from "../
 import { authLoginService, authLogoutService, authRefreshService, authRegisterService } from "../services/authServices";
 import { api } from "../lib/axiosConfig";
 import { getMeService } from "../services/userServices";
+import { getDesktopByOwnerService } from "../services/desktopServices";
+import { DesktopData } from "../types/desktop";
 // import { createUserEmailRef } from "../services/email";
 // import { registerPublicUser, updatePublicUserProfileImage } from "../services/public";
 
 
 interface UserContextProps {
     isAuthenticated: boolean;
-    user: any;
+    user: UserData | null;
     currentDesktop: any | null;
     changeCurrentDesktop: (desktop: any) => void;
     authLoginUser: (data: LoginData) => Promise<void>;
@@ -40,44 +42,77 @@ const UserContext = createContext<UserContextProps | undefined>(undefined);
 export function AuthProvider({ children }: { children: ReactNode }) {
     const { closeAllWindows } = useAppContext();
     const [isAuthenticated, setIsAuthenticated] = useState<boolean>(true);
-    const [currentDesktop, setCurrentDesktop] = useState<any | null>(null);
+    const [currentDesktop, setCurrentDesktop] = useState<DesktopData | null>(null);
     const [user, setUser] = useState<UserData | null>(null);
     const [isLoading, setIsLoading] = useState<boolean>(true)
     const [hasDesktops, setHasDesktops] = useState<boolean>(false);
+
+    console.log('ESTADO ATUAL DO DESKTOP:', currentDesktop);
 
     const changeCurrentDesktop = useCallback((desktop: any) => {
         setCurrentDesktop(desktop)
     }, [])
 
     useEffect(() => {
-        const checkAuth = async () => {
+        const initApp = async () => {
+            setIsLoading(true);
+            let currentUser = null;
+
             try {
-                const userData = await getMeService();
-                setUser(userData);
+                currentUser = await getMeService();
+                setUser(currentUser);
                 setIsAuthenticated(true);
-                console.log('ESTAMOS AUTENTICADOS')
             } catch (err) {
                 try {
                     const { token } = await authRefreshService();
                     localStorage.setItem("accessToken", token);
-
-                    const userData = await getMeService();
-
-                    setUser(userData);
+                    currentUser = await getMeService();
+                    setUser(currentUser);
                     setIsAuthenticated(true);
-                    console.log('ESTAMOS AUTENTICADOS')
                 } catch (refreshErr) {
-
                     setIsAuthenticated(false);
                     setUser(null);
-                    console.log('NAO ESTAMOS AUTENTICADOS')
+                    setIsLoading(false);
+                    return;
                 }
-            } finally {
-                setIsLoading(false);
             }
+
+
+            if (currentUser) {
+                try {
+
+                    const desktops = await getDesktopByOwnerService();
+
+                    if (desktops && desktops.length > 0) {
+
+                        setHasDesktops(true);
+
+                        const firstDesktop = desktops[0];
+
+                        setCurrentDesktop({
+                            id: firstDesktop.id,
+                            name: firstDesktop.name,
+                            ownerId: firstDesktop.owner_id,
+                            backgroundImage: firstDesktop.background_image.startsWith('data:')
+                                ? firstDesktop.background_image
+                                : `data:image/png;base64,${firstDesktop.background_image}`,
+                            createdAt: firstDesktop.created_at
+                        } as DesktopData);
+
+
+                    } else {
+                        setHasDesktops(false);
+                    }
+                } catch (err) {
+                    setHasDesktops(false);
+                    setCurrentDesktop(null);
+                }
+            }
+
+            setIsLoading(false);
         };
 
-        checkAuth();
+        initApp();
     }, []);
 
 
