@@ -59,7 +59,7 @@ export default function DesktopConfigWindow() {
         setFormattedDtName((dtConfig.desktop.name).replace(/ /g, ''))
         setDesktopName(dtConfig.desktop.name)
 
-    }, [dtConfig.desktop?.id])
+    }, [dtConfig.desktop])
 
     if (!user) return null;
 

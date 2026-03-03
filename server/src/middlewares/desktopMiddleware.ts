@@ -13,7 +13,7 @@ export const isSingleDesktopOwner = async (req: Request, res: Response, next: Ne
         console.log(response.rows)
 
         if (response.rows.length > 0) {
-
+            console.log('vamos seguir')
             next();
         } else {
             return res.status(403).json({ error: "User is not desktop owner" });

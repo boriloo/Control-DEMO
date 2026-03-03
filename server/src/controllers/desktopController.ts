@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { createDesktopService, deleteDesktopService, getDesktopByIdService, getDesktopByOwnerService } from "../services/desktopService";
+import { createDesktopService, deleteDesktopService, getDesktopByIdService, getDesktopByOwnerService, updateDesktopService } from "../services/desktopService";
 import { CreateDesktopData } from "../types/desktop";
 
 export const createDesktopController = async (req: Request, res: Response) => {
@@ -59,6 +59,31 @@ export const getDesktopByOwnerController = async (req: Request, res: Response) =
         return res.status(500).json({ error: 'Server Error' })
     }
 }
+
+
+export const updateDesktopController = async (req: Request, res: Response) => {
+    try {
+        const desktopId = req.params.id
+        const { name } = req.body;
+        const backgroundImage = req.file?.buffer;
+
+        const desktop = await updateDesktopService(desktopId as string, { name, backgroundImage });
+
+        return res.status(201).json(desktop);
+    } catch (err: any) {
+
+        if (err.message === "No fields provided for update.") {
+            return res.status(404).json({ error: err.message })
+        }
+
+        if (err.message === "Desktop not found.") {
+            return res.status(404).json({ error: err.message })
+        }
+
+        return res.status(500).json({ error: 'Server Error' })
+    }
+}
+
 
 
 export const deleteDesktopController = async (req: Request, res: Response) => {

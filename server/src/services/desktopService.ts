@@ -88,7 +88,47 @@ export const getDesktopByOwnerService = async (ownerId: string) => {
 
 //UPDATE DESKTOP
 
+export const updateDesktopService = async (id: string, data: { name?: string; backgroundImage?: Buffer }) => {
+    const fields: string[] = [];
+    const values: any[] = [];
+    let queryIndex = 1;
 
+    if (data.name) {
+        fields.push(`name = $${queryIndex++}`);
+        values.push(data.name);
+    }
+
+    if (data.backgroundImage) {
+        fields.push(`background_image = $${queryIndex++}`);
+        values.push(data.backgroundImage);
+    }
+
+    if (fields.length === 0) {
+        throw new Error("No fields provided for update.");
+    }
+
+    values.push(id);
+
+    const query = `
+        UPDATE desktops 
+        SET ${fields.join(', ')} 
+        WHERE id = $${queryIndex}
+        RETURNING id, name, background_image;
+    `;
+
+    const response = await pool.query(query, values);
+
+    if (response.rows.length === 0) {
+        throw new Error("Desktop not found.");
+    }
+
+    const updated = response.rows[0];
+
+    return {
+        ...updated,
+        backgroundImage: updated.backgroundImage ? updated.backgroundImage.toString('base64') : null
+    };
+};
 
 //DELETE DESKTOP
 
