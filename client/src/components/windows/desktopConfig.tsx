@@ -11,7 +11,7 @@ import { DotLottieReact } from "@lottiefiles/dotlottie-react";
 // import { db } from "../../firebase/config";
 import { useAppContext } from "../../context/AppContext";
 import { FullFileData } from "../../types/file";
-import { FullDesktopData } from "../../types/desktop";
+import { DesktopData } from "../../types/desktop";
 // import { FullFileData, listenToAllFilesByDesktop } from "../../services/file";
 
 
@@ -23,12 +23,14 @@ export default function DesktopConfigWindow() {
     const [currentImage, setCurrentImage] = useState<File | null>(null)
     const [isFullsceen, setIsFullscreen] = useState<boolean>(false)
     const [confirmDelete, setConfirmDelete] = useState<boolean>(false)
-    const [windowDesktop, setWindowDesktop] = useState<FullDesktopData | null>(null)
+    const [windowDesktop, setWindowDesktop] = useState<DesktopData | null>(null)
     const [formattedUserName, setFormattedUserName] = useState<string | null>(null)
     const [formattedDtName, setFormattedDtName] = useState<string | null>(null)
     const [deleteInput, setDeleteInput] = useState<string>('')
     const [desktopName, setDesktopName] = useState('')
     const [allFiles, setAllFiles] = useState<FullFileData[]>([]);
+
+    console.log(windowDesktop)
 
     useEffect(() => {
         if (!user || !currentDesktop?.id) return;
@@ -43,44 +45,19 @@ export default function DesktopConfigWindow() {
 
         // return () => unsubscribeAll();
 
-    }, [currentDesktop?.id, user?.uid]);
+    }, [currentDesktop?.id, user?.id]);
 
     useEffect(() => {
-        const desktopId = dtConfig.desktop?.id;
-
-        if (!desktopId) {
+        if (!dtConfig.desktop) {
             setWindowDesktop(null);
             return;
-        };
+        }
 
-        // const desktopRef = doc(db, "desktops", desktopId);
+        setWindowDesktop(dtConfig.desktop)
 
-        // const unsubscribe = onSnapshot(desktopRef, (desktop) => {
-        //     if (desktop.exists()) {
-        //         const desktopData = {
-        //             id: desktop.id,
-        //             ...desktop.data()
-        //         } as FullDesktopData
-
-        //         setWindowDesktop(desktopData)
-        //         setDesktopName(desktopData.name)
-        //         const formatUser = (user?.name as string).replace(/ /g, '')
-        //         setFormattedUserName(formatUser)
-        //         const formatDt = (desktopData.name).replace(/ /g, '')
-        //         setFormattedDtName(formatDt)
-        //     }
-        //     else {
-        //         console.log("O documento do desktop não existe mais.");
-        //         setWindowDesktop(null);
-        //     }
-        // }, (error) => {
-        //     console.error("Erro ao ouvir os desktops:", error);
-        // });
-
-        // return () => {
-        //     console.log("Cancelando o listener do desktop.");
-        //     unsubscribe();
-        // };
+        setFormattedUserName((user?.name as string).replace(/ /g, ''))
+        setFormattedDtName((dtConfig.desktop.name).replace(/ /g, ''))
+        setDesktopName(dtConfig.desktop.name)
 
     }, [dtConfig.desktop?.id])
 
@@ -223,7 +200,6 @@ export default function DesktopConfigWindow() {
                 </div>
             </div>
 
-
             <div className={`${isFullsceen ? 'max-w-full max-h-full' : 'rounded-lg max-w-[1200px] max-h-[700px]'} ${dtConfig.currentStatus === "open" ? 'scale-100' : 'scale-0 '} 
                 bg-zinc-900 cursor-default origin-center relative transition-all duration-300 flex flex-col w-full h-full overflow-y-auto`}>
                 <div className="z-50 sticky select-none top-0 w-full bg-black/60 h-8 flex flex-row justify-between items-center backdrop-blur-[6px]">
@@ -234,8 +210,8 @@ export default function DesktopConfigWindow() {
                     </div>
                 </div>
 
-                <div className="absolute w-full top-0 h-[450px] z-1 bg-cover bg-center" style={{ backgroundImage: `url(${windowDesktop?.background})` }} />
-                <div className="absolute w-full h-[450px] z-2 bg-gradient-to-b from-zinc-900/40 to-zinc-900" />
+                <div className="absolute w-full top-0 h-[450px] z-1 bg-cover bg-center" style={{ backgroundImage: `url(${windowDesktop?.backgroundImage})` }} />
+                <div className="absolute w-full h-[450px] z-2 bg-gradient-to-b from-zinc-900/20 to-zinc-900" />
                 <div className="absolute w-full top-0 h-[450px] z-0 flex justify-center items-center">
                     <DotLottieReact
                         src="https://lottie.host/e580eaa4-d189-480f-a6ce-f8c788dff90d/MP2FjoJFFE.lottie"
@@ -257,11 +233,11 @@ export default function DesktopConfigWindow() {
                 <div className="flex flex-col gap-2 p-4 mt-[80px] z-3">
                     <div className="flex flex-row justify-between gap-2 p-4 items-center flex-wrap">
                         <div className="flex flex-col gap-1 items-start">
-                            <p className="text-[15px] opacity-80">Criado em {windowDesktop?.createdAt?.toLocaleDateString('pt-BR')}</p>
+                            <p className="text-[15px] opacity-80">Criado em {new Date(windowDesktop?.createdAt as Date)?.toLocaleDateString('pt-BR')}</p>
                             <h1 className="text-[38px] mt-[-10px]">{windowDesktop?.name}</h1>
-                            <p className="text-[18px]">Desktop {windowDesktop?.type}</p>
+                            {/* <p className="text-[18px]">Desktop {windowDesktop?.type}</p>
                             <p className="p-1 px-3 mt-5 bg-zinc-950/50 border-1 border-zinc-600 rounded-full">{windowDesktop?.members.length}
-                                {windowDesktop?.members.length && windowDesktop?.members.length > 1 ? ' Membros' : ' Membro'}</p>
+                                {windowDesktop?.members.length && windowDesktop?.members.length > 1 ? ' Membros' : ' Membro'}</p> */}
                         </div>
                         <div className="p-2 pb-3 flex flex-col bg-zinc-950/60 backdrop-blur-[2px] border-1 border-zinc-800 rounded-lg min-w-[300px]">
                             <p>Espaço Ocupado</p>
@@ -344,7 +320,9 @@ export default function DesktopConfigWindow() {
                         </div>
 
 
-                        <div className="flex flex-col w-full max-w-[500px] p-4 rounded-xl gap-3 bg-zinc-950/70">
+                        {/* VERSAO LANCAMENTO */}
+
+                        {/* <div className="flex flex-col w-full max-w-[500px] p-4 rounded-xl gap-3 bg-zinc-950/70">
                             <div className="flex flex-row justify-between gap-2 items-center">
                                 <p className="text-xl">Membros</p>
                                 <Plus size={35} className="p-1 rounded-full hover:bg-zinc-800 cursor-pointer transition-all" />
@@ -353,6 +331,8 @@ export default function DesktopConfigWindow() {
                             <div className="w-[100%] h-[1px] bg-zinc-400/40" />
 
                             <div className="flex flex-col w-full gap-3 mt-3 max-h-[570px] overflow-y-auto">
+
+
                                 {windowDesktop?.members.map((member) =>
                                     <div key={member.userId} className="flex flex-row w-full justify-between items-center bg-zinc-900 
                                     p-3 px-3 rounded-md group hover:bg-zinc-800/70 transition-all select-none inset-shadow-sm inset-shadow-zinc-800 shadow-md">
@@ -376,7 +356,7 @@ export default function DesktopConfigWindow() {
                                 )}
 
                             </div>
-                        </div>
+                        </div> */}
 
                     </div>
 

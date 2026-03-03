@@ -47,8 +47,8 @@ export default function NewFileWindow() {
         const basePayload = {
             desktopId: currentDesktop.id,
             parentId: null,
-            ownerId: user.uid,
-            usersId: [user.uid],
+            ownerId: user.id,
+            usersId: [user.id],
             name: name,
             type: fileType,
             position: { x: 500, y: 500 },
@@ -170,24 +170,32 @@ export default function NewFileWindow() {
                             <img src="/assets/images/open-folder.png" className="w-6" />
                             Pasta
                         </div>
-                        <div onClick={() => { setFileType('text'); setDrop(true) }} className={`${fileType === 'text' ? 'border-blue-500 text-blue-500' : 'border-transparent'} 
+
+                        {/* VERSAO LANCAMENTO */}
+
+                        {/* <div onClick={() => { setFileType('text'); setDrop(true) }} className={`${fileType === 'text' ? 'border-blue-500 text-blue-500' : 'border-transparent'} 
                             border-1 p-2 flex flex-row gap-4 transition-all hover:bg-zinc-900 rounded-md cursor-pointer select-none`}>
                             <img src="/assets/images/text-file.png" className="w-6" />
                             Texto
-                        </div>
+                        </div> */}
+
                         <div onClick={() => { setFileType('link'); setDrop(true) }}
                             className={`${fileType === 'link' ? 'border-blue-500 text-blue-500' : 'border-transparent'} 
                             border-1 p-2 flex flex-row gap-4 transition-all hover:bg-zinc-900 rounded-md cursor-pointer select-none`}>
                             <img src="/assets/images/link.png" className="w-6" />
                             Link
                         </div>
-                        <div onClick={() => { setFileType('drive'); setDrop(true) }}
+
+                        {/* VERSAO LANCAMENTO */}
+
+                        {/* <div onClick={() => { setFileType('drive'); setDrop(true) }}
                             className={`${fileType === 'drive' ? 'border-blue-500 border-1 bg-blue-500/10' : 'border-transparent'} 
                              p-2 flex flex-row gap-4 transition-all rounded-md cursor-pointer select-none
                             bg-gradient-to-r from-blue-500/20 to-transparent hover:bg-blue-500/5`}>
                             <img src="/assets/images/google-drive.png" className="w-6" />
                             Google Drive
-                        </div>
+                        </div> */}
+                        
                     </div>
                     {fileType !== 'drive' && (
                         <div className="flex flex-col gap-1">

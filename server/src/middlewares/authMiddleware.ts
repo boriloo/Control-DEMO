@@ -10,6 +10,7 @@ export const authMiddleware = (req: Request, res: Response, next: NextFunction) 
     try {
         const decoded = jwt.verify(token as string, process.env.JWT_SECRET as string) as { id: string };
         (req as any).userId = decoded.id;
+        console.log('auth tudo certo')
         next();
     } catch (err) {
         return res.status(401).json({ error: "Invalid token" });

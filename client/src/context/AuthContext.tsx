@@ -47,7 +47,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const [isLoading, setIsLoading] = useState<boolean>(true)
     const [hasDesktops, setHasDesktops] = useState<boolean>(false);
 
-    console.log('ESTADO ATUAL DO DESKTOP:', currentDesktop);
+    console.log(user)
 
     const changeCurrentDesktop = useCallback((desktop: any) => {
         setCurrentDesktop(desktop)
@@ -56,60 +56,47 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     useEffect(() => {
         const initApp = async () => {
             setIsLoading(true);
-            let currentUser = null;
 
             try {
-                currentUser = await getMeService();
-                setUser(currentUser);
+                const currentUser = await getMeService();
+
+                setUser({
+                    id: currentUser.id,
+                    email: currentUser.email,
+                    name: currentUser.name,
+                    filterDark: currentUser.filter_dark,
+                    filterBlur: currentUser.filter_blur,
+                    filterColor: currentUser.filter_color,
+                    createdAt: currentUser.created_at
+                } as UserData);
+
                 setIsAuthenticated(true);
+
+                console.log(currentUser)
+
+                const desktops = await getDesktopByOwnerService();
+
+                const firstDesktop = desktops[0]
+
+                if (desktops && desktops.length > 0) {
+                    setHasDesktops(true);
+                    setCurrentDesktop({
+                        id: firstDesktop.id,
+                        name: firstDesktop.name,
+                        ownerId: firstDesktop.owner_id,
+                        backgroundImage: firstDesktop.background_image.startsWith('data:')
+                            ? firstDesktop.background_image
+                            : `data:image/png;base64,${firstDesktop.background_image}`,
+                        createdAt: firstDesktop.created_at,
+
+                    } as DesktopData);
+                }
             } catch (err) {
-                try {
-                    const { token } = await authRefreshService();
-                    localStorage.setItem("accessToken", token);
-                    currentUser = await getMeService();
-                    setUser(currentUser);
-                    setIsAuthenticated(true);
-                } catch (refreshErr) {
-                    setIsAuthenticated(false);
-                    setUser(null);
-                    setIsLoading(false);
-                    return;
-                }
+                setIsAuthenticated(false);
+                setUser(null);
+            } finally {
+                setIsLoading(false);
             }
-
-
-            if (currentUser) {
-                try {
-
-                    const desktops = await getDesktopByOwnerService();
-
-                    if (desktops && desktops.length > 0) {
-
-                        setHasDesktops(true);
-
-                        const firstDesktop = desktops[0];
-
-                        setCurrentDesktop({
-                            id: firstDesktop.id,
-                            name: firstDesktop.name,
-                            ownerId: firstDesktop.owner_id,
-                            backgroundImage: firstDesktop.background_image.startsWith('data:')
-                                ? firstDesktop.background_image
-                                : `data:image/png;base64,${firstDesktop.background_image}`,
-                            createdAt: firstDesktop.created_at
-                        } as DesktopData);
-
-
-                    } else {
-                        setHasDesktops(false);
-                    }
-                } catch (err) {
-                    setHasDesktops(false);
-                    setCurrentDesktop(null);
-                }
-            }
-
-            setIsLoading(false);
         };
 
         initApp();

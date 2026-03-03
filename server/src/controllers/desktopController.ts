@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { createDesktopService, getDesktopByIdService, getDesktopByOwnerService } from "../services/desktopService";
+import { createDesktopService, deleteDesktopService, getDesktopByIdService, getDesktopByOwnerService } from "../services/desktopService";
 import { CreateDesktopData } from "../types/desktop";
 
 export const createDesktopController = async (req: Request, res: Response) => {
@@ -33,8 +33,8 @@ export const getDesktopByIdController = async (req: Request, res: Response) => {
         return res.status(201).json(desktop);
     } catch (err: any) {
 
-        if (err.message = "Desktop doesn't exist.") {
-            return res.status(404).json({ error: 'Server Error' })
+        if (err.message === "Desktop doesn't exist.") {
+            return res.status(404).json({ error: err.message })
         }
 
         return res.status(500).json({ error: 'Server Error' })
@@ -52,10 +52,29 @@ export const getDesktopByOwnerController = async (req: Request, res: Response) =
         return res.status(201).json(desktops);
     } catch (err: any) {
 
-        if (err.message = "No desktops were found.") {
+        if (err.message === "No desktops were found.") {
             return res.status(404).json({ error: err.message })
         }
 
         return res.status(500).json({ error: 'Server Error' })
     }
 }
+
+
+export const deleteDesktopController = async (req: Request, res: Response) => {
+    try {
+        const desktopId = req.params.id
+
+        await deleteDesktopService(desktopId as string);
+
+        return res.status(204).send();
+    } catch (err: any) {
+
+        if (err.message === "Desktop doesn't exist.") {
+            return res.status(404).json({ error: err.message })
+        }
+
+        return res.status(500).json({ error: 'Server Error' })
+    }
+}
+

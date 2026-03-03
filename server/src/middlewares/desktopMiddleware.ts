@@ -4,18 +4,16 @@ import { pool } from '../lib/postgres';
 export const isSingleDesktopOwner = async (req: Request, res: Response, next: NextFunction) => {
     const ownerId = (req as any).userId
 
-    console.log(ownerId)
-
     const desktopId = req.params.id
-
-    console.log(desktopId)
-
+    console.log('ownerId', ownerId)
+    console.log('desktopId', desktopId)
     try {
         const response = await pool.query('SELECT id FROM desktops WHERE id = $1 AND owner_id = $2', [desktopId, ownerId])
 
         console.log(response.rows)
 
         if (response.rows.length > 0) {
+
             next();
         } else {
             return res.status(403).json({ error: "User is not desktop owner" });

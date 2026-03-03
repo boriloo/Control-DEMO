@@ -6,10 +6,10 @@ import { useAppContext } from "../../context/AppContext";
 import { useEffect, useState } from "react";
 // import { getDesktopById } from "../../services/desktop";
 import { useTranslation } from "react-i18next";
+import { getDesktopByOwnerService } from "../../services/desktopServices";
+import { DesktopData } from "../../types/desktop";
 // import { collection, onSnapshot, query, where } from "firebase/firestore";
 // import { db } from "../../firebase/config";
-
-
 
 export default function ListDesktopsWindow() {
     const { t } = useTranslation();
@@ -17,7 +17,7 @@ export default function ListDesktopsWindow() {
     const { minimazeAllWindows } = useAppContext();
     const { listdt, newdt, dtConfig } = useWindowContext();
     const [loading, setLoading] = useState<boolean>(false);
-    const [allDesktops, setAllDesktops] = useState<any[]>([]);
+    const [allDesktops, setAllDesktops] = useState<DesktopData[]>([]);
 
     const handleAreaClick = (e: React.MouseEvent<HTMLElement>) => {
         if (e.target != e.currentTarget) return;
@@ -30,18 +30,15 @@ export default function ListDesktopsWindow() {
             return;
         };
 
-        // const q = query(collection(db, "desktops"), where("membersId", "array-contains", user.uid));
+        const getAllDesktops = async () => {
+            const desktops = await getDesktopByOwnerService();
 
-        // const unsubscribe = onSnapshot(q, (querySnapshot) => {
-        //     const desktopsFromDb = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+            const otherDesktops = desktops.filter((desktop: DesktopData) => desktop.id !== currentDesktop?.id);
 
-        //     const otherDesktops = desktopsFromDb.filter(desktop => desktop.id !== currentDesktop?.id);
-        //     setAllDesktops(otherDesktops);
-        // }, (error) => {
-        //     console.error("Erro ao ouvir os desktops:", error);
-        // });
+            setAllDesktops(otherDesktops)
+        }
 
-        // return () => unsubscribe();
+        getAllDesktops();
 
     }, [user, currentDesktop?.id]);
 
@@ -56,7 +53,7 @@ export default function ListDesktopsWindow() {
             throw err
         } finally {
             setTimeout(() => {
-                setLoading(false)   
+                setLoading(false)
             }, 1000)
         }
     }
@@ -70,22 +67,29 @@ export default function ListDesktopsWindow() {
                 <h1 className="text-[24px]">{t("listdt.title")}</h1>
                 <div className={`${loading ? 'opacity-20 saturate-0 pointer-events-none' : ''} transition-all flex flex-col gap-2 w-full max-h-[500px] overflow-y-auto`}>
                     <p className="text-lg">{t("listdt.current")}</p>
-                    <div className="group flex flex-row w-full p-3 justify-between items-center rounded-sm border-1 border-blue-500 transition-all hover:bg-zinc-950">
+                    <div className="group flex flex-row w-full p-3 justify-between items-center rounded-sm border border-blue-500 transition-all hover:bg-zinc-950">
                         <h1 className="text-lg">
                             {currentDesktop?.name} {''}
-                            ({currentDesktop?.type})
+
+                            {/* VERSÃO LANÇAMENTO */}
+
+                            {/* ({currentDesktop?.type}) */}
                         </h1>
                         <div className="flex flex-row gap-2 items-center">
                             <p className="transition-all opacity-0 group-hover:opacity-100 mr-[-5px] group-hover:mr-1">
-                                {currentDesktop?.members.length} {''}
-                                {currentDesktop?.members.length && currentDesktop?.members.length > 1 ? t("listdt.members") : t("listdt.member")}
+
+                                {/* VERSÃO LANÇAMENTO */}
+
+                                {/* {currentDesktop?.members.length} {''}
+                                {currentDesktop?.members.length && currentDesktop?.members.length > 1 ? t("listdt.members") : t("listdt.member")} */}
                             </p>
                             <Menu onClick={() => {
+                                console.log('novo desk', currentDesktop)
                                 minimazeAllWindows()
                                 dtConfig.openWindow()
                                 dtConfig.setDesktop(currentDesktop)
                             }} className="cursor-pointer transition-all opacity-0 group-hover:opacity-100 hover:bg-blue-500/15 hover:border-blue-500 
-                            hover:text-blue-500 w-9 h-9 p-1 bg-white/5 border-1 border-white/40 rounded-md" />
+                            hover:text-blue-500 w-9 h-9 p-1 bg-white/5 border border-white/40 rounded-md" />
                         </div>
                     </div>
                     <p className="text-lg mt-2">{t("listdt.others")}</p>
@@ -94,16 +98,31 @@ export default function ListDesktopsWindow() {
                             <div key={desktop.id} className="group flex flex-row w-full p-3 justify-between items-center 
                             rounded-sm border border-white/30 transition-all hover:bg-zinc-950">
                                 <h1 className="text-lg">
-                                    {desktop.name} ({desktop.type})
+                                    {desktop.name}
+
+
+                                    {/* VERSÃO LANÇAMENTO */}
+
+                                    {/* ({desktop.type}) */}
+
+
                                 </h1>
                                 <div className="flex flex-row gap-2 items-center">
-                                    <p className="transition-all opacity-0 group-hover:opacity-100 mr-[-5px] group-hover:mr-1">
+
+
+                                    {/* VERSÃO LANÇAMENTO */}
+
+                                    {/* <p className="transition-all opacity-0 group-hover:opacity-100 mr-[-5px] group-hover:mr-1">
                                         {desktop.members.length} {desktop.members.length > 1 ? t("listdt.members") : t("listdt.member")}
-                                    </p>
+                                    </p> */}
+
+
                                     <Menu onClick={() => {
+
                                         minimazeAllWindows()
                                         dtConfig.openWindow()
                                         dtConfig.setDesktop(desktop)
+
                                     }} className="cursor-pointer transition-all opacity-0 group-hover:opacity-100 hover:bg-blue-500/15 hover:border-blue-500 hover:text-blue-500 w-9 h-9 p-1 bg-white/5 border border-white/40 rounded-md" />
                                     <ExternalLink onClick={() => handleChangeDesktop(desktop.id)} className="cursor-pointer transition-all opacity-0 group-hover:opacity-100 hover:bg-blue-500/15 hover:border-blue-500 hover:text-blue-500 w-9 h-9 p-1 bg-white/5 border border-white/40 rounded-md" />
                                 </div>
@@ -120,7 +139,7 @@ export default function ListDesktopsWindow() {
                         minimazeAllWindows();
                         newdt.openWindow();
                         dtConfig.setDesktop(null)
-                    }} className={`sticky max-w-55 mt-5 bottom-0 left-[50%] bg-zinc-900 translate-x-[-50%] border-1 border-blue-500 transition-all cursor-pointer 
+                    }} className={`sticky max-w-55 mt-5 bottom-0 left-[50%] bg-zinc-900 translate-x-[-50%] border border-blue-500 transition-all cursor-pointer 
             hover:bg-blue-500 p-2 px-3 rounded-sm font-medium`}>{t("listdt.create")}</button>
                 </div>
             </div>

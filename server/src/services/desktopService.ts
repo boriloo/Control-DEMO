@@ -67,12 +67,43 @@ export const getDesktopByOwnerService = async (ownerId: string) => {
 
 }
 
-
 //GET DESKTOPS BY MEMBER
+
+// export const getDesktopByMemberService = async (ownerId: string) => {
+//     const response = await pool.query("SELECT * FROM desktops WHERE owner_id = $1", [ownerId])
+//     const desktopExists = response.rows.length > 0
+
+//     if (!desktopExists) {
+//         throw new Error("No desktops were found.")
+//     }
+
+//     const desktops = response.rows
+
+//     return desktops.map((desktop) => ({
+//         ...desktop,
+//         background_image: desktop.background_image ? desktop.background_image.toString('base64') : null
+//     }))
+
+// }
 
 //UPDATE DESKTOP
 
+
+
 //DELETE DESKTOP
+
+export const deleteDesktopService = async (id: string) => {
+    const response = await pool.query("SELECT id FROM desktops WHERE id = $1", [id])
+
+    const desktopExists = response.rows.length > 0
+
+    if (!desktopExists) {
+        throw new Error("Desktop doesn't exist.")
+    }
+
+    await pool.query("DELETE FROM desktops WHERE id = $1", [id])
+
+}
 
 //----------------------------
 

@@ -6,7 +6,7 @@ import { useState } from "react";
 // import { createDesktop, updateDesktopBackground } from "../../services/desktop";
 // import { getDownloadURL, getStorage, ref, uploadBytes } from "firebase/storage";
 import { ClickableImageInput } from "../imageInput";
-import { DesktopType } from "../../types/desktop";
+// import { DesktopType } from "../../types/desktop";
 import { DotLottieReact } from "@lottiefiles/dotlottie-react";
 import { useAppContext } from "../../context/AppContext";
 
@@ -18,7 +18,11 @@ export default function NewDesktopWindow() {
     const [imageSelected, setImageSelected] = useState<File>()
     const [desktopName, setDesktopName] = useState<string | null>()
     const [loading, setLoading] = useState<boolean>(false)
-    const [desktopType, setDesktopType] = useState<DesktopType>('personal')
+
+
+    // VERSAO LANCAMENTO
+
+    // const [desktopType, setDesktopType] = useState<DesktopType>('personal')
 
 
     const handleSubmit = async () => {
@@ -86,20 +90,26 @@ export default function NewDesktopWindow() {
                     <p className="text-lg">Tipo de Desktop</p>
                     <div className="flex flex-row gap-2 w-full">
                         <div className="flex-1 relative">
-                            <button
+
+                            {/* VERSAO LANCAMENTO */}
+
+                            {/* <button
                                 onClick={() => setDesktopType('personal')}
                                 className={`${desktopType === 'personal' ? 'bg-blue-500' : 'hover:bg-white/10'} 
                                 peer font-medium border border-blue-500 rounded-md p-2 w-full transition-all cursor-pointer`}
                             >
                                 Pessoal
-                            </button>
+                            </button> */}
 
                             <p className="bg-zinc-900/30 backdrop-blur-sm rounded-lg p-1 px-2 absolute top-0 left-[50%] mt-[-65px] 
                             translate-x-[-50%] w-[90%] peer-hover:opacity-100 opacity-0 transition-opacity duration-400 text-center">Apenas para você, deixe tudo do seu jeito</p>
                         </div>
                         <div className="flex-1 relative">
-                            <button onClick={() => setDesktopType('team')} className={`${desktopType === 'team' ? 'bg-blue-500' : 'hover:bg-white/10'} 
-                              peer font-medium border-1 border-blue-500 rounded-md p-2 w-full transition-all cursor-pointer `}>Equipe</button>
+                            
+                            {/* VERSAO LANCAMENTO */}
+
+                            {/* <button onClick={() => setDesktopType('team')} className={`${desktopType === 'team' ? 'bg-blue-500' : 'hover:bg-white/10'} 
+                              peer font-medium border-1 border-blue-500 rounded-md p-2 w-full transition-all cursor-pointer `}>Equipe</button> */}
 
                             <p className="bg-zinc-900/30 backdrop-blur-sm rounded-lg p-1 px-2 absolute top-0 left-[50%] mt-[-65px] 
                             translate-x-[-50%] w-[90%] peer-hover:opacity-100 opacity-0 transition-opacity duration-400 text-center">Adicione membros, e compartilhe seus arquivos</p>

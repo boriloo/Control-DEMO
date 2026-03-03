@@ -16,10 +16,13 @@ export default function TaskBar() {
                 minimazeAllWindows()
                 profile.openWindow()
             }} src="/assets/images/profile.png" alt="profile" className=" p-1.5 px-2 w-11 transition-all cursor-pointer hover:bg-zinc-500/30" />
-            <img onClick={() => {
+
+            {/* VERSAO LANCAMENTO */}
+
+            {/* <img onClick={() => {
                 minimazeAllWindows()
                 social.openWindow()
-            }} src="/assets/images/users.png" alt="users" className=" p-1.5 px-2 w-11 transition-all cursor-pointer hover:bg-zinc-500/30" />
+            }} src="/assets/images/users.png" alt="users" className=" p-1.5 px-2 w-11 transition-all cursor-pointer hover:bg-zinc-500/30" /> */}
         </div>
     )
 }
