@@ -47,8 +47,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const [isLoading, setIsLoading] = useState<boolean>(true)
     const [hasDesktops, setHasDesktops] = useState<boolean>(false);
 
-    console.log(user)
-
     const changeCurrentDesktop = useCallback((desktop: any) => {
         setCurrentDesktop(desktop)
     }, [])

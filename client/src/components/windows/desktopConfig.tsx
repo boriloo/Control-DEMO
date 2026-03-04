@@ -12,6 +12,7 @@ import { DotLottieReact } from "@lottiefiles/dotlottie-react";
 import { useAppContext } from "../../context/AppContext";
 import { FullFileData } from "../../types/file";
 import { DesktopData } from "../../types/desktop";
+import { deleteDesktopService, getDesktopByOwnerService, updateDesktopService } from "../../services/desktopServices";
 // import { FullFileData, listenToAllFilesByDesktop } from "../../services/file";
 
 
@@ -19,7 +20,9 @@ export default function DesktopConfigWindow() {
     const { callToast } = useAppContext();
     const { user, currentDesktop, changeCurrentDesktop, setHasDesktops } = useUser();
     const { dtConfig } = useWindowContext();
+
     const [loading, setLoading] = useState<boolean>(false)
+
     const [currentImage, setCurrentImage] = useState<File | null>(null)
     const [isFullsceen, setIsFullscreen] = useState<boolean>(false)
     const [confirmDelete, setConfirmDelete] = useState<boolean>(false)
@@ -30,7 +33,6 @@ export default function DesktopConfigWindow() {
     const [desktopName, setDesktopName] = useState('')
     const [allFiles, setAllFiles] = useState<FullFileData[]>([]);
 
-    console.log(windowDesktop)
 
     useEffect(() => {
         if (!user || !currentDesktop?.id) return;
@@ -68,53 +70,42 @@ export default function DesktopConfigWindow() {
         dtConfig.closeWindow();
     }
 
-    const handleEditName = async () => {
-        if (!desktopName || !windowDesktop) return;
+    const handleEditDesktop = async () => {
+        if (!windowDesktop || !desktopName || !currentImage) return;
+
+        setLoading(true)
+
         try {
-            setLoading(true)
-            // const updatedDesktop = await updateDesktopName(windowDesktop.id, desktopName)
-            // setWindowDesktop(updatedDesktop)
-
-            if (currentDesktop?.id === windowDesktop.id) {
-                changeCurrentDesktop({
-                    ...windowDesktop,
-                    name: desktopName,
-                });
-            }
-            callToast({ message: 'Nome do desktop alterado!', type: 'success' })
-        } catch (err) {
-            console.log('ERRO AO ATUALIZAR NOME PELAS CONFIGURAÇÕES: ', err)
-        } finally {
-            setLoading(false)
-        }
-    }
-
-
-    const handleEditBackground = async () => {
-        if (!currentImage || !windowDesktop) return;
-        try {
-            setLoading(true)
-            const localUrl = URL.createObjectURL(currentImage)
-            // const storage = getStorage();
-            // const storageRef = ref(storage, `desktops/${windowDesktop.id}/background`);
-            // const snapshot = await uploadBytes(storageRef, currentImage);
-            // const downloadURL = await getDownloadURL(snapshot.ref);
-            // const updatedDesktop = await updateDesktopBackground(windowDesktop.id as string, downloadURL)
-            // setWindowDesktop(updatedDesktop)
+            const bgForReq = currentImage ? currentImage : undefined
+            const updatedDesktop = await updateDesktopService(windowDesktop.id, { name: desktopName, backgroundImage: bgForReq, })
 
             setCurrentImage(null)
 
-            if (currentDesktop?.id === windowDesktop.id) {
-                console.log(windowDesktop)
-                localStorage.setItem('background', localUrl);
-                changeCurrentDesktop({
-                    ...windowDesktop,
-                    background: localUrl,
-                });
-            }
             callToast({ message: 'Fundo do desktop alterado!', type: 'success' })
+
+            console.log('ACABOU DE ATUALIZAR', updatedDesktop)
+
+            setWindowDesktop({
+                ...currentDesktop,
+                name: updatedDesktop.name,
+                backgroundImage: `data:image/png;base64,${updatedDesktop.background_image}`
+            });
+            dtConfig.setDesktop({
+                ...currentDesktop,
+                name: updatedDesktop.name,
+                backgroundImage: `data:image/png;base64,${updatedDesktop.background_image}`
+            });
+
+            if (currentDesktop.id === windowDesktop.id) {
+                changeCurrentDesktop({
+                    ...currentDesktop,
+                    name: updatedDesktop.name,
+                    backgroundImage: `data:image/png;base64,${updatedDesktop.background_image}`
+                })
+            }
+
         } catch (err) {
-            console.log('ERRO AO ATUALIZAR IMAGEM PELAS CONFIGURAÇÕES: ', err)
+            callToast({ message: 'Erro ao alterar desktop!', type: 'error' })
         } finally {
             setLoading(false)
         }
@@ -138,23 +129,26 @@ export default function DesktopConfigWindow() {
 
 
     const deleteDesktopFunction = async () => {
+        if (!windowDesktop) return;
+
         try {
             if (currentDesktop?.id === dtConfig.desktop?.id) {
 
-                // const desktops = await getDesktopsByMember(user?.uid as string);
+                const desktops = await getDesktopByOwnerService();
 
-                // const otherDesktops = desktops.filter(d => d.id !== dtConfig.desktop?.id);
+                const otherDesktops = desktops.filter((d: any) => d.id !== dtConfig.desktop?.id);
 
-                // if (otherDesktops.length === 0) {
-                //     setTimeout(() => {
-                //         setHasDesktops(false);
-                //     }, 1000)
-                // } else {
-                //     changeCurrentDesktop(otherDesktops[0]);
-                // }
+                if (otherDesktops.length === 0) {
+                    setTimeout(() => {
+                        setHasDesktops(false);
+                    }, 1000)
+                } else {
+                    changeCurrentDesktop(otherDesktops[0]);
+                }
             }
 
-            // await deleteDesktopById(user.uid as string, dtConfig.desktop?.id as string);
+            await deleteDesktopService(windowDesktop.id)
+
             setDeleteInput('')
             setConfirmDelete(false);
             dtConfig.closeWindow();
@@ -287,7 +281,7 @@ export default function DesktopConfigWindow() {
                                     />
                                 </div>
                             ) : (
-                                <button disabled={!currentImage} onClick={handleEditBackground} className={`${currentImage ? '' : 'pointer-events-none saturate-0 opacity-50'} border-1 border-blue-500 transition-all cursor-pointer 
+                                <button disabled={(!desktopName || desktopName === windowDesktop?.name) && !currentImage} onClick={handleEditDesktop} className={`${(desktopName && desktopName != windowDesktop?.name) || currentImage ? '' : 'pointer-events-none saturate-0 opacity-50'} border-1 border-blue-500 transition-all cursor-pointer 
             hover:bg-blue-500 p-2 px-3 rounded-sm font-medium`}>Salvar Alterações</button>
                             )}
 

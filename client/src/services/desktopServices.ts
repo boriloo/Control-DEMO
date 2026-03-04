@@ -16,9 +16,19 @@ export const getDesktopByOwnerService = async () => {
 }
 
 export const updateDesktopService = async (id: string, data: UpdateDesktopData) => {
-    const response = await api.patch(`/desktop/${id}`, data, { headers: { 'Content-Type': 'multipart/form-data' } });
+    const formData = new FormData();
 
-    return (response).data;
+    if (data.name) {
+        formData.append('name', data.name);
+    }
+
+    if (data.backgroundImage) {
+        formData.append('backgroundImage', data.backgroundImage);
+    }
+
+    const response = await api.patch(`/desktop/${id}`, formData);
+
+    return response.data;
 }
 
 export const deleteDesktopService = async (id: string) => {

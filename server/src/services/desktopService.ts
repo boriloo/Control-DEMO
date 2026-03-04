@@ -126,7 +126,7 @@ export const updateDesktopService = async (id: string, data: { name?: string; ba
 
     return {
         ...updated,
-        backgroundImage: updated.backgroundImage ? updated.backgroundImage.toString('base64') : null
+        background_image: updated.background_image ? updated.background_image.toString('base64') : null
     };
 };
 

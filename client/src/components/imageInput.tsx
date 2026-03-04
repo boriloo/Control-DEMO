@@ -10,7 +10,7 @@ type ClickableImageInputProps = {
 
 export function ClickableImageInput({ onFileSelected, currentImageUrl }: ClickableImageInputProps) {
     const { dtConfig } = useWindowContext();
-    const [preview, setPreview] = useState<string | null>(currentImageUrl || null);
+    const [preview, setPreview] = useState<string | undefined>(currentImageUrl || undefined);
     const [errors, setError] = useState<string | null>()
 
     const onDrop = useCallback((acceptedFiles: File[]) => {
@@ -45,8 +45,8 @@ export function ClickableImageInput({ onFileSelected, currentImageUrl }: Clickab
     }, [preview, currentImageUrl]);
 
     useEffect(() => {
-        setPreview(null)
-    }, [dtConfig.desktop?.background])
+        setPreview(undefined)
+    }, [dtConfig.desktop?.backgroundImage])
 
     return (
         <>
@@ -69,10 +69,10 @@ export function ClickableImageInput({ onFileSelected, currentImageUrl }: Clickab
                     </>
                 ) : (
                     <>
-                        {dtConfig.desktop?.background ? (<>
+                        {dtConfig.desktop?.backgroundImage ? (<>
                             <div
                                 className="w-full h-[168px] bg-cover bg-center"
-                                style={{ backgroundImage: `url(${dtConfig.desktop?.background} )` }}
+                                style={{ backgroundImage: `url(${dtConfig.desktop?.backgroundImage} )` }}
                             />
                             <div className="absolute top-0 left-0 z-10 w-full h-full flex justify-center items-center font-medium text-lg transition-all 
       opacity-0 bg-black/50 group-hover:opacity-100 backdrop-blur-sm">
