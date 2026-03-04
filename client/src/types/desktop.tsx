@@ -4,6 +4,11 @@ export type CreateDesktopData = {
     backgroundImage: File,
 }
 
+export type UpdateDesktopData = {
+    name?: string,
+    backgroundImage?: File,
+}
+
 export type DesktopData = {
     id: string,
     name: string,

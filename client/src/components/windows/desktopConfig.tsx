@@ -211,7 +211,7 @@ export default function DesktopConfigWindow() {
                 </div>
 
                 <div className="absolute w-full top-0 h-[450px] z-1 bg-cover bg-center" style={{ backgroundImage: `url(${windowDesktop?.backgroundImage})` }} />
-                <div className="absolute w-full h-[450px] z-2 bg-gradient-to-b from-zinc-900/20 to-zinc-900" />
+                <div className="absolute w-full h-[450px] z-2 bg-gradient-to-b from-zinc-900/30 from-0% to-zinc-900 to-78%" />
                 <div className="absolute w-full top-0 h-[450px] z-0 flex justify-center items-center">
                     <DotLottieReact
                         src="https://lottie.host/e580eaa4-d189-480f-a6ce-f8c788dff90d/MP2FjoJFFE.lottie"
@@ -261,22 +261,6 @@ export default function DesktopConfigWindow() {
                             </div>
 
 
-                            {loading ? (
-                                <div className={`
-            p-0.5 px-3 rounded-sm font-medium`}>
-                                    <DotLottieReact
-                                        src="https://lottie.host/e580eaa4-d189-480f-a6ce-f8c788dff90d/MP2FjoJFFE.lottie"
-                                        className="w-20 p-0"
-                                        loop
-                                        autoplay
-                                    />
-                                </div>
-                            ) : (
-                                <button disabled={!desktopName || loading} onClick={handleEditName} className={`${desktopName != windowDesktop?.name ? '' : 'pointer-events-none saturate-0 opacity-50'} border-1 border-blue-500 transition-all cursor-pointer 
-            hover:bg-blue-500 p-2 px-3 rounded-sm font-medium`}>Alterar Nome</button>
-                            )}
-
-
                             <div className="w-[100%] h-[1px] mt-1 bg-zinc-400/50"></div>
 
                             <h1 className="text-2xl">Tela de Fundo</h1>
@@ -290,6 +274,8 @@ export default function DesktopConfigWindow() {
                                 }} />
                             </div>
 
+                            <div className="w-[100%] h-[1px] mb-1 bg-zinc-400/50"></div>
+
                             {loading ? (
                                 <div className={`
             p-0.5 px-3 rounded-sm font-medium`}>
@@ -302,10 +288,8 @@ export default function DesktopConfigWindow() {
                                 </div>
                             ) : (
                                 <button disabled={!currentImage} onClick={handleEditBackground} className={`${currentImage ? '' : 'pointer-events-none saturate-0 opacity-50'} border-1 border-blue-500 transition-all cursor-pointer 
-            hover:bg-blue-500 p-2 px-3 rounded-sm font-medium`}>Alterar fundo</button>
+            hover:bg-blue-500 p-2 px-3 rounded-sm font-medium`}>Salvar Alterações</button>
                             )}
-
-                            <div className="w-[100%] h-[1px] mb-1 bg-zinc-400/50"></div>
 
                             <div className="bg-zinc-950/50 p-4 gap-3 flex flex-col w-full max-w-[400px] rounded-lg items-start border-1 border-zinc-800">
                                 <h1 className="text-2xl">Zona de risco</h1>
