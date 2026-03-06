@@ -9,12 +9,14 @@ import { ClickableImageInput } from "../imageInput";
 // import { DesktopType } from "../../types/desktop";
 import { DotLottieReact } from "@lottiefiles/dotlottie-react";
 import { useAppContext } from "../../context/AppContext";
+import { createDesktopService } from "../../services/desktopServices";
+import { CreateDesktopData } from "../../types/desktop";
 
 
 export default function NewDesktopWindow() {
     const { callToast } = useAppContext();
     const { newdt } = useWindowContext();
-    const { user, changeCurrentDesktop, } = useUser();
+    const { user, changeCurrentDesktop, standardDesktop } = useUser();
     const [imageSelected, setImageSelected] = useState<File>()
     const [desktopName, setDesktopName] = useState<string | null>()
     const [loading, setLoading] = useState<boolean>(false)
@@ -28,33 +30,24 @@ export default function NewDesktopWindow() {
     const handleSubmit = async () => {
         if (!imageSelected) return;
         try {
-            const localUrl = URL.createObjectURL(imageSelected)
+
             setLoading(true)
             if (!imageSelected || !user || !desktopName) return;
-            // const newDesktop = await createDesktop({
-            //     name: desktopName,
-            //     type: desktopType,
-            //     ownerId: user.uid as string,
-            //     members: [{
-            //         userId: user.uid as string,
-            //         userName: user.name as string,
-            //         userImage: user.profileImage as string,
-            //         role: 'owner'
-            //     }],
-            //     membersId: [user.uid as string]
-            // })
-            // const storage = getStorage();
-            // const storageRef = ref(storage, `desktops/${newDesktop.id}/background`);
-            // const snapshot = await uploadBytes(storageRef, imageSelected);
-            // const downloadURL = await getDownloadURL(snapshot.ref);
-            // const updatedDesktop = await updateDesktopBackground(newDesktop.id, downloadURL)
-            localStorage.setItem('background', localUrl);
-            // changeCurrentDesktop(updatedDesktop)
-            setLoading(false)
+            const response = await createDesktopService({ name: desktopName, backgroundImage: imageSelected } as CreateDesktopData)
+
+            const updatedDesktop = standardDesktop(response)
+
+            localStorage.setItem('background', updatedDesktop.backgroundImage);
+
+            changeCurrentDesktop(updatedDesktop)
+
             newdt.closeWindow();
+
             callToast({ message: 'Novo Desktop criado!', type: 'success' })
+
         } catch (err) {
             console.log('Erro ao criar: ', err)
+        } finally {
             setLoading(false)
         }
     }
@@ -105,7 +98,7 @@ export default function NewDesktopWindow() {
                             translate-x-[-50%] w-[90%] peer-hover:opacity-100 opacity-0 transition-opacity duration-400 text-center">Apenas para você, deixe tudo do seu jeito</p>
                         </div>
                         <div className="flex-1 relative">
-                            
+
                             {/* VERSAO LANCAMENTO */}
 
                             {/* <button onClick={() => setDesktopType('team')} className={`${desktopType === 'team' ? 'bg-blue-500' : 'hover:bg-white/10'} 

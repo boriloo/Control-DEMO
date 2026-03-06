@@ -6,14 +6,14 @@ import { useAppContext } from "../../context/AppContext";
 import { useEffect, useState } from "react";
 // import { getDesktopById } from "../../services/desktop";
 import { useTranslation } from "react-i18next";
-import { getDesktopByOwnerService } from "../../services/desktopServices";
+import { getDesktopByIdService, getDesktopByOwnerService } from "../../services/desktopServices";
 import { DesktopData } from "../../types/desktop";
 // import { collection, onSnapshot, query, where } from "firebase/firestore";
 // import { db } from "../../firebase/config";
 
 export default function ListDesktopsWindow() {
     const { t } = useTranslation();
-    const { user, currentDesktop, changeCurrentDesktop } = useUser();
+    const { user, currentDesktop, changeCurrentDesktop, standardDesktop } = useUser();
     const { minimazeAllWindows } = useAppContext();
     const { listdt, newdt, dtConfig } = useWindowContext();
     const [loading, setLoading] = useState<boolean>(false);
@@ -31,7 +31,19 @@ export default function ListDesktopsWindow() {
         };
 
         const getAllDesktops = async () => {
-            const desktops = await getDesktopByOwnerService();
+            const responseDesktops = await getDesktopByOwnerService();
+
+            const desktops = responseDesktops.map((desktop: any) => {
+                return {
+                    id: desktop.id,
+                    name: desktop.name,
+                    ownerId: desktop.owner_id,
+                    backgroundImage: desktop.background_image.startsWith('data:')
+                        ? desktop.background_image
+                        : `data:image/png;base64,${desktop.background_image}`,
+                    createdAt: desktop.created_at,
+                }
+            })
 
             const otherDesktops = desktops.filter((desktop: DesktopData) => desktop.id !== currentDesktop?.id);
 
@@ -40,14 +52,17 @@ export default function ListDesktopsWindow() {
 
         getAllDesktops();
 
-    }, [user, currentDesktop?.id]);
+    }, [user, dtConfig.desktop, currentDesktop?.id]);
 
     const handleChangeDesktop = async (id: string) => {
         setLoading(true)
         try {
-            // const newDesktop = await getDesktopById(id)
-            // changeCurrentDesktop(newDesktop)
-            localStorage.setItem('last-desktop', id);
+            const response = await getDesktopByIdService(id)
+            const updatedDesktop = standardDesktop(response)
+
+            changeCurrentDesktop(updatedDesktop)
+
+            localStorage.setItem('last-desktop', updatedDesktop.id);
         } catch (err) {
             console.log(err)
             throw err
@@ -66,10 +81,13 @@ export default function ListDesktopsWindow() {
                 <X onClick={listdt.minimizeWindow} size={35} className="absolute top-0 right-0 p-2 rounded-bl-lg cursor-pointer transition-all hover:bg-red-500" />
                 <h1 className="text-[24px]">{t("listdt.title")}</h1>
                 <div className={`${loading ? 'opacity-20 saturate-0 pointer-events-none' : ''} transition-all flex flex-col gap-2 w-full max-h-[500px] overflow-y-auto`}>
-                    <p className="text-lg">{t("listdt.current")}</p>
                     <div className="group flex flex-row w-full p-3 justify-between items-center rounded-sm border border-blue-500 transition-all hover:bg-zinc-950">
+                        <div className="w-full gap-1 flex flex-row text-lg text-blue-300">
+                            <p>Atual -</p>
+                            {currentDesktop?.name}
+                        </div>
                         <h1 className="text-lg">
-                            {currentDesktop?.name} {''}
+
 
                             {/* VERSÃO LANÇAMENTO */}
 
@@ -84,7 +102,6 @@ export default function ListDesktopsWindow() {
                                 {currentDesktop?.members.length && currentDesktop?.members.length > 1 ? t("listdt.members") : t("listdt.member")} */}
                             </p>
                             <Menu onClick={() => {
-                                console.log('novo desk', currentDesktop)
                                 minimazeAllWindows()
                                 dtConfig.openWindow()
                                 dtConfig.setDesktop(currentDesktop)
@@ -92,7 +109,6 @@ export default function ListDesktopsWindow() {
                             hover:text-blue-500 w-9 h-9 p-1 bg-white/5 border border-white/40 rounded-md" />
                         </div>
                     </div>
-                    <p className="text-lg mt-2">{t("listdt.others")}</p>
                     {allDesktops.length >= 1 ?
                         allDesktops.map((desktop) => (
                             <div key={desktop.id} className="group flex flex-row w-full p-3 justify-between items-center 
@@ -118,7 +134,6 @@ export default function ListDesktopsWindow() {
 
 
                                     <Menu onClick={() => {
-
                                         minimazeAllWindows()
                                         dtConfig.openWindow()
                                         dtConfig.setDesktop(desktop)

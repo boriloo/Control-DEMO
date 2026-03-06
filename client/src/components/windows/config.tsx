@@ -55,11 +55,15 @@ export default function ConfigWindow() {
                             <User />
                             <p className="overflow-hidden max-w-0 transition-all group-hover:pr-10 group-hover:ml-2 group-hover:max-w-80 text-lg">Conta</p>
                         </div>
-                        <div onClick={() => config.setCurrentTab('security')} className={`${config.currentTab === 'security' ? 'bg-blue-500 hover:bg-blue-600' : 'hover:bg-zinc-800'} 
+
+                        {/* VERSAO LANCAMENTO */}
+
+                        {/* <div onClick={() => config.setCurrentTab('security')} className={`${config.currentTab === 'security' ? 'bg-blue-500 hover:bg-blue-600' : 'hover:bg-zinc-800'} 
                             flex flex-row w-full items-center cursor-pointer rounded-md p-2 gap-0 transition-all hover:gap-1`}>
                             <Shield />
                             <p className="overflow-hidden max-w-0 transition-all group-hover:pr-10 group-hover:ml-2 group-hover:max-w-80 text-lg">Segurança</p>
-                        </div>
+                        </div> */}
+                        
                         <div onClick={() => config.setCurrentTab('appearance')} className={`${config.currentTab === 'appearance' ? 'bg-blue-500 hover:bg-blue-600' : 'hover:bg-zinc-800'} 
                             flex flex-row w-full items-center cursor-pointer rounded-md p-2 gap-0 transition-all hover:gap-1`}>
                             <Palette />

@@ -12,13 +12,13 @@ import { DotLottieReact } from "@lottiefiles/dotlottie-react";
 import { useAppContext } from "../../context/AppContext";
 import { FullFileData } from "../../types/file";
 import { DesktopData } from "../../types/desktop";
-import { deleteDesktopService, getDesktopByOwnerService, updateDesktopService } from "../../services/desktopServices";
+import { deleteDesktopService, getDesktopByIdService, getDesktopByOwnerService, updateDesktopService } from "../../services/desktopServices";
 // import { FullFileData, listenToAllFilesByDesktop } from "../../services/file";
 
 
 export default function DesktopConfigWindow() {
     const { callToast } = useAppContext();
-    const { user, currentDesktop, changeCurrentDesktop, setHasDesktops } = useUser();
+    const { user, currentDesktop, changeCurrentDesktop, setHasDesktops, standardDesktop } = useUser();
     const { dtConfig } = useWindowContext();
 
     const [loading, setLoading] = useState<boolean>(false)
@@ -57,6 +57,8 @@ export default function DesktopConfigWindow() {
 
         setWindowDesktop(dtConfig.desktop)
 
+        console.log('PORRA', dtConfig.desktop)
+
         setFormattedUserName((user?.name as string).replace(/ /g, ''))
         setFormattedDtName((dtConfig.desktop.name).replace(/ /g, ''))
         setDesktopName(dtConfig.desktop.name)
@@ -71,39 +73,25 @@ export default function DesktopConfigWindow() {
     }
 
     const handleEditDesktop = async () => {
-        if (!windowDesktop || !desktopName || !currentImage) return;
+        if (!windowDesktop || ((!desktopName || desktopName === windowDesktop?.name) && !currentImage)) return;
 
         setLoading(true)
 
         try {
             const bgForReq = currentImage ? currentImage : undefined
-            const updatedDesktop = await updateDesktopService(windowDesktop.id, { name: desktopName, backgroundImage: bgForReq, })
-
+            const response = await updateDesktopService(windowDesktop.id, { name: desktopName, backgroundImage: bgForReq, })
             setCurrentImage(null)
 
-            callToast({ message: 'Fundo do desktop alterado!', type: 'success' })
+            const updatedDesktop = standardDesktop(response);
 
-            console.log('ACABOU DE ATUALIZAR', updatedDesktop)
+            setWindowDesktop(updatedDesktop);
+            dtConfig.setDesktop(updatedDesktop);
 
-            setWindowDesktop({
-                ...currentDesktop,
-                name: updatedDesktop.name,
-                backgroundImage: `data:image/png;base64,${updatedDesktop.background_image}`
-            });
-            dtConfig.setDesktop({
-                ...currentDesktop,
-                name: updatedDesktop.name,
-                backgroundImage: `data:image/png;base64,${updatedDesktop.background_image}`
-            });
-
-            if (currentDesktop.id === windowDesktop.id) {
-                changeCurrentDesktop({
-                    ...currentDesktop,
-                    name: updatedDesktop.name,
-                    backgroundImage: `data:image/png;base64,${updatedDesktop.background_image}`
-                })
+            if (response.id === currentDesktop?.id) {
+                changeCurrentDesktop(updatedDesktop)
             }
 
+            callToast({ message: 'Fundo do desktop alterado!', type: 'success' })
         } catch (err) {
             callToast({ message: 'Erro ao alterar desktop!', type: 'error' })
         } finally {
@@ -114,9 +102,13 @@ export default function DesktopConfigWindow() {
     const handleChangeDesktop = async (id: string) => {
         setLoading(true)
         try {
-            // const newDesktop = await getDesktopById(id)
-            // changeCurrentDesktop(newDesktop)
-            localStorage.setItem('last-desktop', id);
+            const response = await getDesktopByIdService(id)
+            const updatedDesktop = standardDesktop(response)
+
+            changeCurrentDesktop(updatedDesktop)
+
+            localStorage.setItem('last-desktop', updatedDesktop.id);
+
         } catch (err) {
             console.log(err)
             throw err
@@ -281,8 +273,12 @@ export default function DesktopConfigWindow() {
                                     />
                                 </div>
                             ) : (
-                                <button disabled={(!desktopName || desktopName === windowDesktop?.name) && !currentImage} onClick={handleEditDesktop} className={`${(desktopName && desktopName != windowDesktop?.name) || currentImage ? '' : 'pointer-events-none saturate-0 opacity-50'} border-1 border-blue-500 transition-all cursor-pointer 
-            hover:bg-blue-500 p-2 px-3 rounded-sm font-medium`}>Salvar Alterações</button>
+                                <button
+                                    disabled={(!desktopName || desktopName === windowDesktop?.name) && !currentImage}
+                                    onClick={handleEditDesktop}
+                                    className={`${(!desktopName || desktopName === windowDesktop?.name) && !currentImage
+                                        ? 'pointer-events-none saturate-0 opacity-50' : ''} border-1 border-blue-500 transition-all cursor-pointer 
+                                    hover:bg-blue-500 p-2 px-3 rounded-sm font-medium`}>Salvar Alterações</button>
                             )}
 
                             <div className="bg-zinc-950/50 p-4 gap-3 flex flex-col w-full max-w-[400px] rounded-lg items-start border-1 border-zinc-800">

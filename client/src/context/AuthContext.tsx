@@ -24,8 +24,9 @@ import { DesktopData } from "../types/desktop";
 interface UserContextProps {
     isAuthenticated: boolean;
     user: UserData | null;
-    currentDesktop: any | null;
-    changeCurrentDesktop: (desktop: any) => void;
+    currentDesktop: DesktopData | null;
+    changeCurrentDesktop: (desktop: DesktopData) => void;
+    standardDesktop: (desktop: any) => DesktopData;
     authLoginUser: (data: LoginData) => Promise<void>;
     authRegisterUser: (data: RegisterData) => Promise<void>;
     authLogoutUser: () => Promise<void>;
@@ -50,6 +51,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const changeCurrentDesktop = useCallback((desktop: any) => {
         setCurrentDesktop(desktop)
     }, [])
+
+    const standardDesktop = (desktop: any) => {
+        return {
+            id: desktop.id,
+            name: desktop.name,
+            ownerId: desktop.owner_id,
+            backgroundImage: desktop.background_image.startsWith('data:')
+                ? desktop.background_image
+                : `data:image/png;base64,${desktop.background_image}`,
+            createdAt: desktop.created_at,
+        } as DesktopData
+    }
 
     useEffect(() => {
         const initApp = async () => {
@@ -235,6 +248,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
                 user,
                 currentDesktop,
                 changeCurrentDesktop,
+                standardDesktop,
                 authLoginUser,
                 authChangeUserFilters,
                 authRegisterUser,
