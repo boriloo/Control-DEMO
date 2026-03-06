@@ -57,8 +57,6 @@ export default function DesktopConfigWindow() {
 
         setWindowDesktop(dtConfig.desktop)
 
-        console.log('PORRA', dtConfig.desktop)
-
         setFormattedUserName((user?.name as string).replace(/ /g, ''))
         setFormattedDtName((dtConfig.desktop.name).replace(/ /g, ''))
         setDesktopName(dtConfig.desktop.name)
