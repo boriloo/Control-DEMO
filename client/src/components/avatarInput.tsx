@@ -177,12 +177,12 @@ export function AvatarImageInput({ onFileSelected, currentImageUrl }: AvatarImag
         <>
             <div
                 {...getRootProps()}
-                className="relative rounded-full overflow-hidden cursor-pointer group bg-zinc-700 transition w-full max-w-[120px] h-[120px] hover:bg-zinc-800"
+                className="relative rounded-full overflow-hidden cursor-pointer group bg-zinc-700 transition w-full max-w-[90px] h-[90px] hover:bg-zinc-800"
             >
                 <input {...getInputProps()} />
 
                 <div
-                    className="w-full h-[120px] bg-cover bg-center"
+                    className="w-full h-[90px] bg-cover bg-center"
                     style={{
                         backgroundImage: `url(${preview || user?.profileImage || '/assets/images/profile.png'})`,
                     }}

@@ -38,9 +38,10 @@ export default function AppearanceOption() {
 
 
     return (
-        <div className="flex flex-col items-start gap-4 p-4 w-full">
+        <div className="flex flex-col items-start gap-4 p-6 py-5 w-full">
             {hasDesktops && (<h1 className="text-[25px] flex">Aparência</h1>)}
-            <div className="w-full h-[1px] bg-zinc-600"></div>
+            <p className="text-md mt-[-12px] mb-1">Efeitos aplicados ao fundo quando uma janela é aberta.</p>
+            <div className="w-full h-[1px] bg-zinc-600 mt-[-10px]"></div>
 
             <div className="flex flex-col gap-4 px-2 items-start w-full">
                 <p className="text-xl mt-2">Filtros</p>
@@ -117,7 +118,7 @@ export default function AppearanceOption() {
                     </div>
                 ) : (
                     <button disabled={loading} onClick={handleEditFilters} className={`border-1 border-blue-500 transition-all cursor-pointer 
-            hover:bg-blue-500 p-2 px-3 rounded-sm font-medium`}>Salvar filtros</button>
+            hover:bg-blue-500 p-2 px-4 rounded-sm font-medium`}>Salvar filtros</button>
                 )}
             </div>
 
