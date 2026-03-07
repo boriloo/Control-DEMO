@@ -5,8 +5,7 @@ export const isSingleDesktopOwner = async (req: Request, res: Response, next: Ne
     const ownerId = (req as any).userId
 
     const desktopId = req.params.id
-    console.log('ownerId', ownerId)
-    console.log('desktopId', desktopId)
+
     try {
         const response = await pool.query('SELECT id FROM desktops WHERE id = $1 AND owner_id = $2', [desktopId, ownerId])
 
@@ -27,12 +26,8 @@ export const isSingleDesktopOwner = async (req: Request, res: Response, next: Ne
 export const isDesktopsOwner = async (req: Request, res: Response, next: NextFunction) => {
     const ownerId = (req as any).userId
 
-    console.log(ownerId)
-
     try {
         const response = await pool.query('SELECT id FROM desktops WHERE owner_id = $1', [ownerId])
-
-        console.log(response.rows)
 
         if (response.rows.length > 0) {
             next();
