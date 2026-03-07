@@ -8,14 +8,14 @@ import { CreateDesktopData } from "../types/desktop";
 
 //CREATE DESKTOP
 
-export const createDesktopService = async ({ name, ownerId, backgroundImage }: CreateDesktopData) => {
+export const createDesktopService = async (data: CreateDesktopData) => {
     const query = `
-    INSERT INTO desktops (name, owner_id, background_image)
+    INSERT INTO files (name, owner_id, background_image)
     VALUES ($1, $2, $3)
     RETURNING id, name, owner_id, background_image, created_at
     `
 
-    const values = [name, ownerId, backgroundImage]
+    const values = [data.name, data.ownerId, data.backgroundImage]
 
     const response = await pool.query(query, values)
 
@@ -27,6 +27,7 @@ export const createDesktopService = async ({ name, ownerId, backgroundImage }: C
     }
 
 }
+
 
 //GET DESKTOP BY ID
 

@@ -12,6 +12,16 @@ fileRouter.get("/:fileId", (req, res) => {
 
 })
 
+// GET FILE FROM OWNERID
+fileRouter.get("/", (req, res) => {
+
+})
+
+// GET FILE FROM DESKTOP
+fileRouter.get("/desktop/:desktopId", (req, res) => {
+
+})
+
 // UPDATE FILE POSITION
 fileRouter.post("/:fileId/position", (req, res) => {
 
