@@ -1,26 +1,33 @@
-export type FileType = "folder" | "text" | "link"
+type FileType = 'folder' | 'link'
 
-type PathSegment = {
-    id: string | null;
-    name: string;
-};
-
-export interface FileData {
-    desktopId: string;
-    parentId: string | null;
-    ownerId: string;
-    usersId: string[];
-    name: string;
-    type: FileType;
-    position: { x: number, y: number };
-    content?: string;
-    url?: string;
-    imageUrl?: string;
-    extension?: string;
-    filePath?: string;
-    sizeInBytes?: number;
-    path: PathSegment[];
+export type FileData = {
+    id: string,
+    name: string,
+    ownerId: string,
+    desktopId: string,
+    parentId: string,
+    fileType: FileType,
+    xPos: number,
+    yPos: number,
+    url?: string,
 }
 
-export type FullFileData = FileData & { id: string };
+export type CreateFileBodyData = {
+    name: string,
+    parentId: string,
+    fileType: FileType,
+    xPos: number,
+    yPos: number,
+    url?: string,
+}
 
+export type CreateFileData = {
+    name: string,
+    ownerId: string,
+    desktopId: string,
+    parentId: string,
+    fileType: FileType,
+    xPos: number,
+    yPos: number,
+    url?: string,
+}

@@ -11,23 +11,13 @@ export const desktopRouter = Router()
 desktopRouter.post("/", upload.single('backgroundImage'), createDesktopController)
 
 // GET DESKTOP BY ID
-desktopRouter.get("/:id", isSingleDesktopOwner, getDesktopByIdController)
+desktopRouter.get("/:desktopId", isSingleDesktopOwner, getDesktopByIdController)
 
 // GET DESKTOP BY OWNER
 desktopRouter.get("/", isDesktopsOwner, getDesktopByOwnerController)
 
 // UPDATE DESKTOP 
-desktopRouter.patch("/:id", upload.single('backgroundImage'), isSingleDesktopOwner, updateDesktopController)
-
-// GET DESKTOP ROOT FILES
-desktopRouter.get("/:desktopId/root-files", (req, res) => {
-
-})
-
-// GET ALL DESKTOP FILES
-desktopRouter.get("/:desktopId/files", (req, res) => {
-
-})
+desktopRouter.patch("/:desktopId", upload.single('backgroundImage'), isSingleDesktopOwner, updateDesktopController)
 
 // DELETE DESKTOP
-desktopRouter.delete("/:id", isSingleDesktopOwner, deleteDesktopController)
+desktopRouter.delete("/:desktopId", isSingleDesktopOwner, deleteDesktopController)

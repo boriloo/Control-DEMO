@@ -22,33 +22,34 @@ import OpenLinkWindow from "../../components/windows/openLink";
 import DesktopConfigWindow from "../../components/windows/desktopConfig";
 import ImageViewerWindow from "../../components/windows/imageViewer";
 import SocialWindow from "../../components/windows/social";
-import { FullFileData } from "../../types/file";
+import { FileData } from "../../types/file";
+import { getAllFilesFromDesktopService, getFilesFromDesktopService } from "../../services/fileServices";
 
 
-// const findNextAvailablePosition = (icons: FullFileData[], containerWidth: number): { x: number; y: number } | null => {
-//     const GRID_SIZE = 100;
-//     const occupiedPositions = new Set(
-//         icons.map(icon => `${icon.position.x},${icon.position.y}`)
-//     );
+const findNextAvailablePosition = (icons: FileData[], containerWidth: number): { x: number; y: number } | null => {
+    const GRID_SIZE = 100;
+    const occupiedPositions = new Set(
+        icons.map(icon => `${icon.xPos},${icon.yPos}`)
+    );
 
-//     for (let y = 0; y > -1; y += GRID_SIZE) {
-//         for (let x = 0; x < containerWidth - 80; x += GRID_SIZE) {
-//             const currentPosition = `${x},${y}`;
-//             if (!occupiedPositions.has(currentPosition)) {
-//                 return { x, y };
-//             }
-//         }
-//     }
-//     return null;
-// };
+    for (let y = 0; y > -1; y += GRID_SIZE) {
+        for (let x = 0; x < containerWidth - 80; x += GRID_SIZE) {
+            const currentPosition = `${x},${y}`;
+            if (!occupiedPositions.has(currentPosition)) {
+                return { x, y };
+            }
+        }
+    }
+    return null;
+};
 
 export default function DashboardPage() {
     const { t } = useTranslation();
     const { root } = useRootContext();
-    const { user, hasDesktops, setHasDesktops, currentDesktop } = useUser();
+    const { user, hasDesktops, setHasDesktops, currentDesktop, standardFile } = useUser();
     const { newFile, listdt, openLink } = useWindowContext();
     const [start, setStart] = useState<boolean>(false);
-    const [desktopFiles, setDesktopFiles] = useState<FullFileData[]>([])
+    const [desktopFiles, setDesktopFiles] = useState<FileData[]>([])
 
     useEffect(() => {
         if (!hasDesktops) return;
@@ -58,19 +59,21 @@ export default function DashboardPage() {
     useEffect(() => {
         if (!user || !currentDesktop?.id) return;
 
+        const getAllFiles = async () => {
+            try {
+                const files = await getFilesFromDesktopService(currentDesktop.id)
 
-        // const unsubscribeAll = listenToAllFilesByDesktop(
-        //     user.uid as string,
-        //     currentDesktop.id,
-        //     (newFiles) => {
-        //         const filtered = newFiles.filter((file) =>
-        //             file.parentId === null
-        //         )
-        //         setDesktopFiles(filtered)
-        //     }
-        // );
+                const standardFiles = files.map((file: FileData) => {
+                    return standardFile(file)
+                })
 
-        // return unsubscribeAll;
+                setDesktopFiles(standardFiles)
+            } catch (err) {
+                alert(err)
+            }
+        }
+
+        getAllFiles()
 
     }, [currentDesktop?.id, user?.id]);
 
@@ -97,7 +100,7 @@ export default function DashboardPage() {
         setContentToBottom(hasVerticalOverflow && !isAtVerticalEnd);
     }, []);
 
-    const initialDragState = useRef<FullFileData[] | null>(null);
+    const initialDragState = useRef<FileData[] | null>(null);
 
     const handleDragStart = () => {
         root.setCanOpenWindow(true);
@@ -107,28 +110,38 @@ export default function DashboardPage() {
     const handleDrag = (e: DraggableEvent, data: DraggableData, draggedIconId: string) => {
         root.setCanOpenWindow(false);
         if (!initialDragState.current) return;
+
         const GRID_SIZE = 100;
         const roundToGrid = (value: number) => Math.round(value / GRID_SIZE) * GRID_SIZE;
-        const currentPosition = { x: roundToGrid(data.x), y: roundToGrid(data.y) };
+
+        const currentX = roundToGrid(data.x);
+        const currentY = roundToGrid(data.y);
+
         const originalIcons = initialDragState.current;
         const draggedIconOriginal = originalIcons.find(i => i.id === draggedIconId);
         if (!draggedIconOriginal) return;
 
+
         const targetIcon = originalIcons.find(icon =>
             icon.id !== draggedIconId &&
-            currentPosition.x === icon.position.x &&
-            currentPosition.y === icon.position.y
+            currentX === icon.xPos &&
+            currentY === icon.yPos
         );
 
         if (targetIcon) {
+
             setDesktopFiles(originalIcons.map(icon => {
-                if (icon.id === draggedIconId) return { ...icon, position: targetIcon.position };
-                if (icon.id === targetIcon.id) return { ...icon, position: draggedIconOriginal.position };
+                if (icon.id === draggedIconId) {
+                    return { ...icon, xPos: targetIcon.xPos, yPos: targetIcon.yPos };
+                }
+                if (icon.id === targetIcon.id) {
+                    return { ...icon, xPos: draggedIconOriginal.xPos, yPos: draggedIconOriginal.yPos };
+                }
                 return icon;
             }));
         } else {
             setDesktopFiles(originalIcons.map(icon =>
-                icon.id === draggedIconId ? { ...icon, position: currentPosition } : icon
+                icon.id === draggedIconId ? { ...icon, xPos: currentX, yPos: currentY } : icon
             ));
         }
 

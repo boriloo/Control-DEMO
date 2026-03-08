@@ -2,6 +2,8 @@ import { pool } from "../lib/postgres";
 import { CreateFileData } from "../types/file";
 
 export const createFileService = async (data: CreateFileData) => {
+    console.log('ARQUIVASSO', data)
+
     const query = `
     INSERT INTO files (name, owner_id, desktop_id, parent_id, file_type, xPos, yPos, url)
     VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
@@ -37,11 +39,6 @@ export const getAllFilesFromDesktopService = async (desktopId: string) => {
 
 export const getFilesFromDesktopService = async (desktopId: string) => {
     const response = await pool.query("SELECT * FROM files WHERE desktop_id = $1 AND parent_id = 'root'", [desktopId])
-    const filesExists = response.rows.length > 0
-
-    if (!filesExists) {
-        throw new Error("No Files were found.")
-    }
 
     const files = response.rows
 

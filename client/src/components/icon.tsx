@@ -1,9 +1,10 @@
 import { useCallback, useEffect, useState } from "react";
 import { useRootContext } from "../context/RootContext";
 import { useWindowContext } from "../context/WindowContext";
-import { FullFileData } from "../services/file";
+import { FileData } from "../types/file";
 
-export default function Icon(icon: FullFileData) {
+export default function Icon(icon: FileData) {
+
     const { root } = useRootContext();
     const { fileViewer, openLink, imgViewer, newFile } = useWindowContext();
     const [imageSrc, setImageSrc] = useState<string>("/assets/images/file.png");
@@ -49,21 +50,24 @@ export default function Icon(icon: FullFileData) {
     }
 
     useEffect(() => {
-        if (icon.type === 'link') {
+        if (icon.fileType === 'link') {
             async function validate() {
                 const isValid = await validateImage(icon.url as string);
                 setIsValidImage(isValid)
             }
             validate();
         }
-    }, [icon.url, icon.type]);
+    }, [icon.url, icon.fileType]);
 
     useEffect(() => {
         function loadIcon() {
-            if (icon.type === "folder") return setImageSrc("/assets/images/open-folder.png");
-            if (icon.type === "text") return setImageSrc("/assets/images/text-file.png");
+  
+    console.log('icone', icon)
+            if (icon.fileType === "folder") {
+                return setImageSrc("/assets/images/open-folder.png");
+            }
 
-            if (icon.type === "link") {
+            if (icon.fileType === "link") {
                 if (isValidImage) {
                     if (driveThumb) {
                         setImageSrc(driveThumb)
@@ -83,7 +87,7 @@ export default function Icon(icon: FullFileData) {
     const returnAction = useCallback(() => {
         if (!root.canOpenWindow) return;
         newFile.setFile(icon)
-        if (icon.type === "link") {
+        if (icon.fileType === "link") {
             if (!icon.url) return;
             if (isValidImage) {
                 imgViewer.setFile(icon);
@@ -93,7 +97,7 @@ export default function Icon(icon: FullFileData) {
                 openLink.setBackPath(false);
                 openLink.openWindow();
             }
-        } else if (icon.type === "folder") {
+        } else if (icon.fileType === "folder") {
             fileViewer.openWindow();
             fileViewer.setFile(icon)
         }

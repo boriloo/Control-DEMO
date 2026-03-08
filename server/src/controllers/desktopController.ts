@@ -26,7 +26,7 @@ export const createDesktopController = async (req: Request, res: Response) => {
 
 export const getDesktopByIdController = async (req: Request, res: Response) => {
     try {
-        const desktopId = req.params.id
+        const desktopId = req.params.desktopId
 
         const desktop = await getDesktopByIdService(desktopId as string);
 
@@ -63,7 +63,7 @@ export const getDesktopByOwnerController = async (req: Request, res: Response) =
 
 export const updateDesktopController = async (req: Request, res: Response) => {
     try {
-        const desktopId = req.params.id
+        const desktopId = req.params.desktopId
         const { name } = req.body;
         const backgroundImage = req.file?.buffer;
 
@@ -88,7 +88,7 @@ export const updateDesktopController = async (req: Request, res: Response) => {
 
 export const deleteDesktopController = async (req: Request, res: Response) => {
     try {
-        const desktopId = req.params.id
+        const desktopId = req.params.desktopId
 
         await deleteDesktopService(desktopId as string);
 

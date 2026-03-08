@@ -17,6 +17,7 @@ import { api } from "../lib/axiosConfig";
 import { getMeService } from "../services/userServices";
 import { getDesktopByOwnerService } from "../services/desktopServices";
 import { DesktopData } from "../types/desktop";
+import { FileData } from "../types/file";
 // import { createUserEmailRef } from "../services/email";
 // import { registerPublicUser, updatePublicUserProfileImage } from "../services/public";
 
@@ -27,6 +28,7 @@ interface UserContextProps {
     currentDesktop: DesktopData | null;
     changeCurrentDesktop: (desktop: DesktopData) => void;
     standardDesktop: (desktop: any) => DesktopData;
+    standardFile: (file: any) => FileData;
     authLoginUser: (data: LoginData) => Promise<void>;
     authRegisterUser: (data: RegisterData) => Promise<void>;
     authLogoutUser: () => Promise<void>;
@@ -62,6 +64,20 @@ export function AuthProvider({ children }: { children: ReactNode }) {
                 : `data:image/png;base64,${desktop.background_image}`,
             createdAt: desktop.created_at,
         } as DesktopData
+    }
+
+    const standardFile = (file: any) => {
+        return {
+            id: file.id,
+            name: file.name,
+            ownerId: file.owner_id,
+            parentId: file.parent_id,
+            desktopId: file.desktop_id,
+            fileType: file.file_type,
+            xPos: file.xPos,
+            yPos: file.yPos,
+            createdAt: file.created_at,
+        } as FileData;
     }
 
     useEffect(() => {
@@ -205,41 +221,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         }
     }
 
-    // useEffect(() => {
-    //     const unsubscribe = onAuthStateChanged(auth, async (user) => {
-    //         if (!user) {
-    //             console.log("não foi possível encontrar usuário autenticado");
-    //             setIsLoading(false);
-    //             return;
-    //         }
-    //         setIsAuthenticated(true);
-    //         try {
-    //             const item = localStorage.getItem("last-desktop");
-    //             if (item === null) {
-    //                 const desktops = await getDesktopsByMember(user.uid as string);
-    //                 if (desktops.length > 0) {
-    //                     setHasDesktops(true);
-    //                     changeCurrentDesktop(desktops[0]);
-    //                 }
-    //             } else {
-    //                 setHasDesktops(true);
-    //                 const lastDesktop = await getDesktopById(item);
-    //                 changeCurrentDesktop(lastDesktop);
-    //             }
-    //             const userProfile = await getUserProfile(user.uid);
-    //             if (userProfile) setUser(userProfile);
-    //         } catch (err) {
-    //             localStorage.removeItem("last-desktop")
-    //         } finally {
-    //             setIsLoading(false);
-    //         }
-    //     });
-    //     return () => unsubscribe();
-    // }, []);
-
-
-
-
     return (
         <UserContext.Provider
             value={{
@@ -249,6 +230,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
                 currentDesktop,
                 changeCurrentDesktop,
                 standardDesktop,
+                standardFile,
                 authLoginUser,
                 authChangeUserFilters,
                 authRegisterUser,

@@ -6,8 +6,10 @@ import { returnFilterEffects } from "../../types/auth";
 import { useUser } from "../../context/AuthContext";
 import { DotLottieReact } from "@lottiefiles/dotlottie-react";
 import { useAppContext } from "../../context/AppContext";
+import { createFileService } from "../../services/fileServices";
+import { FileData } from "../../types/file";
 
-export type CreateFileType = "folder" | "text" | "link" | "drive"
+export type CreateFileType = "folder" | "link"
 
 export default function NewFileWindow() {
     const { callToast } = useAppContext();
@@ -46,13 +48,11 @@ export default function NewFileWindow() {
 
         const basePayload = {
             desktopId: currentDesktop.id,
-            parentId: null,
-            ownerId: user.id,
-            usersId: [user.id],
+            parentId: 'root',
             name: name,
-            type: fileType,
-            position: { x: 500, y: 500 },
-            path: [{ id: null, name: 'Início' }],
+            fileType: fileType,
+            xPos: 500,
+            yPos: 500,
         };
 
         let finalPayload: any = { ...basePayload };
@@ -70,11 +70,11 @@ export default function NewFileWindow() {
         }
 
         switch (fileType) {
-            case 'text':
-                const content = "";
-                finalPayload.content = content;
-                finalPayload.sizeInBytes = new Blob([content]).size;
-                break;
+            // case 'text':
+            //     const content = "";
+            //     finalPayload.content = content;
+            //     finalPayload.sizeInBytes = new Blob([content]).size;
+            //     break;
 
             case 'link':
                 const finalUrl = normalizeUrl(url);
@@ -85,11 +85,9 @@ export default function NewFileWindow() {
                 }
 
                 finalPayload.url = finalUrl;
-                finalPayload.sizeInBytes = 0;
                 break;
 
             case 'folder':
-                finalPayload.sizeInBytes = 0;
                 break;
 
             default:
@@ -97,7 +95,7 @@ export default function NewFileWindow() {
                 return;
         }
         try {
-            // await createFile(finalPayload);
+            await createFileService(currentDesktop.id, finalPayload as FileData);
             setName(null)
         } catch (error) {
             console.error("Falha ao criar o ficheiro:", error);
@@ -114,12 +112,8 @@ export default function NewFileWindow() {
         switch (fileType) {
             case ('folder'):
                 return '/assets/images/open-folder.png'
-            case ('text'):
-                return '/assets/images/text-file.png'
             case ('link'):
                 return '/assets/images/link.png'
-            case ('drive'):
-                return '/assets/images/google-drive.png'
             default:
                 break
         }
@@ -129,12 +123,8 @@ export default function NewFileWindow() {
         switch (fileType) {
             case ('folder'):
                 return 'Pasta'
-            case ('text'):
-                return 'Texto'
             case ('link'):
                 return 'Link'
-            case ('drive'):
-                return 'Google Drive'
             default:
                 break
         }
@@ -195,18 +185,18 @@ export default function NewFileWindow() {
                             <img src="/assets/images/google-drive.png" className="w-6" />
                             Google Drive
                         </div> */}
-                        
+
                     </div>
-                    {fileType !== 'drive' && (
-                        <div className="flex flex-col gap-1">
-                            <p>Nome</p>
-                            <div className="flex flex-col">
-                                <input value={name ?? ''} onChange={(e) => setName(e.target.value)} type="text" className="border-none outline-[1.5px] p-1 px-2 outline-transparent 
+
+                    <div className="flex flex-col gap-1">
+                        <p>Nome</p>
+                        <div className="flex flex-col">
+                            <input value={name ?? ''} onChange={(e) => setName(e.target.value)} type="text" className="border-none outline-[1.5px] p-1 px-2 outline-transparent 
                             transition-all cursor-pointer hover:bg-zinc-800 rounded-sm focus:outline-blue-500 focus:cursor-text" />
-                                <div className="w-full h-[1px] bg-zinc-400"></div>
-                            </div>
+                            <div className="w-full h-[1px] bg-zinc-400"></div>
                         </div>
-                    )}
+                    </div>
+
                     {fileType === 'link' && (<div className="flex flex-col gap-1">
                         <p>URL</p>
                         <div className="flex flex-col">

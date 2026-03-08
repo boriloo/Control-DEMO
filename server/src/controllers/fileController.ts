@@ -55,6 +55,7 @@ export const getFilesFromDesktopController = async (req: Request, res: Response)
 
         const files = await getFilesFromDesktopService(desktopId as string);
 
+
         return res.status(201).json(files);
 
     } catch (err: any) {

@@ -4,7 +4,8 @@ import { pool } from '../lib/postgres';
 export const isSingleDesktopOwner = async (req: Request, res: Response, next: NextFunction) => {
     const ownerId = (req as any).userId
 
-    const desktopId = req.params.id
+
+    const desktopId = req.params.desktopId
 
     try {
         const response = await pool.query('SELECT id FROM desktops WHERE id = $1 AND owner_id = $2', [desktopId, ownerId])

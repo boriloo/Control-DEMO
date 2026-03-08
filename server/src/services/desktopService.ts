@@ -2,12 +2,7 @@ import { pool } from "../lib/postgres";
 import { CreateDesktopData } from "../types/desktop";
 
 
-// export type FullDesktopData = DesktopData & { id: string };
-
-// ----AQUI DEVE TER----------
-
 //CREATE DESKTOP
-
 export const createDesktopService = async (data: CreateDesktopData) => {
     const query = `
     INSERT INTO files (name, owner_id, background_image)
@@ -30,7 +25,6 @@ export const createDesktopService = async (data: CreateDesktopData) => {
 
 
 //GET DESKTOP BY ID
-
 export const getDesktopByIdService = async (id: string) => {
     const response = await pool.query("SELECT * FROM desktops WHERE id = $1", [id])
     const desktopExists = response.rows.length > 0
@@ -48,9 +42,7 @@ export const getDesktopByIdService = async (id: string) => {
 
 }
 
-
 //GET DESKTOPS BY OWNER ID
-
 export const getDesktopByOwnerService = async (ownerId: string) => {
     const response = await pool.query("SELECT * FROM desktops WHERE owner_id = $1", [ownerId])
     const desktopExists = response.rows.length > 0
@@ -88,7 +80,6 @@ export const getDesktopByOwnerService = async (ownerId: string) => {
 // }
 
 //UPDATE DESKTOP
-
 export const updateDesktopService = async (id: string, data: { name?: string; backgroundImage?: Buffer }) => {
     const fields: string[] = [];
     const values: any[] = [];
@@ -132,7 +123,6 @@ export const updateDesktopService = async (id: string, data: { name?: string; ba
 };
 
 //DELETE DESKTOP
-
 export const deleteDesktopService = async (id: string) => {
     const response = await pool.query("SELECT id FROM desktops WHERE id = $1", [id])
 
@@ -146,6 +136,5 @@ export const deleteDesktopService = async (id: string) => {
 
 }
 
-//----------------------------
 
 
