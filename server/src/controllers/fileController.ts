@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { createFileService, getAllFilesFromDesktopService, getFilesFromDesktopService, getFilesParentNamesService, updateFilePositionService } from '../services/fileService';
+import { createFileService, deleteFileService, getAllFilesFromDesktopService, getFilesFromDesktopService, getFilesParentNamesService, updateFilePositionService } from '../services/fileService';
 import { CreateFileBodyData, CreateFileData } from '../types/file';
 
 export const createFileController = async (req: Request, res: Response) => {
@@ -99,6 +99,23 @@ export const updateFilePositionController = async (req: Request, res: Response) 
     } catch (err: any) {
 
         if (err.message === "No files received.") {
+            return res.status(404).json({ error: err.message })
+        }
+
+        return res.status(500).json({ error: 'Server Error' })
+    }
+}
+
+export const deleteFileController = async (req: Request, res: Response) => {
+    try {
+        const fileId = req.params.fileId
+
+        await deleteFileService(fileId as string);
+
+        return res.status(204).send();
+    } catch (err: any) {
+
+        if (err.message === "File doesn't exist.") {
             return res.status(404).json({ error: err.message })
         }
 

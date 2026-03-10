@@ -70,7 +70,6 @@ export const getFilesParentNamesService = async (parentId: string) => {
 };
 
 // UPDATE FILE POSITION 
-
 export const updateFilePositionService = async (files: FilePositionsData[]) => {
     if (files.length < 1) throw new Error("No files received.");
 
@@ -83,4 +82,18 @@ export const updateFilePositionService = async (files: FilePositionsData[]) => {
     })
 }
 
+
+// DELETE FILE 
+export const deleteFileService = async (id: string) => {
+    const response = await pool.query("SELECT id FROM files WHERE id = $1", [id])
+
+    const fileExists = response.rows.length > 0
+
+    if (!fileExists) {
+        throw new Error("File doesn't exist.")
+    }
+
+    await pool.query("DELETE FROM files WHERE id = $1", [id])
+
+}
 
