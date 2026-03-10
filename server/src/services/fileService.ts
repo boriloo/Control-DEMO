@@ -1,5 +1,5 @@
 import { pool } from "../lib/postgres";
-import { CreateFileData } from "../types/file";
+import { CreateFileData, FilePositionsData } from "../types/file";
 
 export const createFileService = async (data: CreateFileData) => {
     console.log('ARQUIVASSO', data)
@@ -68,5 +68,19 @@ export const getFilesParentNamesService = async (parentId: string) => {
 
     return parentNames;
 };
+
+// UPDATE FILE POSITION 
+
+export const updateFilePositionService = async (files: FilePositionsData[]) => {
+    if (files.length < 1) throw new Error("No files received.");
+
+    const query = 'UPDATE files SET (xpos, ypos) VALUES ($1, $2) WHERE id = $3'
+
+    files.forEach(async (file) => {
+        const values = [file.xPos, file.yPos, file.id]
+
+        await pool.query(query, values)
+    })
+}
 
 

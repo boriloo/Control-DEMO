@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { createFileService, getAllFilesFromDesktopService, getFilesFromDesktopService, getFilesParentNamesService } from '../services/fileService';
+import { createFileService, getAllFilesFromDesktopService, getFilesFromDesktopService, getFilesParentNamesService, updateFilePositionService } from '../services/fileService';
 import { CreateFileBodyData, CreateFileData } from '../types/file';
 
 export const createFileController = async (req: Request, res: Response) => {
@@ -87,3 +87,21 @@ export const getFilesParentNamesController = async (req: Request, res: Response)
 
 }
 
+
+export const updateFilePositionController = async (req: Request, res: Response) => {
+    try {
+        const { files } = req.body
+
+        await updateFilePositionService(files);
+
+        return res.status(201)
+
+    } catch (err: any) {
+
+        if (err.message === "No files received.") {
+            return res.status(404).json({ error: err.message })
+        }
+
+        return res.status(500).json({ error: 'Server Error' })
+    }
+}
