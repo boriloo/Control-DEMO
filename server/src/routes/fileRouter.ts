@@ -1,5 +1,5 @@
 import { Router } from "express"
-import { createFileController, getAllFilesFromDesktopController, getFilesFromDesktopController, getFilesParentNamesController, updateFilePositionController } from "../controllers/fileController"
+import { createFileController, deleteFileController, getAllFilesFromDesktopController, getFilesFromDesktopController, getFilesParentNamesController, updateFilePositionController } from "../controllers/fileController"
 import { isSingleDesktopOwner } from "../middlewares/desktopMiddleware"
 import { deleteFileService } from "../services/fileService"
 
@@ -32,4 +32,4 @@ fileRouter.get("/parent", getFilesParentNamesController)
 fileRouter.put("/position", updateFilePositionController)
 
 // DELETE FILE
-fileRouter.delete("/:fileId", deleteFileService)
+fileRouter.delete("/:fileId", deleteFileController)
