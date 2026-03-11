@@ -1,6 +1,7 @@
 import { Router } from "express"
-import { createFileController, getAllFilesFromDesktopController, getFilesFromDesktopController, getFilesParentNamesController } from "../controllers/fileController"
+import { createFileController, deleteFileController, getAllFilesFromDesktopController, getFilesFromDesktopController, getFilesParentNamesController, updateFilePositionController } from "../controllers/fileController"
 import { isSingleDesktopOwner } from "../middlewares/desktopMiddleware"
+import { deleteFileService } from "../services/fileService"
 
 export const fileRouter = Router()
 
@@ -28,11 +29,7 @@ fileRouter.get("/parent", getFilesParentNamesController)
 
 
 // UPDATE FILE POSITION
-fileRouter.post("/:fileId/position", (req, res) => {
-
-})
+fileRouter.put("/position", updateFilePositionController)
 
 // DELETE FILE
-fileRouter.delete("/:fileId", (req, res) => {
-
-})
+fileRouter.delete("/:fileId", deleteFileController)
