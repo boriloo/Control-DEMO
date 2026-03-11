@@ -24,6 +24,7 @@ import ImageViewerWindow from "../../components/windows/imageViewer";
 import SocialWindow from "../../components/windows/social";
 import { FileData } from "../../types/file";
 import { getAllFilesFromDesktopService, getFilesFromDesktopService } from "../../services/fileServices";
+import { useAppContext } from "../../context/AppContext";
 
 
 const findNextAvailablePosition = (icons: FileData[], containerWidth: number): { x: number; y: number } | null => {
@@ -44,6 +45,7 @@ const findNextAvailablePosition = (icons: FileData[], containerWidth: number): {
 };
 
 export default function DashboardPage() {
+    const { changeNextIconPosition } = useAppContext();
     const { t } = useTranslation();
     const { root } = useRootContext();
     const { user, hasDesktops, setHasDesktops, currentDesktop, standardFile } = useUser();
@@ -55,6 +57,19 @@ export default function DashboardPage() {
         if (!hasDesktops) return;
         setTimeout(() => { setStart(true) }, 500);
     }, [hasDesktops]);
+
+    useEffect(() => {
+        const containerWidth = desktopRef.current?.clientWidth || window.innerWidth;
+
+        const nextPosition = findNextAvailablePosition(desktopFiles, containerWidth);
+
+        console.log('desktopFiles ', desktopFiles)
+
+        if (nextPosition) {
+            changeNextIconPosition(nextPosition);
+            console.log('nextPosition', nextPosition)
+        }
+    }, [desktopFiles]);
 
     useEffect(() => {
         if (!user || !currentDesktop?.id) return;
@@ -122,19 +137,19 @@ export default function DashboardPage() {
         if (!draggedIconOriginal) return;
 
 
-        const targetIcon = originalIcons.find(icon =>
+        const existingIcon = originalIcons.find(icon =>
             icon.id !== draggedIconId &&
             currentX === icon.xPos &&
             currentY === icon.yPos
         );
 
-        if (targetIcon) {
+        if (existingIcon) {
 
             setDesktopFiles(originalIcons.map(icon => {
                 if (icon.id === draggedIconId) {
-                    return { ...icon, xPos: targetIcon.xPos, yPos: targetIcon.yPos };
+                    return { ...icon, xPos: existingIcon.xPos, yPos: existingIcon.yPos };
                 }
-                if (icon.id === targetIcon.id) {
+                if (icon.id === existingIcon.id) {
                     return { ...icon, xPos: draggedIconOriginal.xPos, yPos: draggedIconOriginal.yPos };
                 }
                 return icon;

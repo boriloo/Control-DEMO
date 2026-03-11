@@ -74,8 +74,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             parentId: file.parent_id,
             desktopId: file.desktop_id,
             fileType: file.file_type,
-            xPos: file.xPos,
-            yPos: file.yPos,
+            url: file.url,
+            xPos: file.xpos,
+            yPos: file.ypos,
             createdAt: file.created_at,
         } as FileData;
     }

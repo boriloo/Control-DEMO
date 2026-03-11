@@ -12,7 +12,7 @@ import { FileData } from "../../types/file";
 export type CreateFileType = "folder" | "link"
 
 export default function NewFileWindow() {
-    const { callToast } = useAppContext();
+    const { callToast, nextIconPosition } = useAppContext();
     const { user, currentDesktop } = useUser();
     const { newFile } = useWindowContext();
     const [fileType, setFileType] = useState<CreateFileType>('folder')
@@ -44,6 +44,8 @@ export default function NewFileWindow() {
             return;
         }
 
+        console.log('estou criand arquivo novo ', nextIconPosition)
+
         setLoading(true)
 
         const basePayload = {
@@ -51,8 +53,8 @@ export default function NewFileWindow() {
             parentId: 'root',
             name: name,
             fileType: fileType,
-            xPos: 500,
-            yPos: 500,
+            xPos: nextIconPosition?.x,
+            yPos: nextIconPosition?.y,
         };
 
         let finalPayload: any = { ...basePayload };
@@ -95,7 +97,9 @@ export default function NewFileWindow() {
                 return;
         }
         try {
-            await createFileService(currentDesktop.id, finalPayload as FileData);
+            console.log(finalPayload)
+            const fileCreated = await createFileService(currentDesktop.id, finalPayload as FileData);
+            console.log('fileCreated ', fileCreated)
             setName(null)
         } catch (error) {
             console.error("Falha ao criar o ficheiro:", error);

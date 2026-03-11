@@ -14,6 +14,8 @@ interface AppContextType {
     callToast: ({ message, type }: Toast) => void;
     toastOpen: boolean;
     toast: Toast;
+    nextIconPosition: { x: number; y: number } | null;
+    changeNextIconPosition: (position: { x: number; y: number }) => void;
 };
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
@@ -23,6 +25,11 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
     const [toastOpen, setToastOpen] = useState<boolean>(false)
     const [toast, setToast] = useState<Toast>({ message: 'Hmmm...', type: 'message' })
     const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+    const [nextIconPosition, setNextIconPosition] = useState<{ x: number; y: number } | null>(null)
+
+    const changeNextIconPosition = (position: { x: number; y: number }) => {
+        setNextIconPosition(position);
+    }
 
     const callToast = ({ message, type }: Toast) => {
         if (timeoutRef.current) {
@@ -69,7 +76,7 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
     }, []);
 
 
-    return <AppContext.Provider value={{ minimazeAllWindows, closeAllWindows, callToast, toastOpen, toast }}>{children}</AppContext.Provider>;
+    return <AppContext.Provider value={{ minimazeAllWindows, closeAllWindows, callToast, toastOpen, toast, nextIconPosition, changeNextIconPosition }}>{children}</AppContext.Provider>;
 };
 
 export const useAppContext = () => {

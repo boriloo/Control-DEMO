@@ -8,8 +8,10 @@ export default function Icon(icon: FileData) {
     const { root } = useRootContext();
     const { fileViewer, openLink, imgViewer, newFile } = useWindowContext();
     const [imageSrc, setImageSrc] = useState<string>("/assets/images/file.png");
-    const [isValidImage, setIsValidImage] = useState<boolean>(true)
+    // const [loading, setLoading] = useState<>
+    const [isValidImage, setIsValidImage] = useState<boolean | null>(null)
     const [driveThumb, setDriveThumb] = useState<string | null>(null)
+
 
     function getDomainFromUrl(url: string): string {
         try {
@@ -20,63 +22,71 @@ export default function Icon(icon: FileData) {
     }
 
 
-    function validateImage(url: string): Promise<boolean> {
-        return new Promise((resolve) => {
-            let convertedUrl = 'null'
-            if (url.startsWith('https://drive.google.com')) {
-                const regex = /\/d\/([a-zA-Z0-9_-]+)/;
-                const match = url.match(regex);
-
-                if (match && match[1]) {
-                    const fileId = match[1];
-                    convertedUrl = `https://lh3.googleusercontent.com/d/${fileId}=w1000`;
-                    setDriveThumb(convertedUrl)
-                } else {
-                    console.warn("Não foi possível extrair o ID do arquivo do Google Drive.");
-                }
-            } else if (/\.(jpg|jpeg|webp|png)/i.test(url as string)) {
-                console.log('imagem tem png no nome')
-                convertedUrl = url
-            }
-            const img = new Image();
-            if (convertedUrl) {
-                img.src = convertedUrl;
-            } else {
-                img.src = url
-            }
-            img.onload = () => resolve(true);
-            img.onerror = () => resolve(false);
-        });
-    }
-
     useEffect(() => {
-        if (icon.fileType === 'link') {
-            async function validate() {
-                const isValid = await validateImage(icon.url as string);
-                setIsValidImage(isValid)
-            }
-            validate();
+        const validateImage = async (): Promise<boolean> => {
+            return new Promise((resolve) => {
+                if (!icon.url || icon.fileType !== 'link') return;
+                let convertedUrl = 'null'
+
+                if (icon.url.startsWith('https://drive.google.com')) {
+                    const regex = /\/d\/([a-zA-Z0-9_-]+)/;
+                    const match = icon.url.match(regex);
+
+                    if (match && match[1]) {
+                        const fileId = match[1];
+                        convertedUrl = `https://lh3.googleusercontent.com/d/${fileId}=w1000`;
+                        setDriveThumb(convertedUrl)
+                    } else {
+                        console.warn("Não foi possível extrair o ID do arquivo do Google Drive.");
+                    }
+                } else if (/\.(jpg|jpeg|webp|png)/i.test(icon.url as string)) {
+                    console.log('imagem tem png no nome')
+                    convertedUrl = icon.url
+                }
+
+                const img = new Image();
+
+
+                if (convertedUrl) {
+                    img.src = convertedUrl;
+                } else {
+                    img.src = icon.url
+                }
+                img.onload = () => resolve(true);
+                img.onerror = () => resolve(false);
+            });
         }
-    }, [icon.url, icon.fileType]);
+
+
+        const callValidateFunction = async () => {
+            const isValid = await validateImage();
+
+            setIsValidImage(isValid)
+        }
+
+        callValidateFunction()
+
+    }, [icon.url])
+
 
     useEffect(() => {
         function loadIcon() {
-  
-    console.log('icone', icon)
             if (icon.fileType === "folder") {
                 return setImageSrc("/assets/images/open-folder.png");
             }
 
             if (icon.fileType === "link") {
+                if (isValidImage === null) return; // ⬅️ aguarda validação terminar
+
                 if (isValidImage) {
                     if (driveThumb) {
-                        setImageSrc(driveThumb)
+                        setImageSrc(driveThumb);
                     } else {
-                        setImageSrc(icon.url as string)
+                        setImageSrc(icon.url as string);
                     }
                 } else {
                     const domain = getDomainFromUrl(icon.url as string);
-                    return setImageSrc(`https://www.google.com/s2/favicons?domain=${domain}&sz=256`);
+                    setImageSrc(`https://www.google.com/s2/favicons?domain=${domain}&sz=256`);
                 }
             }
         }
@@ -85,21 +95,23 @@ export default function Icon(icon: FileData) {
 
 
     const returnAction = useCallback(() => {
-        if (!root.canOpenWindow) return;
-        newFile.setFile(icon)
-        if (icon.fileType === "link") {
-            if (!icon.url) return;
-            if (isValidImage) {
-                imgViewer.setFile(icon);
-                imgViewer.openWindow();
-            } else {
-                openLink.setUrl(icon.url as string);
-                openLink.setBackPath(false);
-                openLink.openWindow();
+        if (isValidImage) {
+            if (!root.canOpenWindow) return;
+            newFile.setFile(icon)
+            if (icon.fileType === "link") {
+                if (!icon.url) return;
+                if (isValidImage) {
+                    imgViewer.setFile(icon);
+                    imgViewer.openWindow();
+                } else {
+                    openLink.setUrl(icon.url as string);
+                    openLink.setBackPath(false);
+                    openLink.openWindow();
+                }
+            } else if (icon.fileType === "folder") {
+                fileViewer.openWindow();
+                fileViewer.setFile(icon)
             }
-        } else if (icon.fileType === "folder") {
-            fileViewer.openWindow();
-            fileViewer.setFile(icon)
         }
     }, [icon.url, isValidImage, root])
 
