@@ -96,23 +96,3 @@ export const deleteFileService = async (id: string) => {
     await pool.query("DELETE FROM files WHERE id = $1", [id])
 
 }
-
-// UPDATE FILE POSITION
-
-export const updateFilePositionService = async (position: { x: number, y: number }) => {
-
-    const query = `
-    INSERT INTO files (name, owner_id, desktop_id, parent_id, file_type, xPos, yPos, url)
-    VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
-    RETURNING id, name, owner_id, desktop_id, parent_id, file_type, xPos, yPos, url, created_at
-    `
-
-    const values = [data.name, data.ownerId, data.desktopId, data.parentId, data.fileType, data.xPos, data.yPos, data.url]
-
-    const response = await pool.query(query, values)
-
-    const desktop = response.rows[0]
-
-    return desktop;
-
-}

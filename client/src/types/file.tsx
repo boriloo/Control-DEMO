@@ -31,3 +31,9 @@ export type CreateFileData = {
     yPos: number,
     url?: string,
 }
+
+export type FilePositionsData = {
+    id: string,
+    xPos: number,
+    yPos: number
+}

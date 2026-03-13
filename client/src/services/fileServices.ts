@@ -1,6 +1,6 @@
 import { api } from "../lib/axiosConfig"
 import { CreateDesktopData, UpdateDesktopData } from "../types/desktop";
-import { CreateFileData } from "../types/file";
+import { CreateFileData, FilePositionsData } from "../types/file";
 
 export const createFileService = async (desktopId: string, data: CreateFileData) => {
 
@@ -21,8 +21,14 @@ export const getAllFilesFromDesktopService = async (desktopId: string) => {
     return (response).data;
 }
 
-export const getFilesParentNamesService = async (parentId: string) => {
-    const response = await api.post(`/file/parent`, parentId);
+export const updateDesktopService = async (files: FilePositionsData) => {
+    const response = await api.post(`/file/position`, files);
+
+    return (response).data;
+}
+
+export const deleteFileService = async (id: string) => {
+    const response = await api.delete(`/file/${id}`);
 
     return (response).data;
 }

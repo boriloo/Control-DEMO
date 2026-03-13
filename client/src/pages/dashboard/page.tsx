@@ -17,7 +17,6 @@ import SearchBar from "../../components/SearchBar";
 import ListDesktopsWindow from "../../components/windows/listDesktops";
 import NewDesktopWindow from "../../components/windows/newDesktop";
 import { useTranslation } from "react-i18next";
-// import { FullFileData, listenToAllFilesByDesktop, updateFilePosition } from "../../services/file";
 import OpenLinkWindow from "../../components/windows/openLink";
 import DesktopConfigWindow from "../../components/windows/desktopConfig";
 import ImageViewerWindow from "../../components/windows/imageViewer";
@@ -27,23 +26,6 @@ import { getAllFilesFromDesktopService, getFilesFromDesktopService } from "../..
 import { useAppContext } from "../../context/AppContext";
 
 
-const findNextAvailablePosition = (icons: FileData[], containerWidth: number): { x: number; y: number } | null => {
-    const GRID_SIZE = 100;
-    const occupiedPositions = new Set(
-        icons.map(icon => `${icon.xPos},${icon.yPos}`)
-    );
-
-    for (let y = 0; y > -1; y += GRID_SIZE) {
-        for (let x = 0; x < containerWidth - 80; x += GRID_SIZE) {
-            const currentPosition = `${x},${y}`;
-            if (!occupiedPositions.has(currentPosition)) {
-                return { x, y };
-            }
-        }
-    }
-    return null;
-};
-
 export default function DashboardPage() {
     const { changeNextIconPosition } = useAppContext();
     const { t } = useTranslation();
@@ -52,23 +34,56 @@ export default function DashboardPage() {
     const { newFile, listdt, openLink } = useWindowContext();
     const [start, setStart] = useState<boolean>(false);
     const [desktopFiles, setDesktopFiles] = useState<FileData[]>([])
+    const [timer, setTimer] = useState<number>(0)
+
+    useEffect(() => {
+        if (timer === 0) return;
+
+        const interval = setInterval(() => {
+            setTimer(prev => prev - 1);
+            console.log(timer)
+        }, 1000);
+
+        return () => clearInterval(interval);
+    }, [timer]);
+
+    const findNextAvailablePosition = (icons: FileData[], containerWidth: number): { x: number; y: number } | null => {
+        const GRID_SIZE = 100;
+        const occupiedPositions = new Set(
+            icons.map(icon => `${icon.xPos},${icon.yPos}`)
+        );
+
+        for (let y = 0; y > -1; y += GRID_SIZE) {
+            for (let x = 0; x < containerWidth - 80; x += GRID_SIZE) {
+                const currentPosition = `${x},${y}`;
+                if (!occupiedPositions.has(currentPosition)) {
+                    return { x, y };
+                }
+            }
+        }
+        return null;
+    };
+
 
     useEffect(() => {
         if (!hasDesktops) return;
         setTimeout(() => { setStart(true) }, 500);
     }, [hasDesktops]);
 
+
     useEffect(() => {
+        console.log('ARQUIVOS MUDARAM')
+
         const containerWidth = desktopRef.current?.clientWidth || window.innerWidth;
 
         const nextPosition = findNextAvailablePosition(desktopFiles, containerWidth);
 
-        console.log('desktopFiles ', desktopFiles)
-
         if (nextPosition) {
             changeNextIconPosition(nextPosition);
-            console.log('nextPosition', nextPosition)
         }
+
+        setTimer(20)
+
     }, [desktopFiles]);
 
     useEffect(() => {
