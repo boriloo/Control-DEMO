@@ -73,15 +73,13 @@ export const getFilesParentNamesService = async (parentId: string) => {
 export const updateFilePositionService = async (files: FilePositionsData[]) => {
     if (files.length < 1) throw new Error("No files received.");
 
-    const query = 'UPDATE files SET (xpos, ypos) VALUES ($1, $2) WHERE id = $3'
+    const query = 'UPDATE files SET xpos = $1, ypos = $2 WHERE id = $3'
 
-    files.forEach(async (file) => {
+    await Promise.all(files.map(async (file) => {
         const values = [file.xPos, file.yPos, file.id]
-
         await pool.query(query, values)
-    })
+    }))
 }
-
 
 // DELETE FILE 
 export const deleteFileService = async (id: string) => {

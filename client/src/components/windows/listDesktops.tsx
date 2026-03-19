@@ -57,12 +57,14 @@ export default function ListDesktopsWindow() {
     const handleChangeDesktop = async (id: string) => {
         setLoading(true)
         try {
+            
             const response = await getDesktopByIdService(id)
             const updatedDesktop = standardDesktop(response)
 
             changeCurrentDesktop(updatedDesktop)
 
             localStorage.setItem('last-desktop', updatedDesktop.id);
+
         } catch (err) {
             console.log(err)
             throw err

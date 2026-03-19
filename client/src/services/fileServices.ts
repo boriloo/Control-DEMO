@@ -21,8 +21,8 @@ export const getAllFilesFromDesktopService = async (desktopId: string) => {
     return (response).data;
 }
 
-export const updateDesktopService = async (files: FilePositionsData) => {
-    const response = await api.post(`/file/position`, files);
+export const updateFilePositionService = async (files: FilePositionsData[]) => {
+    const response = await api.put(`/file/position`, files);
 
     return (response).data;
 }

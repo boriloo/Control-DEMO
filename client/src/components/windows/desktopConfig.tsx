@@ -1,5 +1,5 @@
 import { ArrowRight, Maximize, Menu, Plus, UserRound, X } from "lucide-react"
-import { useEffect, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import { useUser } from "../../context/AuthContext";
 import { useWindowContext } from "../../context/WindowContext";
 import { returnFilterEffects } from "../../types/auth";
@@ -10,7 +10,7 @@ import { DotLottieReact } from "@lottiefiles/dotlottie-react";
 // import { doc, onSnapshot } from "firebase/firestore";
 // import { db } from "../../firebase/config";
 import { useAppContext } from "../../context/AppContext";
-import { FullFileData } from "../../types/file";
+import { FileData } from "../../types/file";
 import { DesktopData } from "../../types/desktop";
 import { deleteDesktopService, getDesktopByIdService, getDesktopByOwnerService, updateDesktopService } from "../../services/desktopServices";
 // import { FullFileData, listenToAllFilesByDesktop } from "../../services/file";
@@ -31,8 +31,22 @@ export default function DesktopConfigWindow() {
     const [formattedDtName, setFormattedDtName] = useState<string | null>(null)
     const [deleteInput, setDeleteInput] = useState<string>('')
     const [desktopName, setDesktopName] = useState('')
-    const [allFiles, setAllFiles] = useState<FullFileData[]>([]);
+    const [allFiles, setAllFiles] = useState<FileData[]>([]);
+    const mouseDownTarget = useRef<EventTarget | null>(null);
 
+    const handleMouseDown = (e: React.MouseEvent<HTMLElement>) => {
+        mouseDownTarget.current = e.target;
+    };
+
+    const handleMouseUp = (e: React.MouseEvent<HTMLElement>) => {
+        if (
+            e.target === e.currentTarget &&
+            mouseDownTarget.current === e.currentTarget
+        ) {
+            dtConfig.closeWindow();
+        }
+        mouseDownTarget.current = null;
+    };
 
     useEffect(() => {
         if (!user || !currentDesktop?.id) return;
@@ -64,11 +78,6 @@ export default function DesktopConfigWindow() {
     }, [dtConfig.desktop])
 
     if (!user) return null;
-
-    const handleAreaClick = (e: React.MouseEvent<HTMLElement>) => {
-        if (e.target != e.currentTarget) return;
-        dtConfig.closeWindow();
-    }
 
     const handleEditDesktop = async () => {
         if (!windowDesktop || ((!desktopName || desktopName === windowDesktop?.name) && !currentImage)) return;
@@ -154,7 +163,8 @@ export default function DesktopConfigWindow() {
 
     return (
 
-        <div onClick={handleAreaClick} className={`${isFullsceen ? 'pb-[40px]' : ' p-2 pb-[50px]'} ${dtConfig.currentStatus === "open" ? returnFilterEffects(user) : 'pointer-events-none'} 
+        <div onMouseDown={handleMouseDown} onMouseUp={handleMouseUp}
+            className={`${isFullsceen ? 'pb-[40px]' : ' p-2 pb-[50px]'} ${dtConfig.currentStatus === "open" ? returnFilterEffects(user) : 'pointer-events-none'} 
         fixed z-100 flex-1 flex justify-center items-center w-full h-screen transition-all duration-500 cursor-pointer`}>
 
             <div className={`${confirmDelete ? '' : 'pointer-events-none opacity-0'} transition-all cursor-default fixed top-0 bg-black/70 w-full h-full z-100 flex 

@@ -15,7 +15,15 @@ export default function Icon(icon: FileData) {
 
     function getDomainFromUrl(url: string): string {
         try {
-            return new URL(url).hostname;
+            const hostname = new URL(url).hostname;
+            
+            const parts = hostname.split(".");
+
+            const isCompoundSuffix = parts.length > 2 && parts[parts.length - 2].length <= 3;
+            const rootDomain = isCompoundSuffix
+                ? parts.slice(-3).join(".")  
+                : parts.slice(-2).join(".");  
+            return rootDomain;
         } catch {
             return "";
         }
@@ -76,7 +84,7 @@ export default function Icon(icon: FileData) {
             }
 
             if (icon.fileType === "link") {
-                if (isValidImage === null) return; // ⬅️ aguarda validação terminar
+                if (isValidImage === null) return;
 
                 if (isValidImage) {
                     if (driveThumb) {
@@ -85,8 +93,13 @@ export default function Icon(icon: FileData) {
                         setImageSrc(icon.url as string);
                     }
                 } else {
+                    console.log(icon.name)
                     const domain = getDomainFromUrl(icon.url as string);
-                    setImageSrc(`https://www.google.com/s2/favicons?domain=${domain}&sz=256`);
+                    if (domain) {
+                        setImageSrc(`https://www.google.com/s2/favicons?domain=${domain}&sz=256`);
+                    } else {
+                        setImageSrc("/assets/images/file.png");
+                    }
                 }
             }
         }
@@ -95,23 +108,24 @@ export default function Icon(icon: FileData) {
 
 
     const returnAction = useCallback(() => {
-        if (isValidImage) {
-            if (!root.canOpenWindow) return;
-            newFile.setFile(icon)
-            if (icon.fileType === "link") {
-                if (!icon.url) return;
-                if (isValidImage) {
-                    imgViewer.setFile(icon);
-                    imgViewer.openWindow();
-                } else {
-                    openLink.setUrl(icon.url as string);
-                    openLink.setBackPath(false);
-                    openLink.openWindow();
-                }
-            } else if (icon.fileType === "folder") {
-                fileViewer.openWindow();
-                fileViewer.setFile(icon)
+
+        if (!root.canOpenWindow) return;
+        newFile.setFile(icon)
+        if (icon.fileType === "link") {
+            if (!icon.url) return;
+            if (isValidImage) {
+                imgViewer.setFile(icon);
+                imgViewer.openWindow();
+            } else {
+                openLink.setUrl(icon.url as string);
+                openLink.setBackPath(false);
+                openLink.openWindow();
             }
+        }
+
+        if (icon.fileType === "folder") {
+            fileViewer.openWindow();
+            fileViewer.setFile(icon)
         }
     }, [icon.url, isValidImage, root])
 

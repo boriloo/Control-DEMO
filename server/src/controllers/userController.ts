@@ -18,7 +18,7 @@ export const getMeController = async (req: Request, res: Response) => {
 
 export const deleteUserController = async (req: Request, res: Response) => {
     try {
-        const userId = req.params.userId
+        const userId = (req as any).userId
 
         await deleteUserService(userId as string);
 

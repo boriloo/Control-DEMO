@@ -35,10 +35,13 @@ export default function OpenLinkWindow({ url }: { url: string | null }) {
                 </div>
                 <div className="flex flex-col gap-3">
                     <div className="flex flex-row w-full justify-between mt-1">
-                        <div className="flex flex-row gap-2 items-center p-1 px-2 hover:bg-white/10 rounded-sm transition-all cursor-pointer">
+
+                        {/* VERSAO LANCAMENTO */}
+
+                        {/* <div className="flex flex-row gap-2 items-center p-1 px-2 hover:bg-white/10 rounded-sm transition-all cursor-pointer">
                             <div className="w-6 h-6 border-1 rounded-sm"></div>
                             <p className="text-lg">Confiar neste link</p>
-                        </div>
+                        </div> */}
                         <div className="flex flex-row gap-2">
                             <button onClick={openLink.closeWindow} className="p-1 px-5 text-lg text-white border-1 border-white cursor-pointer transition-all hover:border-red-500 hover:text-red-500 rounded-md">
                                 Voltar

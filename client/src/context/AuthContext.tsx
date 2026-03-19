@@ -15,7 +15,7 @@ import { BasicFilter, ColorFilter, LoginData, RegisterData, UserData } from "../
 import { authLoginService, authLogoutService, authRefreshService, authRegisterService } from "../services/authServices";
 import { api } from "../lib/axiosConfig";
 import { getMeService } from "../services/userServices";
-import { getDesktopByOwnerService } from "../services/desktopServices";
+import { getDesktopByIdService, getDesktopByOwnerService } from "../services/desktopServices";
 import { DesktopData } from "../types/desktop";
 import { FileData } from "../types/file";
 // import { createUserEmailRef } from "../services/email";
@@ -106,18 +106,25 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
                 const firstDesktop = desktops[0]
 
-                if (desktops && desktops.length > 0) {
-                    setHasDesktops(true);
-                    setCurrentDesktop({
-                        id: firstDesktop.id,
-                        name: firstDesktop.name,
-                        ownerId: firstDesktop.owner_id,
-                        backgroundImage: firstDesktop.background_image.startsWith('data:')
-                            ? firstDesktop.background_image
-                            : `data:image/png;base64,${firstDesktop.background_image}`,
-                        createdAt: firstDesktop.created_at,
+                const localStorageDesktop = localStorage.getItem('last-desktop')
 
-                    } as DesktopData);
+                if (desktops && desktops.length > 0) {
+
+                    setHasDesktops(true);
+
+                    if (localStorageDesktop) {
+                        const desktop = await getDesktopByIdService(localStorageDesktop)
+
+                        const standart = standardDesktop(desktop)
+
+                        setCurrentDesktop(standart as DesktopData);
+
+                    } else {
+                        const standart = standardDesktop(firstDesktop)
+
+                        setCurrentDesktop(standart as DesktopData);
+                    }
+
                 }
             } catch (err) {
                 setIsAuthenticated(false);

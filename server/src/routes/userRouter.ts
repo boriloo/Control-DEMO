@@ -7,10 +7,9 @@ export const userRouter = Router()
 userRouter.get("/me", getMeController)
 
 // UPDATE USER DATA
-userRouter.patch("/", (req, res) => {
-
-})
+// UPDATE DESKTOP 
+userRouter.patch("/", () => { })
 
 // DELETE USER
-userRouter.delete("/:userId", deleteUserController)
+userRouter.delete("/", deleteUserController)
 

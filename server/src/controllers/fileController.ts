@@ -90,11 +90,11 @@ export const getFilesParentNamesController = async (req: Request, res: Response)
 
 export const updateFilePositionController = async (req: Request, res: Response) => {
     try {
-        const { files } = req.body
+        const files = req.body
 
         await updateFilePositionService(files);
 
-        return res.status(201)
+        return res.status(200).json({ updated: files.length })
 
     } catch (err: any) {
 

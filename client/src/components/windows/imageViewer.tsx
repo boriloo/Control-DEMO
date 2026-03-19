@@ -130,7 +130,7 @@ export default function ImageViewerWindow() {
 
             <div className={`${imgFull ? '' : 'scale-90 opacity-0 pointer-events-none'} transition-all w-full min-h-screen fixed inset-0 bg-zinc-950 z-100 pb-10 flex justify-center items-center`}>
                 <img src={driveImage ? driveImage : imgViewer.file?.url} className="max-h-full w-full max-w-full object-contain" />
-                <Minimize2 onClick={() => setImgFull(false)} size={40} className="absolute bottom-10 right-0 p-1 transition-all cursor-pointer hover:bg-zinc-800" />
+                <Minimize2 onClick={() => setImgFull(false)} size={40} className="absolute bottom-12 right-2 p-1 rounded-sm transition-all cursor-pointer hover:bg-zinc-800" />
             </div>
 
             <div className={`${confirmDelete ? '' : 'pointer-events-none opacity-0'} transition-all cursor-default fixed top-0 bg-black/70 w-full h-full z-100 flex 
