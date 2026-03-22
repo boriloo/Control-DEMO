@@ -39,10 +39,6 @@ export default function DashboardPage() {
 
 
     useEffect(() => {
-        console.log(filesMap)
-    }, [filesMap])
-
-    useEffect(() => {
         if (timer === 0) {
             if (filesMap.current.size === 0) return;
 

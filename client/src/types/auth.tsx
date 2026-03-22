@@ -7,10 +7,10 @@ export interface UserData {
   id: string;
   name: string;
   email: string;
+  profileImage: string;
   filterDark: BasicFilter,
   filterBlur: BasicFilter,
   filterColor: ColorFilter,
-  token: string;
   createdAt: string;
 }
 
@@ -59,3 +59,11 @@ export const returnFilterEffects = (user: any | null) => {
 
   return classes.trim();
 };
+
+export type updateUserData = {
+  name?: string,
+  profileImage?: File,
+  filterDark?: BasicFilter,
+  filterBlur?: BasicFilter,
+  filterColor?: ColorFilter,
+}

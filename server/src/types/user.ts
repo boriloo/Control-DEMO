@@ -10,3 +10,11 @@ export type UserData = {
     filterBlur: BasicFilter,
     filterColor: ColorFilter,
 }
+
+export type updateUserData = {
+    name?: string,
+    profileImage?: Buffer,
+    filterDark?: BasicFilter,
+    filterBlur?: BasicFilter,
+    filterColor?: ColorFilter,
+}

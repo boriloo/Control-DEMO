@@ -93,7 +93,6 @@ export default function Icon(icon: FileData) {
                         setImageSrc(icon.url as string);
                     }
                 } else {
-                    console.log(icon.name)
                     const domain = getDomainFromUrl(icon.url as string);
                     if (domain) {
                         setImageSrc(`https://www.google.com/s2/favicons?domain=${domain}&sz=256`);

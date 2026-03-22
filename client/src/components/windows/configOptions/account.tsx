@@ -4,10 +4,12 @@ import { useUser } from "../../../context/AuthContext"
 import { DotLottieReact } from "@lottiefiles/dotlottie-react"
 import { AvatarImageInput } from "../../avatarInput"
 import { useAppContext } from "../../../context/AppContext"
+import { updateUserService } from "../../../services/userServices"
+import { updateUserData } from "../../../types/auth"
 
 export default function AccountOption() {
     const { callToast } = useAppContext();
-    const { user, currentDesktop, authChangeUserAvatar, authChangeUserName } = useUser()
+    const { user, currentDesktop, changeUser, standardUser } = useUser()
     const [currentImage, setCurrentImage] = useState<File | null>(null)
     const [loading, setLoading] = useState<boolean>(false)
     const [username, setUsername] = useState<string>('')
@@ -21,32 +23,17 @@ export default function AccountOption() {
     if (!currentDesktop) return;
 
     const handleEditBackground = async () => {
-        if (!currentImage || !currentDesktop) return;
+        if (!currentImage && !username) return;
         try {
             setLoading(true)
-            // const storage = getStorage();
-            // const storageRef = ref(storage, `users/${user?.uid}/avatar`);
-            // const snapshot = await uploadBytes(storageRef, currentImage);
-            // const downloadURL = await getDownloadURL(snapshot.ref);
-            // await authChangeUserAvatar(downloadURL)
-
+            const pictureForReq = currentImage ? currentImage : undefined
+            const updatedUser = await updateUserService({ name: username, profileImage: pictureForReq } as updateUserData)
+            const formattedUser = standardUser(updatedUser);
+            changeUser(formattedUser);
             setCurrentImage(null)
             callToast({ message: 'Avatar alterado com sucesso!', type: 'success' })
         } catch (err) {
             console.log('ERRO AO ATUALIZAR IMAGEM PELAS CONFIGURAÇÕES: ', err)
-        } finally {
-            setLoading(false)
-        }
-    }
-
-    const handleEditUsername = async () => {
-        if (!username) return;
-        try {
-            setLoading(true)
-            await authChangeUserName(username)
-            callToast({ message: 'Nome alterado com sucesso!', type: 'success' })
-        } catch (err) {
-            console.log('ERRO AO ATUALIZAR NOME PELAS CONFIGURAÇÕES: ', err)
         } finally {
             setLoading(false)
         }
@@ -72,8 +59,8 @@ export default function AccountOption() {
                         <p className="text-md">Nome de exibição</p>
                         <input value={username} onChange={(e) => {
                             setUsername(e.target.value)
-                        }} type="text" className="border-1 border-zinc-600 outline-none transition-all text-lg bg-zinc-800 hover:bg-zinc-700/60  
-                                cursor-pointer focus:cursor-text p-0.5 px-1.5 rounded-sm focus:border-blue-500 focus:text-blue-100 w-full max-w-[300px]" />
+                        }} type="text" className="border-1 border-zinc-600 outline-none transition-all text-lg bg-zinc-800 hover:bg-zinc-700/50  
+                                cursor-pointer focus:cursor-text p-0.5 px-1.5 rounded-sm focus:border-blue-500 focus:bg-zinc-700/80 focus:text-blue-100 w-full max-w-[300px]" />
                     </div>
 
                 </div>
@@ -91,14 +78,14 @@ export default function AccountOption() {
                     />
                 </div>
             ) : (
-                <button disabled={!currentImage} onClick={handleEditBackground} className={`${currentImage ? '' : 'pointer-events-none saturate-0 opacity-50'} border-1 border-blue-500 transition-all cursor-pointer 
+                <button disabled={(!currentImage && !username)} onClick={handleEditBackground} className={`${(currentImage || username) ? '' : 'pointer-events-none saturate-0 opacity-50'} border-1 border-blue-500 transition-all cursor-pointer 
             hover:bg-blue-500 p-2 px-4 rounded-sm font-medium`}>Salvar alterações</button>
             )}
             <div className="w-full h-[1px] bg-zinc-600 mt-4"></div>
 
 
 
-           
+
         </div>
     )
 }

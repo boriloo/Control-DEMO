@@ -1,5 +1,9 @@
 import { Router } from "express"
-import { deleteUserController, getMeController } from "../controllers/userController"
+import { deleteUserController, getMeController, updateUserController } from "../controllers/userController"
+import multer from 'multer';
+const storage = multer.memoryStorage();
+const upload = multer({ storage });
+
 
 export const userRouter = Router()
 
@@ -8,7 +12,7 @@ userRouter.get("/me", getMeController)
 
 // UPDATE USER DATA
 // UPDATE DESKTOP 
-userRouter.patch("/", () => { })
+userRouter.patch("/", upload.single('profileImage'), updateUserController)
 
 // DELETE USER
 userRouter.delete("/", deleteUserController)

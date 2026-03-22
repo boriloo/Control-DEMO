@@ -11,7 +11,7 @@ import {
 // import { auth } from "../firebase/config";
 import { useAppContext } from "./AppContext";
 // import { FullDesktopData, getDesktopById, getDesktopsByMember } from "../services/desktop";
-import { BasicFilter, ColorFilter, LoginData, RegisterData, UserData } from "../types/auth";
+import { BasicFilter, ColorFilter, LoginData, RegisterData, returnFilterEffects, UserData } from "../types/auth";
 import { authLoginService, authLogoutService, authRefreshService, authRegisterService } from "../services/authServices";
 import { api } from "../lib/axiosConfig";
 import { getMeService } from "../services/userServices";
@@ -23,8 +23,11 @@ import { FileData } from "../types/file";
 
 
 interface UserContextProps {
+    userFilters: any;
     isAuthenticated: boolean;
     user: UserData | null;
+    changeUser: (user: UserData) => void;
+    standardUser: (user: any) => UserData;
     currentDesktop: DesktopData | null;
     changeCurrentDesktop: (desktop: DesktopData) => void;
     standardDesktop: (desktop: any) => DesktopData;
@@ -32,9 +35,6 @@ interface UserContextProps {
     authLoginUser: (data: LoginData) => Promise<void>;
     authRegisterUser: (data: RegisterData) => Promise<void>;
     authLogoutUser: () => Promise<void>;
-    authChangeUserAvatar: (imageURL: string) => void;
-    authChangeUserFilters: (filterDark: BasicFilter, filterBlur: BasicFilter, filterColor: ColorFilter) => Promise<void>;
-    authChangeUserName: (username: string) => void;
     isLoading: boolean;
     hasDesktops: boolean;
     setHasDesktops: (value: boolean) => void;
@@ -49,10 +49,37 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const [user, setUser] = useState<UserData | null>(null);
     const [isLoading, setIsLoading] = useState<boolean>(true)
     const [hasDesktops, setHasDesktops] = useState<boolean>(false);
+    const [userFilters, setUserFilters] = useState<any>()
+
+    useEffect(() => {
+        setUserFilters(returnFilterEffects(user))
+    }, [user?.filterBlur, user?.filterColor, user?.filterDark])
+
 
     const changeCurrentDesktop = useCallback((desktop: any) => {
         setCurrentDesktop(desktop)
-    }, [])
+    }, [currentDesktop])
+
+    const changeUser = useCallback((user: UserData) => {
+        setUser(user)
+    }, [user])
+
+    const standardUser = (user: any) => {
+        return {
+            id: user.id,
+            name: user.name,
+            email: user.email,
+            profileImage: user.profile_image
+                ? user.profile_image.startsWith('data:')
+                    ? user.profile_image
+                    : `data:image/png;base64,${user.profile_image}`
+                : null,
+            filterBlur: user.filter_blur,
+            filterDark: user.filter_dark,
+            filterColor: user.filter_color,
+            createdAt: user.created_at,
+        } as UserData
+    }
 
     const standardDesktop = (desktop: any) => {
         return {
@@ -84,19 +111,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     useEffect(() => {
         const initApp = async () => {
             setIsLoading(true);
-
             try {
                 const currentUser = await getMeService();
+                console.log(currentUser)
+                
+                const standart = standardUser(currentUser)
 
-                setUser({
-                    id: currentUser.id,
-                    email: currentUser.email,
-                    name: currentUser.name,
-                    filterDark: currentUser.filter_dark,
-                    filterBlur: currentUser.filter_blur,
-                    filterColor: currentUser.filter_color,
-                    createdAt: currentUser.created_at
-                } as UserData);
+                setUser(standart as UserData);
 
                 setIsAuthenticated(true);
 
@@ -138,16 +159,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }, []);
 
 
-    useEffect(() => {
-        api.interceptors.request.use((config) => {
-            const token = user?.token
-            if (token) {
-                config.headers.Authorization = `Bearer ${token}`;
-            }
-            return config;
-        });
-    }, [])
-
     async function authLoginUser(data: LoginData) {
         try {
             const userData = await authLoginService(data)
@@ -164,7 +175,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         try {
 
             const userData = await authRegisterService(data)
-
             setUser(userData);
 
         } catch (err) {
@@ -186,63 +196,21 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         }
     }
 
-    async function authChangeUserFilters(filterDark: BasicFilter, filterBlur: BasicFilter, filterColor: ColorFilter) {
-        try {
-            if (!user) return;
-            // const updatedUser = await updateUserFilters(
-            //     user.uid as string,
-            //     filterDark,
-            //     filterBlur,
-            //     filterColor
-            // );
-            // console.log('FILTROS ATUALIZADOS COM SUCESSO! ', updatedUser)
-            // setUser(updatedUser)
-        } catch (err) {
-            throw err;
-        }
-    }
-
-    async function authChangeUserAvatar(imageURl: string) {
-        try {
-            if (!user) return;
-            // const updatedUser = await updateUserProfileImage(
-            //     user.uid as string,
-            //     imageURl
-            // );
-            // await updatePublicUserProfileImage(updatedUser.uid as string, imageURl)
-            // setUser(updatedUser)
-        } catch (err) {
-            throw err;
-        }
-    }
-
-    async function authChangeUserName(username: string) {
-        try {
-            if (!user) return;
-            // const updatedUser = await updateUserName(
-            //     user.uid as string,
-            //     username
-            // );
-            // setUser(updatedUser)
-        } catch (err) {
-            throw err
-        }
-    }
 
     return (
         <UserContext.Provider
             value={{
-                authChangeUserAvatar,
+                userFilters,
                 isAuthenticated,
                 user,
+                changeUser,
+                standardUser,
                 currentDesktop,
                 changeCurrentDesktop,
                 standardDesktop,
                 standardFile,
                 authLoginUser,
-                authChangeUserFilters,
                 authRegisterUser,
-                authChangeUserName,
                 isLoading,
                 authLogoutUser,
                 hasDesktops,
