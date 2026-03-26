@@ -37,3 +37,9 @@ export type FilePositionsData = {
     xPos: number,
     yPos: number
 }
+
+export type FilePathData = {
+    id: string,
+    name: string
+}
+

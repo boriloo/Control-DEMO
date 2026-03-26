@@ -1,12 +1,12 @@
 import { useCallback, useEffect, useState } from "react"
-import { FullFileData } from "../../../services/file"
 import { useRootContext } from "../../../context/RootContext"
 import { useWindowContext } from "../../../context/WindowContext"
 import { useAppContext } from "../../../context/AppContext"
 import { Menu, Trash } from "lucide-react"
+import { FileData } from "../../../types/file"
 
 export interface ColumnFileProps {
-    file: FullFileData
+    file: FileData
     animationKey: number
     index: number
     imageValidations: Record<string, boolean>
@@ -44,11 +44,11 @@ export default function ColumnFile({ file, animationKey, index, imageValidations
 
     function imageReturn() {
         if (driveThumb) return driveThumb
-        switch (file.type) {
+
+        switch (file.fileType) {
+
             case 'folder':
                 return '/assets/images/open-folder.png'
-            case 'text':
-                return '/assets/images/text-file.png'
             case 'link':
                 const domain = getDomainFromUrl(file.url ?? '');
                 if (imageValidations[file.url ?? '']) {
@@ -66,7 +66,7 @@ export default function ColumnFile({ file, animationKey, index, imageValidations
     const returnAction = useCallback(() => {
         if (!root.canOpenWindow) return;
         newFile.setFile(file)
-        if (file.type === "link") {
+        if (file.fileType === "link") {
             if (!file.url) return;
             if (imageValidations[file.url]) {
                 minimazeAllWindows();
@@ -77,7 +77,7 @@ export default function ColumnFile({ file, animationKey, index, imageValidations
                 openLink.setBackPath(true);
                 openLink.openWindow();
             }
-        } else if (file.type === "folder") {
+        } else if (file.fileType === "folder") {
             fileViewer.setFile(file)
         }
     }, [imageValidations, root, file])
@@ -87,17 +87,17 @@ export default function ColumnFile({ file, animationKey, index, imageValidations
         <div
             key={`${file.id}-${animationKey}`}
             onClick={() => returnAction()}
-            className="group flex flex-row p-3 gap-3 rounded-md bg-zinc-900 transition-all cursor-pointer hover:bg-zinc-800/85 animate-slideIn opacity-0 items-center
-            inset-shadow-sm inset-shadow-zinc-700 shadow-md min-w-40"
+            className="group flex flex-row p-3 gap-3 rounded-md bg-linear-to-b from-zinc-900 to-zinc-800/60 transition-all cursor-pointer hover:bg-zinc-800/85 animate-slideIn opacity-0 items-center
+            inset-shadow-xs inset-shadow-zinc-700 shadow-md min-w-40"
             style={{
                 animationDelay: `${index * 120}ms`,
                 animationFillMode: 'forwards'
             }}
         >
-            <img src={imageReturn()} alt="" className="max-h-8 w-8 object-contain" />
+            <img src={imageReturn()} alt="" className="max-h-8 w-8 object-contain transition-all group-hover:ml-0.5" />
             <div className="flex flex-col">
-                <p className="text-[18px] w-full max-w-70 truncate">{file.name}</p>
-                <p className="text-[14px] mt-[-5px] opacity-80">{imageValidations[file.url as string] ? 'imagem' : file.type}</p>
+                <p className="text-[18px] w-full max-w-70 truncate transition-all group-hover:ml-1">{file.name}</p>
+                <p className="text-[14px] mt-[-5px] opacity-80 transition-all group-hover:ml-1">{imageValidations[file.url as string] ? 'imagem' : file.fileType}</p>
             </div>
             <p className="ml-[-5px] p-1 px-2 opacity-0 transition-all rounded-md group-hover:opacity-100 group-hover:ml-2 text-blue-500 bg-blue-800/15">Clique para abrir</p>
             <div className="ml-auto flex flex-row gap-3">

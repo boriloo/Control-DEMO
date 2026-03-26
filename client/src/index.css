@@ -12,7 +12,6 @@
 
 
 
-
 html {
   scroll-behavior: smooth;
 }
@@ -69,4 +68,24 @@ input:-webkit-autofill:active {
     width: 0%;
     opacity: 0;
   }
+}
+
+@keyframes expandIn {
+  from {
+    width: 0;
+    opacity: 0;
+    padding-left: 0;
+    padding-right: 0;
+  }
+
+  to {
+    width: auto;
+    opacity: 1;
+  }
+}
+
+.animate-expand {
+  overflow: hidden;
+  white-space: nowrap;
+  animation: expandIn 0.35s cubic-bezier(0.4, 0, 0.2, 1) forwards;
 }

@@ -7,37 +7,53 @@ import { returnFilterEffects } from "../../types/auth";
 import ColumnFile from "./fileViewer/columnFile";
 import { useAppContext } from "../../context/AppContext";
 import { DotLottieReact } from "@lottiefiles/dotlottie-react";
-import { FullFileData } from "../../types/file";
+import { FileData, FilePathData } from "../../types/file";
+import { getFileByIdService, getFileParentNamesService, getFilesFromParentService } from "../../services/fileServices";
 
 export default function FileWindow() {
     const { minimazeAllWindows } = useAppContext();
-    const { user, currentDesktop } = useUser()
+    const { user, currentDesktop, standardFile } = useUser()
     const { fileViewer, newFile } = useWindowContext();
     const [isFullsceen, setIsFullscreen] = useState<boolean>(false)
-    const [internalFiles, setInternalFiles] = useState<FullFileData[]>([])
+    const [internalFiles, setInternalFiles] = useState<FileData[]>([])
     const [imageValidations, setImageValidations] = useState<Record<string, boolean>>({});
     const [animationKey, setAnimationKey] = useState<number>(0);
     const [seeFiles, setSeeFiles] = useState<boolean>(false)
+    const [path, setPath] = useState<FilePathData[]>([])
     const [loading, setLoading] = useState<boolean>(false)
+    const [animKey, setAnimKey] = useState(0);
 
 
     useEffect(() => {
-        if (!fileViewer.file?.desktopId || !fileViewer.file?.id || !user) return;
-        // const unsubscribe = listenToFilesByParent(
-        //     user.uid as string,
-        //     fileViewer.file?.desktopId,
-        //     fileViewer.file?.id,
-        //     (newFiles: FullFileData[]) => {
-        //         const typeOrder = { folder: 0, link: 1, text: 2 };
-        //         const sortedArray = newFiles.sort((a, b) => {
-        //             return typeOrder[a.type] - typeOrder[b.type];
-        //         });
-        //         setInternalFiles(sortedArray);
-        //     }
-        // );
-        // return unsubscribe;
+        if (!fileViewer.file?.desktopId || !fileViewer.file?.id || !user || !currentDesktop) return;
+        setAnimKey(prev => prev + 1);
+        const initInternalFiles = async () => {
 
-    }, [fileViewer.file, user?.uid]);
+            try {
+                const files = await getFilesFromParentService(currentDesktop?.id, fileViewer.file.id)
+
+                const standardFiles = files.map((file: FileData) => {
+                    return standardFile(file)
+                })
+
+                type FileType = "folder" | "link" | "file";
+                const typeOrder: Record<FileType, number> = { folder: 0, link: 1, file: 2 };
+
+                const sortedArray = standardFiles.sort((a: { fileType: FileType }, b: { fileType: FileType }) => {
+                    return typeOrder[a.fileType] - typeOrder[b.fileType];
+                });
+                setInternalFiles(sortedArray);
+
+                const path = await getFileParentNamesService(currentDesktop.id, fileViewer.file.parentId)
+                setPath(path.reverse())
+            } catch (err) {
+                alert(err)
+            }
+        }
+
+        initInternalFiles()
+
+    }, [fileViewer.file, user?.id]);
 
     useEffect(() => {
         if (fileViewer.currentStatus === 'open') {
@@ -80,7 +96,7 @@ export default function FileWindow() {
 
     useEffect(() => {
         internalFiles.forEach(file => {
-            if (file.type === 'link' && file.url && !imageValidations[file.url]) {
+            if (file.fileType === 'link' && file.url && !imageValidations[file.url]) {
                 validateImage(file.url).then(isValid => {
                     setImageValidations(prev => ({
                         ...prev,
@@ -99,18 +115,24 @@ export default function FileWindow() {
 
     const handleCreateFile = () => {
         newFile.openWindow()
+        console.log('criar arquivo', fileViewer.file)
         newFile.setFile(fileViewer.file)
     }
 
     const handlePathClick = async (pathId: string | null) => {
+        if (!currentDesktop) return;
+
         if (!pathId) {
             minimazeAllWindows()
             return;
         }
+
         try {
             setLoading(true)
-            // const file = await getFileById(pathId)
-            // fileViewer.setFile(file)
+            const file = await getFileByIdService(pathId, currentDesktop?.id)
+            console.log('meuarquivoi', file)
+            const stfile = standardFile(file)
+            fileViewer.setFile(stfile)
         } catch (err) {
             throw err
         } finally {
@@ -122,10 +144,10 @@ export default function FileWindow() {
 
     return (
 
-        <div onClick={handleAreaClick} className={`${isFullsceen ? 'pb-[40px]' : ' p-2 pb-[50px]'} ${fileViewer.currentStatus === "open" ? returnFilterEffects(user) : 'pointer-events-none'} 
+        <div onClick={handleAreaClick} className={`${isFullsceen ? 'pb-[40px]' : ' p-2 pb-[50px]'} ${fileViewer.currentStatus === "open" ? 'returnFilterEffects(user)' : 'pointer-events-none'} 
         fixed z-100 flex-1 flex justify-center items-center w-full h-screen transition-all duration-500 cursor-pointer`}>
             <div className={`${isFullsceen ? 'max-w-full max-h-full' : 'rounded-lg max-w-[1200px] max-h-[700px]'} ${fileViewer.currentStatus === "open" ? 'scale-100' : 'scale-0 '} 
-                bg-zinc-900 cursor-default origin-bottom relative transition-all duration-300 flex flex-col w-full h-full overflow-y-auto select-none`}>
+                bg-zinc-900/40 backdrop-blur-sm cursor-default origin-bottom relative transition-all duration-300 flex flex-col w-full h-full overflow-y-auto select-none`}>
                 <div className="z-50 sticky select-none top-0 w-full bg-black/50 h-8 flex flex-row justify-between items-center backdrop-blur-[2px]">
                     <p className="p-2">Pasta</p>
                     <div className="flex flex-row h-full">
@@ -140,15 +162,18 @@ export default function FileWindow() {
                             <p>Endereço</p>
                             <div className=" p-1 px-2 flex flex-row bg-black/30 rounded-md border-1 border-zinc-600 items-center">
                                 <FolderRoot size={16} className="opacity-60 mr-1" />
-                                {fileViewer.file?.path && fileViewer.file?.path.map((pathSegment) => (
+                                {path && path.map((pathSegment) => (
                                     <div className="flex flex-row items-center">
-                                        <p key={pathSegment.name} onClick={() => handlePathClick(pathSegment.id)} className="p-0.5 px-1 rounded-sm transition-all cursor-pointer hover:bg-zinc-800 hover:px-3  max-w-40 truncate">
+                                        <p key={pathSegment.name} onClick={() => handlePathClick(pathSegment.id)} className="p-0.5 px-2 rounded-sm transition-all cursor-pointer hover:bg-zinc-800 hover:px-3  max-w-40 truncate">
                                             {pathSegment.id ? pathSegment.name : currentDesktop?.name}
                                         </p>
                                         <p className="opacity-40 ml-1 mr-1">|</p>
                                     </div>
                                 ))}
-                                <p className="p-0.5 px-2 rounded-sm bg-blue-500/10 text-blue-500 max-w-40 truncate">{fileViewer.file?.name}</p>
+                                <p className="p-0.5 px-2 rounded-sm bg-blue-500/10 text-blue-500 max-w-40 truncate animate-expand"
+                                    key={animKey}>
+                                    {fileViewer.file?.name}
+                                </p>
                             </div>
                         </div>
                         <div className="flex flex-row gap-2 flex-1 max-w-65">

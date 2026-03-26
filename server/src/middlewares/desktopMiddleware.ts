@@ -4,7 +4,6 @@ import { pool } from '../lib/postgres';
 export const isSingleDesktopOwner = async (req: Request, res: Response, next: NextFunction) => {
     const ownerId = (req as any).userId
 
-
     const desktopId = req.params.desktopId
 
     try {

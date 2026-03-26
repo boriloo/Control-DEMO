@@ -1,5 +1,5 @@
 import { Router } from "express"
-import { createFileController, deleteFileController, getAllFilesFromDesktopController, getFilesFromDesktopController, getFilesParentNamesController, updateFilePositionController } from "../controllers/fileController"
+import { createFileController, deleteFileController, getAllFilesFromDesktopController, getFileByIdController, getFilesFromDesktopController, getFilesFromParentController, getFilesParentNamesController, updateFilePositionController } from "../controllers/fileController"
 import { isSingleDesktopOwner } from "../middlewares/desktopMiddleware"
 import { deleteFileService } from "../services/fileService"
 
@@ -9,9 +9,7 @@ export const fileRouter = Router()
 fileRouter.post("/:desktopId", isSingleDesktopOwner, createFileController)
 
 // GET FILE BY ID
-fileRouter.get("/:fileId", (req, res) => {
-
-})
+fileRouter.get("/:fileId/desktop/:desktopId", isSingleDesktopOwner, getFileByIdController)
 
 // GET FILE FROM OWNERID
 fileRouter.get("/", (req, res) => {
@@ -24,9 +22,11 @@ fileRouter.get("/desktop/:desktopId", isSingleDesktopOwner, getFilesFromDesktopC
 // GET ALL FILES FROM DESKTOP
 fileRouter.get("/desktop/all/:desktopId", isSingleDesktopOwner, getAllFilesFromDesktopController)
 
-// GET FILES PARENT NAMES
-fileRouter.get("/parent", getFilesParentNamesController)
+// GET FILES FROM PARENT
+fileRouter.get("/desktop/:desktopId/parent/:parentId", isSingleDesktopOwner, getFilesFromParentController)
 
+// GET FILES PARENT NAMES
+fileRouter.get("/desktop/:desktopId/parent-names/:parentId", isSingleDesktopOwner, getFilesParentNamesController)
 
 // UPDATE FILE POSITION
 fileRouter.put("/position", updateFilePositionController)

@@ -35,6 +35,27 @@ export const getAllFilesFromDesktopService = async (desktopId: string) => {
     return files
 }
 
+// GET FILE BY ID
+
+export const getFileByIdService = async (fileId: string) => {
+
+    const response = await pool.query("SELECT * FROM files WHERE id = $1", [fileId])
+
+    const files = response.rows[0]
+
+    return files
+}
+
+// GET FILES BY PARENT ID 
+export const getFilesFromParentService = async (parentId: string) => {
+
+    const response = await pool.query("SELECT * FROM files WHERE parent_id = $1", [parentId])
+
+    const files = response.rows
+
+    return files
+}
+
 //GET DESKTOP BY ID
 
 export const getFilesFromDesktopService = async (desktopId: string) => {
@@ -48,25 +69,27 @@ export const getFilesFromDesktopService = async (desktopId: string) => {
 //GET DESKTOP BY ID
 
 export const getFilesParentNamesService = async (parentId: string) => {
-    if (parentId === "root") throw new Error("Root files have no parents.")
+    if (parentId === "root") return [];
 
-    const parentNames: string[] = [];
-    let currentId = parentId;
+    const query = `
+        WITH RECURSIVE parents AS (
+            SELECT id, name, parent_id
+            FROM files
+            WHERE id = $1::uuid
 
-    while (currentId !== 'root') {
-        const query = 'SELECT parent_id, name FROM files WHERE id = $1';
-        const result = await pool.query(query, [currentId]);
+            UNION ALL
 
-        if (result.rows.length === 0) break;
+            SELECT f.id, f.name, f.parent_id
+            FROM files f
+            INNER JOIN parents p ON f.id = p.parent_id::uuid
+            WHERE p.parent_id != 'root'
+        )
+        SELECT id, name FROM parents
+    `;
 
-        const file = result.rows[0];
+    const result = await pool.query(query, [parentId]);
 
-        parentNames.push(file.name);
-
-        currentId = file.parent_id;
-    }
-
-    return parentNames;
+    return result.rows.map(r => ({ id: r.id, name: r.name }))
 };
 
 // UPDATE FILE POSITION 

@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { createFileService, deleteFileService, getAllFilesFromDesktopService, getFilesFromDesktopService, getFilesParentNamesService, updateFilePositionService } from '../services/fileService';
+import { createFileService, deleteFileService, getAllFilesFromDesktopService, getFileByIdService, getFilesFromDesktopService, getFilesFromParentService, getFilesParentNamesService, updateFilePositionService } from '../services/fileService';
 import { CreateFileBodyData, CreateFileData } from '../types/file';
 
 export const createFileController = async (req: Request, res: Response) => {
@@ -36,7 +36,7 @@ export const getAllFilesFromDesktopController = async (req: Request, res: Respon
 
         const files = await getAllFilesFromDesktopService(desktopId as string);
 
-        return res.status(201).json(files);
+        return res.status(200).json(files);
 
     } catch (err: any) {
 
@@ -48,6 +48,31 @@ export const getAllFilesFromDesktopController = async (req: Request, res: Respon
     }
 }
 
+// getFileByIdService
+
+export const getFileByIdController = async (req: Request, res: Response) => {
+
+    try {
+        const fileId = req.params.fileId;
+        const files = await getFileByIdService(fileId as string);
+        return res.status(200).json(files);
+    } catch (err: any) {
+        return res.status(500).json({ error: 'Server Error' });
+    }
+}
+
+
+export const getFilesFromParentController = async (req: Request, res: Response) => {
+
+    try {
+        const parentId = req.params.parentId;
+        const files = await getFilesFromParentService(parentId as string);
+        return res.status(200).json(files);
+    } catch (err: any) {
+        return res.status(500).json({ error: 'Server Error' });
+    }
+}
+
 
 export const getFilesFromDesktopController = async (req: Request, res: Response) => {
     try {
@@ -56,7 +81,7 @@ export const getFilesFromDesktopController = async (req: Request, res: Response)
         const files = await getFilesFromDesktopService(desktopId as string);
 
 
-        return res.status(201).json(files);
+        return res.status(200).json(files);
 
     } catch (err: any) {
 
@@ -69,12 +94,13 @@ export const getFilesFromDesktopController = async (req: Request, res: Response)
 }
 
 export const getFilesParentNamesController = async (req: Request, res: Response) => {
+
     try {
-        const { parentId } = req.body
+        const parentId = req.params.parentId
 
-        const names = await getFilesParentNamesService(parentId)
+        const names = await getFilesParentNamesService(parentId as string)
 
-        return res.status(201).json(names);
+        return res.status(200).json(names);
 
     } catch (err: any) {
 

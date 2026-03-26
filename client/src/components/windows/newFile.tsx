@@ -1,5 +1,5 @@
 import { ChevronDown, X } from "lucide-react"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { useWindowContext } from "../../context/WindowContext";
 import { returnFilterEffects } from "../../types/auth";
 // import { createFile } from "../../services/file";
@@ -20,6 +20,10 @@ export default function NewFileWindow() {
     const [name, setName] = useState<string | null>(null)
     const [url, setUrl] = useState<string | null>(null)
     const [loading, setLoading] = useState<boolean>(false)
+
+    useEffect(() => {
+        console.log('novo file3', newFile)
+    }, [])
 
     const normalizeUrl = (inputUrl: string | null): string | null => {
         if (!inputUrl) return null;
@@ -61,14 +65,6 @@ export default function NewFileWindow() {
 
         if (newFile.file) {
             finalPayload.parentId = newFile.file.id
-            finalPayload.path = [
-                ...newFile.file.path,
-                { id: newFile.file.id, name: newFile.file.name }
-            ]
-            console.log([
-                ...newFile.file.path,
-                { id: newFile.file.id, name: newFile.file.name }
-            ])
         }
 
         switch (fileType) {
@@ -148,7 +144,7 @@ export default function NewFileWindow() {
             max-h-full flex flex-col gap-4 overflow-y-auto transition-all relative shadow-[inset_0_5px_10px_rgba(255,255,255,0.05),0_5px_10px_rgba(0,0,0,0.3)]`}>
                 <X onClick={closeWindow} size={35}
                     className="absolute top-0 right-0 p-2 rounded-bl-lg cursor-pointer transition-all hover:bg-red-500" />
-                <h1 className="text-[20px] flex gap-1.5">Criar um novo item em <p className="text-blue-500 max-w-50 truncate">{newFile.file ? `${newFile.file.name} (${newFile.file.type})` : `${currentDesktop?.name} (Desktop)`}</p></h1>
+                <h1 className="text-[20px] flex gap-1.5">Criar um novo item em <p className="text-blue-500 max-w-50 truncate">{newFile.file ? `${newFile.file.name} (${newFile.file.fileType})` : `${currentDesktop?.name} (Desktop)`}</p></h1>
                 <div className={`${loading && 'saturate-0 pointer-events-none opacity-60'} flex flex-col gap-3`}>
                     <button onClick={() => setDrop(!drop)} className={`${drop ? 'border-white rounded-t-md' : 'border-blue-500 rounded-md'} flex flex-row gap-2 p-4 
                     border-1  items-center 
