@@ -73,6 +73,7 @@ export default function ColumnFile({ file, animationKey, index, imageValidations
                 imgViewer.setFile(file);
                 imgViewer.openWindow();
             } else {
+                openLink.setName(file.name as string);
                 openLink.setUrl(file.url as string);
                 openLink.setBackPath(true);
                 openLink.openWindow();
@@ -87,7 +88,7 @@ export default function ColumnFile({ file, animationKey, index, imageValidations
         <div
             key={`${file.id}-${animationKey}`}
             onClick={() => returnAction()}
-            className="group flex flex-row p-3 gap-3 rounded-md bg-linear-to-b from-zinc-900 to-zinc-800/60 transition-all cursor-pointer hover:bg-zinc-800/85 animate-slideIn opacity-0 items-center
+            className="group flex flex-row p-3 gap-3 rounded-md bg-linear-to-b from-zinc-900 to-zinc-800/60 transition-all cursor-pointer bg-zinc-900 hover:bg-zinc-800/85 animate-slideIn opacity-0 items-center
             inset-shadow-xs inset-shadow-zinc-700 shadow-md min-w-40"
             style={{
                 animationDelay: `${index * 120}ms`,

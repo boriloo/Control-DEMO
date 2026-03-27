@@ -6,11 +6,7 @@ import {
     useEffect,
     useCallback,
 } from "react";
-// import { getUserProfile, loginUser, registerUser, updateUserFilters, updateUserName, updateUserProfileImage } from "../services/auth";
-// import { browserLocalPersistence, browserSessionPersistence, onAuthStateChanged, setPersistence, signOut, UserProfile } from "firebase/auth";
-// import { auth } from "../firebase/config";
 import { useAppContext } from "./AppContext";
-// import { FullDesktopData, getDesktopById, getDesktopsByMember } from "../services/desktop";
 import { BasicFilter, ColorFilter, LoginData, RegisterData, returnFilterEffects, UserData } from "../types/auth";
 import { authLoginService, authLogoutService, authRefreshService, authRegisterService } from "../services/authServices";
 import { api } from "../lib/axiosConfig";
@@ -18,8 +14,6 @@ import { getMeService } from "../services/userServices";
 import { getDesktopByIdService, getDesktopByOwnerService } from "../services/desktopServices";
 import { DesktopData } from "../types/desktop";
 import { FileData } from "../types/file";
-// import { createUserEmailRef } from "../services/email";
-// import { registerPublicUser, updatePublicUserProfileImage } from "../services/public";
 
 
 interface UserContextProps {
@@ -31,7 +25,6 @@ interface UserContextProps {
     currentDesktop: DesktopData | null;
     changeCurrentDesktop: (desktop: DesktopData) => void;
     standardDesktop: (desktop: any) => DesktopData;
-    standardFile: (file: any) => FileData;
     authLoginUser: (data: LoginData) => Promise<void>;
     authRegisterUser: (data: RegisterData) => Promise<void>;
     authLogoutUser: () => Promise<void>;
@@ -93,21 +86,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         } as DesktopData
     }
 
-    const standardFile = (file: any) => {
-        return {
-            id: file.id,
-            name: file.name,
-            ownerId: file.owner_id,
-            parentId: file.parent_id,
-            desktopId: file.desktop_id,
-            fileType: file.file_type,
-            url: file.url,
-            xPos: file.xpos,
-            yPos: file.ypos,
-            createdAt: file.created_at,
-        } as FileData;
-    }
-
+    
     useEffect(() => {
         const initApp = async () => {
             setIsLoading(true);
@@ -208,7 +187,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
                 currentDesktop,
                 changeCurrentDesktop,
                 standardDesktop,
-                standardFile,
                 authLoginUser,
                 authRegisterUser,
                 isLoading,

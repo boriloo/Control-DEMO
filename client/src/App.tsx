@@ -5,6 +5,7 @@ import { AuthProvider } from "./context/AuthContext";
 import PageRouter from "./pages/pageRouter/pageRouter";
 import { RootProvider } from './context/RootContext';
 import Toast from './components/toast/toast';
+import { FileProvider } from './context/FileContext';
 
 function App() {
   return (
@@ -12,10 +13,12 @@ function App() {
       <WindowProvider>
         <AppProvider>
           <AuthProvider>
-            <div className="flex min-h-screen w-full">
-              <PageRouter />
-            </div >
-            <Toast />
+            <FileProvider>
+              <div className="flex min-h-screen w-full">
+                <PageRouter />
+              </div >
+              <Toast />
+            </FileProvider>
           </AuthProvider>
         </AppProvider>
       </WindowProvider>

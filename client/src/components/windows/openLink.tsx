@@ -1,10 +1,12 @@
 import { useWindowContext } from "../../context/WindowContext";
 import { returnFilterEffects } from "../../types/auth";
 import { useUser } from "../../context/AuthContext";
+import { useEffect, useState } from "react";
 
 export default function OpenLinkWindow({ url }: { url: string | null }) {
     const { user } = useUser();
     const { openLink } = useWindowContext();
+    const [imageSrc, setImageSrc] = useState<string | null>(null)
 
     const handleAreaClick = (e: React.MouseEvent<HTMLElement>) => {
         if (e.target != e.currentTarget) return;
@@ -12,12 +14,48 @@ export default function OpenLinkWindow({ url }: { url: string | null }) {
     }
 
 
+    function getDomainFromUrl(url: string): string {
+        try {
+            const hostname = new URL(url).hostname;
+
+            const parts = hostname.split(".");
+
+            const isCompoundSuffix = parts.length > 2 && parts[parts.length - 2].length <= 3;
+            const rootDomain = isCompoundSuffix
+                ? parts.slice(-3).join(".")
+                : parts.slice(-2).join(".");
+            return rootDomain;
+        } catch {
+            return "";
+        }
+    }
+
+
+
+    useEffect(() => {
+        function loadIcon() {
+            const domain = getDomainFromUrl(openLink.url as string);
+            if (domain) {
+                setImageSrc(`https://www.google.com/s2/favicons?domain=${domain}&sz=256`);
+            } else {
+                setImageSrc("/assets/images/file.png");
+            }
+        }
+
+        loadIcon();
+    }, [openLink.url]);
+
+
     return (
         <div onClick={handleAreaClick} className={`${openLink.currentStatus === 'open' ? returnFilterEffects(user) : 'pointer-events-none '} 
         transition-all duration-500 fixed z-110 w-full h-screen flex justify-center items-center p-4 pb-[50px] cursor-pointer`}>
             <div className={`${openLink.currentStatus === 'open' ? 'scale-100' : 'scale-0'} cursor-default bg-zinc-900 shadow-[inset_0_5px_10px_rgba(255,255,255,0.05),0_5px_10px_rgba(0,0,0,0.3)]
              origin-center rounded-md p-4 w-full max-w-[700px] max-h-full flex flex-col gap-4 overflow-y-auto transition-all relative`}>
-                <h1 className="text-[20px]">Aviso - Você será redirecionado à outra página</h1>
+                <div className="p-1.5 bg-zinc-800 border border-zinc-700 rounded-md absolute top-4 right-4">
+                    <img src={imageSrc as string} className="w-10 object-contain pointer-events-none select-none" />
+                </div>
+                <h1 className="text-[25px] truncate max-w-[85%]">{openLink.name}</h1>
+                <p className="mt-[-10px] text-[18px] text-red-400">Aviso - Você será redirecionado à outra página</p>
                 <div className="flex flex-col gap-1">
                     {url && (
                         <>

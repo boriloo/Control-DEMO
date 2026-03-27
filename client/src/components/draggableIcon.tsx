@@ -6,12 +6,13 @@ import { FileData } from '../types/file';
 
 type DraggableIconProps = {
   icon: FileData;
+  beingDragged: boolean;
   onStart: (e: DraggableEvent, data: DraggableData, iconId: string) => void;
   onDrag: (e: DraggableEvent, data: DraggableData, iconId: string) => void;
   onStop: (e: DraggableEvent, data: DraggableData, iconId: string) => void;
 };
 
-export function DraggableIcon({ icon, onStart, onDrag, onStop }: DraggableIconProps) {
+export function DraggableIcon({ icon, beingDragged, onStart, onDrag, onStop }: DraggableIconProps) {
   const position = { x: icon.xPos, y: icon.yPos }
   const nodeRef = useRef(null);
   return (
@@ -22,11 +23,10 @@ export function DraggableIcon({ icon, onStart, onDrag, onStop }: DraggableIconPr
       onStart={(e, data) => onStart(e, data, icon.id)}
       onDrag={(e, data) => onDrag(e, data, icon.id)}
       onStop={(e, data) => onStop(e, data, icon.id)}
-      grid={[100, 100]}
       bounds={{ left: 0, top: 0 }}
     >
-      <div ref={nodeRef} className="absolute cursor-move w-24 h-24 transition-all duration-100">
-        <Icon {...icon} />
+      <div ref={nodeRef} className={`absolute cursor-move w-24 h-24 ${beingDragged ? '' : 'transition-all duration-100'}`}>
+        <Icon icon={icon} beingDragged={beingDragged} />
       </div>
     </Draggable>
   );

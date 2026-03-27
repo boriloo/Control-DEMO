@@ -22,24 +22,26 @@ import DesktopConfigWindow from "../../components/windows/desktopConfig";
 import ImageViewerWindow from "../../components/windows/imageViewer";
 import SocialWindow from "../../components/windows/social";
 import { FileData } from "../../types/file";
-import { getAllFilesFromDesktopService, getFilesFromDesktopService, updateFilePositionService } from "../../services/fileServices";
+import { getFilesFromDesktopService, updateFilePositionService } from "../../services/fileServices";
 import { useAppContext } from "../../context/AppContext";
+import { useFileContext } from "../../context/FileContext";
 
 
 export default function DashboardPage() {
-    const { changeNextIconPosition } = useAppContext();
+    const { rootFiles, changeRootFiles } = useFileContext();
+    const { changeNextIconPosition, callToast } = useAppContext();
     const { t } = useTranslation();
     const { root } = useRootContext();
-    const { user, hasDesktops, setHasDesktops, currentDesktop, standardFile } = useUser();
+    const { user, hasDesktops, setHasDesktops, currentDesktop } = useUser();
     const { newFile, listdt, openLink } = useWindowContext();
     const [start, setStart] = useState<boolean>(false);
-    const [desktopFiles, setDesktopFiles] = useState<FileData[]>([])
     const [timer, setTimer] = useState<number>(0)
+    const [beingDragged, setBeingDragged] = useState<string>('')
     const filesMap = useRef<Map<string, { id: string; xPos: number; yPos: number }>>(new Map());
-
 
     useEffect(() => {
         if (timer === 0) {
+            if (beingDragged != '') return;
             if (filesMap.current.size === 0) return;
 
             (async () => {
@@ -48,6 +50,8 @@ export default function DashboardPage() {
                 filesMap.current.clear();
             })();
 
+            callToast({ message: 'Posições atualizadas no banco!', type: 'success' })
+
             filesMap.current.clear();
 
             return;
@@ -55,7 +59,7 @@ export default function DashboardPage() {
 
         const interval = setInterval(() => {
             setTimer(prev => prev - 1);
-            // console.log(timer)
+            console.log(timer)
         }, 1000);
 
         return () => clearInterval(interval);
@@ -89,15 +93,15 @@ export default function DashboardPage() {
     useEffect(() => {
         const containerWidth = desktopRef.current?.clientWidth || window.innerWidth;
 
-        const nextPosition = findNextAvailablePosition(desktopFiles, containerWidth);
+        const nextPosition = findNextAvailablePosition(rootFiles, containerWidth);
 
         if (nextPosition) {
             changeNextIconPosition(nextPosition);
         }
 
-        setTimer(20)
+        setTimer(5)
 
-    }, [desktopFiles]);
+    }, [rootFiles]);
 
     useEffect(() => {
         if (!user || !currentDesktop?.id) return;
@@ -106,11 +110,8 @@ export default function DashboardPage() {
             try {
                 const files = await getFilesFromDesktopService(currentDesktop.id)
 
-                const standardFiles = files.map((file: FileData) => {
-                    return standardFile(file)
-                })
+                changeRootFiles(files)
 
-                setDesktopFiles(standardFiles)
             } catch (err) {
                 alert(err)
             }
@@ -145,14 +146,19 @@ export default function DashboardPage() {
 
     const initialDragState = useRef<FileData[] | null>(null);
 
-    const handleDragStart = () => {
+    const handleDragStart = useCallback((e: DraggableEvent, data: DraggableData, iconId: string) => {
         root.setCanOpenWindow(true);
-        initialDragState.current = desktopFiles;
-    };
+        initialDragState.current = rootFiles;
+        setBeingDragged(iconId)
+    }, [rootFiles])
 
-    const handleDrag = (e: DraggableEvent, data: DraggableData, draggedIconId: string) => {
+    const handleDrag = useCallback((e: DraggableEvent, data: DraggableData, draggedIconId: string) => {
         root.setCanOpenWindow(false);
-        if (!initialDragState.current) return;
+    }, [])
+
+    const handleDragStop = useCallback((e: DraggableEvent, data: DraggableData, draggedIconId: string) => {
+        setBeingDragged('')
+        initialDragState.current = null;
 
         const GRID_SIZE = 100;
         const roundToGrid = (value: number) => Math.round(value / GRID_SIZE) * GRID_SIZE;
@@ -160,10 +166,9 @@ export default function DashboardPage() {
         const currentX = roundToGrid(data.x);
         const currentY = roundToGrid(data.y);
 
-        const originalIcons = initialDragState.current;
+        const originalIcons = rootFiles;
         const draggedIconOriginal = originalIcons.find(i => i.id === draggedIconId);
         if (!draggedIconOriginal) return;
-
 
         const existingIcon = originalIcons.find(icon =>
             icon.id !== draggedIconId &&
@@ -172,31 +177,24 @@ export default function DashboardPage() {
         );
 
         if (existingIcon) {
-
             filesMap.current.set(draggedIconId, { id: draggedIconId, xPos: existingIcon.xPos, yPos: existingIcon.yPos });
             filesMap.current.set(existingIcon.id, { id: existingIcon.id, xPos: draggedIconOriginal.xPos, yPos: draggedIconOriginal.yPos });
 
-            setDesktopFiles(originalIcons.map(icon => {
+            changeRootFiles(originalIcons.map(icon => {
                 if (icon.id === draggedIconId) return { ...icon, xPos: existingIcon.xPos, yPos: existingIcon.yPos };
                 if (icon.id === existingIcon.id) return { ...icon, xPos: draggedIconOriginal.xPos, yPos: draggedIconOriginal.yPos };
                 return icon;
             }));
         } else {
-
             filesMap.current.set(draggedIconId, { id: draggedIconId, xPos: currentX, yPos: currentY });
 
-            setDesktopFiles(originalIcons.map(icon =>
+            changeRootFiles(originalIcons.map(icon =>
                 icon.id === draggedIconId ? { ...icon, xPos: currentX, yPos: currentY } : icon
             ));
         }
 
         checkOverflow();
-    };
-
-    const handleDragStop = () => {
-        initialDragState.current = null;
-        checkOverflow();
-    };
+    }, [rootFiles, checkOverflow])
 
     useDraggableScroll(desktopRef);
 
@@ -212,7 +210,7 @@ export default function DashboardPage() {
             desktopEl.removeEventListener('scroll', checkOverflow);
             window.removeEventListener('resize', checkOverflow);
         };
-    }, [desktopFiles, checkOverflow]);
+    }, [rootFiles, checkOverflow]);
 
 
     return (
@@ -307,10 +305,11 @@ export default function DashboardPage() {
 
                 <div
                     ref={desktopRef} className="desktop-area flex-1 w-full relative mb-10 p-4 overflow-scroll">
-                    {desktopFiles.map((icon, index) => (
+                    {rootFiles.map((icon) => (
                         <DraggableIcon
-                            key={index}
+                            key={icon.id}
                             icon={icon}
+                            beingDragged={beingDragged === icon.id}
                             onStart={handleDragStart}
                             onDrag={handleDrag}
                             onStop={handleDragStop}

@@ -130,7 +130,7 @@ export default function FileWindow() {
         try {
             setLoading(true)
             const file = await getFileByIdService(pathId, currentDesktop?.id)
-            console.log('meuarquivoi', file)
+
             const stfile = standardFile(file)
             fileViewer.setFile(stfile)
         } catch (err) {
@@ -144,10 +144,10 @@ export default function FileWindow() {
 
     return (
 
-        <div onClick={handleAreaClick} className={`${isFullsceen ? 'pb-[40px]' : ' p-2 pb-[50px]'} ${fileViewer.currentStatus === "open" ? 'returnFilterEffects(user)' : 'pointer-events-none'} 
+        <div onClick={handleAreaClick} className={`${isFullsceen ? 'pb-[40px]' : ' p-2 pb-[50px]'} ${fileViewer.currentStatus === "open" ? returnFilterEffects(user) : 'pointer-events-none'} 
         fixed z-100 flex-1 flex justify-center items-center w-full h-screen transition-all duration-500 cursor-pointer`}>
             <div className={`${isFullsceen ? 'max-w-full max-h-full' : 'rounded-lg max-w-[1200px] max-h-[700px]'} ${fileViewer.currentStatus === "open" ? 'scale-100' : 'scale-0 '} 
-                bg-zinc-900/40 backdrop-blur-sm cursor-default origin-bottom relative transition-all duration-300 flex flex-col w-full h-full overflow-y-auto select-none`}>
+                bg-zinc-900 cursor-default origin-bottom relative transition-all duration-300 flex flex-col w-full h-full overflow-y-auto select-none`}>
                 <div className="z-50 sticky select-none top-0 w-full bg-black/50 h-8 flex flex-row justify-between items-center backdrop-blur-[2px]">
                     <p className="p-2">Pasta</p>
                     <div className="flex flex-row h-full">

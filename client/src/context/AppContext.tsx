@@ -76,7 +76,17 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
     }, []);
 
 
-    return <AppContext.Provider value={{ minimazeAllWindows, closeAllWindows, callToast, toastOpen, toast, nextIconPosition, changeNextIconPosition }}>{children}</AppContext.Provider>;
+    return <AppContext.Provider value={{
+        minimazeAllWindows,
+        closeAllWindows,
+        callToast,
+        toastOpen,
+        toast,
+        nextIconPosition,
+        changeNextIconPosition
+    }}>
+        {children}
+    </AppContext.Provider>;
 };
 
 export const useAppContext = () => {

@@ -3,7 +3,12 @@ import { useRootContext } from "../context/RootContext";
 import { useWindowContext } from "../context/WindowContext";
 import { FileData } from "../types/file";
 
-export default function Icon(icon: FileData) {
+interface IconProps {
+    icon: FileData;
+    beingDragged: boolean;
+}
+
+export default function Icon({ icon, beingDragged }: IconProps) {
 
     const { root } = useRootContext();
     const { fileViewer, openLink, imgViewer, newFile } = useWindowContext();
@@ -16,13 +21,13 @@ export default function Icon(icon: FileData) {
     function getDomainFromUrl(url: string): string {
         try {
             const hostname = new URL(url).hostname;
-            
+
             const parts = hostname.split(".");
 
             const isCompoundSuffix = parts.length > 2 && parts[parts.length - 2].length <= 3;
             const rootDomain = isCompoundSuffix
-                ? parts.slice(-3).join(".")  
-                : parts.slice(-2).join(".");  
+                ? parts.slice(-3).join(".")
+                : parts.slice(-2).join(".");
             return rootDomain;
         } catch {
             return "";
@@ -116,6 +121,7 @@ export default function Icon(icon: FileData) {
                 imgViewer.setFile(icon);
                 imgViewer.openWindow();
             } else {
+                openLink.setName(icon.name as string);
                 openLink.setUrl(icon.url as string);
                 openLink.setBackPath(false);
                 openLink.openWindow();
@@ -130,7 +136,8 @@ export default function Icon(icon: FileData) {
 
 
     return (
-        <div onDoubleClick={returnAction} className="transition-all duration-300 group select-none flex flex-col justify-center items-center gap-2 w-20 h-full max-h-40 p-1 px-2 rounded-sm cursor-pointer hover:bg-white/15">
+        <div onDoubleClick={returnAction} className={`${beingDragged ? 'scale-105' : ''} transition-all duration-300 group select-none flex flex-col justify-center 
+        items-center gap-2 w-20 h-full max-h-40 p-1 px-2 rounded-sm cursor-pointer hover:bg-white/15`}>
             <div className={`max-w-13 flex justify-center items-center h-8 max-h-8`}>
                 <img src={imageSrc} alt={icon.name} className="w-full h-full object-contain pointer-events-none select-none" />
             </div>
