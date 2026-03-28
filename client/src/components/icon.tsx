@@ -136,8 +136,8 @@ export default function Icon({ icon, beingDragged }: IconProps) {
 
 
     return (
-        <div onDoubleClick={returnAction} className={`${beingDragged ? 'scale-105' : ''} transition-all duration-300 group select-none flex flex-col justify-center 
-        items-center gap-2 w-20 h-full max-h-40 p-1 px-2 rounded-sm cursor-pointer hover:bg-white/15`}>
+        <div onDoubleClick={returnAction} className={`${beingDragged ? 'scale-105 bg-blue-500/25' : 'hover:bg-white/15'} transition-all  duration-300 group select-none flex flex-col justify-center 
+        items-center gap-2 w-20 h-full max-h-40 p-1 px-2 rounded-sm cursor-pointer `}>
             <div className={`max-w-13 flex justify-center items-center h-8 max-h-8`}>
                 <img src={imageSrc} alt={icon.name} className="w-full h-full object-contain pointer-events-none select-none" />
             </div>

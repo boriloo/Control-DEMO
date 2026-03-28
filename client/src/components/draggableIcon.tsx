@@ -25,7 +25,7 @@ export function DraggableIcon({ icon, beingDragged, onStart, onDrag, onStop }: D
       onStop={(e, data) => onStop(e, data, icon.id)}
       bounds={{ left: 0, top: 0 }}
     >
-      <div ref={nodeRef} className={`absolute cursor-move w-24 h-24 ${beingDragged ? '' : 'transition-all duration-100'}`}>
+      <div ref={nodeRef} className={`absolute cursor-move flex flex-row justify-center w-24 h-24 ${beingDragged ? 'z-100' : 'transition-all duration-100'}`}>
         <Icon icon={icon} beingDragged={beingDragged} />
       </div>
     </Draggable>
