@@ -53,7 +53,6 @@ export default function Icon({ icon, beingDragged }: IconProps) {
                         console.warn("Não foi possível extrair o ID do arquivo do Google Drive.");
                     }
                 } else if (/\.(jpg|jpeg|webp|png)/i.test(icon.url as string)) {
-                    console.log('imagem tem png no nome')
                     convertedUrl = icon.url
                 }
 
@@ -136,12 +135,13 @@ export default function Icon({ icon, beingDragged }: IconProps) {
 
 
     return (
-        <div onDoubleClick={returnAction} className={`${beingDragged ? 'scale-105 bg-blue-500/25' : 'hover:bg-white/15'} transition-all  duration-300 group select-none flex flex-col justify-center 
-        items-center gap-2 w-20 h-full max-h-40 p-1 px-2 rounded-sm cursor-pointer `}>
-            <div className={`max-w-13 flex justify-center items-center h-8 max-h-8`}>
+        <div onDoubleClick={returnAction} className={`${beingDragged ? 'scale-105 bg-blue-500/25' : 'hover:bg-white/15'} transition-all p-1 px-2 duration-300 group select-none flex flex-col justify-center 
+        items-center gap-2 w-20 h-full max-h-40  rounded-sm cursor-pointer `}>
+            <div className={`${beingDragged ? 'scale-106' : 'group-hover:scale-103'} max-w-13 flex justify-center items-center h-8 max-h-8 transition-transform origin-center`}>
                 <img src={imageSrc} alt={icon.name} className="w-full h-full object-contain pointer-events-none select-none" />
             </div>
-            <p className="group-hover:bg-black/60 text-[14px] p-1 bg-black/30 backdrop-blur-sm rounded-md line-clamp-2 text-center max-w-19 transition-all">{icon.name}</p>
+            <p className={`${beingDragged ? 'scale-106' : 'group-hover:scale-103'} group-hover:bg-black/60 text-[14px]/5 p-1 heigt bg-black/30 backdrop-blur-sm rounded-md line-clamp-2 text-center 
+            max-w-19 transition-all  origin-top`}>{icon.name}</p>
         </div>
     );
 }

@@ -49,7 +49,7 @@ export default function OpenLinkWindow({ url }: { url: string | null }) {
     return (
         <div onClick={handleAreaClick} className={`${openLink.currentStatus === 'open' ? returnFilterEffects(user) : 'pointer-events-none '} 
         transition-all duration-500 fixed z-110 w-full h-screen flex justify-center items-center p-4 pb-[50px] cursor-pointer`}>
-            <div className={`${openLink.currentStatus === 'open' ? 'scale-100' : 'scale-0'} cursor-default bg-zinc-900 shadow-[inset_0_5px_10px_rgba(255,255,255,0.05),0_5px_10px_rgba(0,0,0,0.3)]
+            <div className={`${openLink.currentStatus === 'open' ? 'scale-100' : 'scale-0'} cursor-default bg-zinc-900
              origin-center rounded-md p-4 w-full max-w-[700px] max-h-full flex flex-col gap-4 overflow-y-auto transition-all relative`}>
                 <div className="p-1.5 bg-zinc-800 border border-zinc-700 rounded-md absolute top-4 right-4">
                     <img src={imageSrc as string} className="w-10 object-contain pointer-events-none select-none" />
@@ -80,14 +80,14 @@ export default function OpenLinkWindow({ url }: { url: string | null }) {
                             <div className="w-6 h-6 border-1 rounded-sm"></div>
                             <p className="text-lg">Confiar neste link</p>
                         </div> */}
-                        <div className="flex flex-row gap-2">
-                            <button onClick={openLink.closeWindow} className="p-1 px-5 text-lg text-white border-1 border-white cursor-pointer transition-all hover:border-red-500 hover:text-red-500 rounded-md">
+                        <div className="flex flex-row gap-2 w-full">
+                            <button onClick={openLink.closeWindow} className="flex-1 p-1 px-8 text-lg text-white bg-white/10 cursor-pointer transition-all hover:bg-red-500 rounded-md">
                                 Voltar
                             </button>
                             <button onClick={() => {
                                 window.open(url as string, '_blank')?.focus();
                                 openLink.closeWindow();
-                            }} className="p-1 px-5 text-lg text-blue-500 border-1 border-blue-500 cursor-pointer transition-all hover:bg-blue-500 hover:text-white rounded-md">
+                            }} className="flex-1 p-1 px-6 text-lg text-blue-500 border-1 border-blue-500 cursor-pointer transition-all hover:bg-blue-500 hover:text-white rounded-md">
                                 Acessar
                             </button>
                         </div>

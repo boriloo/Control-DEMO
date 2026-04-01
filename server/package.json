@@ -6,6 +6,7 @@
     "server": "nodemon --exec npx tsx src/server.ts"
   },
   "dependencies": {
+    "@prisma/client": "^7.6.0",
     "@types/cors": "^2.8.19",
     "@types/express": "^5.0.6",
     "@types/pg": "^8.16.0",
@@ -19,12 +20,14 @@
     "multer": "^2.1.0",
     "nodemon": "^3.1.11",
     "pg": "^8.18.0",
+    "prisma": "^7.6.0",
     "ts-node": "^10.9.2",
     "tsx": "^4.21.0"
   },
   "devDependencies": {
     "@types/cookie-parser": "^1.4.10",
     "@types/jsonwebtoken": "^9.0.10",
-    "@types/multer": "^2.0.0"
+    "@types/multer": "^2.0.0",
+    "@types/node": "^25.5.0"
   }
 }

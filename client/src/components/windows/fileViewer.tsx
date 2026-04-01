@@ -3,16 +3,17 @@ import { useEffect, useState } from "react"
 import { useWindowContext } from "../../context/WindowContext"
 import { useUser } from "../../context/AuthContext";
 import { returnFilterEffects } from "../../types/auth";
-// import { FullFileData, getFileById, listenToFilesByParent } from "../../services/file";
 import ColumnFile from "./fileViewer/columnFile";
 import { useAppContext } from "../../context/AppContext";
 import { DotLottieReact } from "@lottiefiles/dotlottie-react";
 import { FileData, FilePathData } from "../../types/file";
 import { getFileByIdService, getFileParentNamesService, getFilesFromParentService } from "../../services/fileServices";
+import { useFileContext } from "../../context/FileContext";
 
 export default function FileWindow() {
+    const { standardFile, allFiles } = useFileContext()
     const { minimazeAllWindows } = useAppContext();
-    const { user, currentDesktop, standardFile } = useUser()
+    const { user, currentDesktop } = useUser()
     const { fileViewer, newFile } = useWindowContext();
     const [isFullsceen, setIsFullscreen] = useState<boolean>(false)
     const [internalFiles, setInternalFiles] = useState<FileData[]>([])
@@ -26,6 +27,7 @@ export default function FileWindow() {
 
     useEffect(() => {
         if (!fileViewer.file?.desktopId || !fileViewer.file?.id || !user || !currentDesktop) return;
+        console.log('NIGGA')
         setAnimKey(prev => prev + 1);
         const initInternalFiles = async () => {
 
@@ -53,7 +55,7 @@ export default function FileWindow() {
 
         initInternalFiles()
 
-    }, [fileViewer.file, user?.id]);
+    }, [fileViewer.file, user?.id, allFiles]);
 
     useEffect(() => {
         if (fileViewer.currentStatus === 'open') {
@@ -115,7 +117,6 @@ export default function FileWindow() {
 
     const handleCreateFile = () => {
         newFile.openWindow()
-        console.log('criar arquivo', fileViewer.file)
         newFile.setFile(fileViewer.file)
     }
 

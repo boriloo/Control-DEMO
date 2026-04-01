@@ -92,15 +92,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             setIsLoading(true);
             try {
                 const currentUser = await getMeService();
-                console.log(currentUser)
                 
                 const standart = standardUser(currentUser)
 
                 setUser(standart as UserData);
 
                 setIsAuthenticated(true);
-
-                console.log(currentUser)
 
                 const desktops = await getDesktopByOwnerService();
 

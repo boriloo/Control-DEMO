@@ -29,7 +29,7 @@ import { useFileContext } from "../../context/FileContext";
 
 export default function DashboardPage() {
     const { rootFiles, changeRootFiles } = useFileContext();
-    const { changeNextIconPosition, callToast } = useAppContext();
+    const { changeNextIconPosition } = useAppContext();
     const { t } = useTranslation();
     const { root } = useRootContext();
     const { user, hasDesktops, setHasDesktops, currentDesktop } = useUser();
@@ -37,6 +37,7 @@ export default function DashboardPage() {
     const [start, setStart] = useState<boolean>(false);
     const [timer, setTimer] = useState<number>(0)
     const [beingDragged, setBeingDragged] = useState<string>('')
+    const [saving, setSaving] = useState<boolean>(false)
     const filesMap = useRef<Map<string, { id: string; xPos: number; yPos: number }>>(new Map());
 
     useEffect(() => {
@@ -45,12 +46,13 @@ export default function DashboardPage() {
             if (filesMap.current.size === 0) return;
 
             (async () => {
+                setSaving(true)
                 const movedFiles = Array.from(filesMap.current.values());
                 await updateFilePositionService(movedFiles);
                 filesMap.current.clear();
             })();
 
-            callToast({ message: 'Posições atualizadas no banco!', type: 'success' })
+            setTimeout(() => { setSaving(false) }, 2000);
 
             filesMap.current.clear();
 
@@ -97,7 +99,7 @@ export default function DashboardPage() {
 
         if (nextPosition) {
             changeNextIconPosition(nextPosition);
-        }
+        };
 
         setTimer(5)
 
@@ -146,11 +148,21 @@ export default function DashboardPage() {
 
     const initialDragState = useRef<FileData[] | null>(null);
 
+    const dragOffset = useRef<{ x: number; y: number }>({ x: 0, y: 0 });
+
     const handleDragStart = useCallback((e: DraggableEvent, data: DraggableData, iconId: string) => {
         root.setCanOpenWindow(true);
         initialDragState.current = rootFiles;
-        setBeingDragged(iconId)
-    }, [rootFiles])
+        setBeingDragged(iconId);
+
+        const icon = rootFiles.find(i => i.id === iconId);
+        if (icon && e instanceof MouseEvent) {
+            dragOffset.current = {
+                x: e.clientX - icon.xPos,
+                y: e.clientY - icon.yPos,
+            };
+        }
+    }, [rootFiles]);
 
     const handleDrag = useCallback((e: DraggableEvent, data: DraggableData, draggedIconId: string) => {
         root.setCanOpenWindow(false);
@@ -180,6 +192,16 @@ export default function DashboardPage() {
             filesMap.current.set(draggedIconId, { id: draggedIconId, xPos: existingIcon.xPos, yPos: existingIcon.yPos });
             filesMap.current.set(existingIcon.id, { id: existingIcon.id, xPos: draggedIconOriginal.xPos, yPos: draggedIconOriginal.yPos });
 
+            const root = rootFiles.map((file) => {
+                return {
+                    id: file.id,
+                    xPos: file.xPos,
+                    yPos: file.yPos
+                }
+            })
+
+            if (root as any === filesMap.current) return
+
             changeRootFiles(originalIcons.map(icon => {
                 if (icon.id === draggedIconId) return { ...icon, xPos: existingIcon.xPos, yPos: existingIcon.yPos };
                 if (icon.id === existingIcon.id) return { ...icon, xPos: draggedIconOriginal.xPos, yPos: draggedIconOriginal.yPos };
@@ -187,6 +209,14 @@ export default function DashboardPage() {
             }));
         } else {
             filesMap.current.set(draggedIconId, { id: draggedIconId, xPos: currentX, yPos: currentY });
+
+
+            if (draggedIconOriginal.xPos === currentX &&
+                draggedIconOriginal.yPos === currentY
+            ) {
+                console.log(`NAO MUDA NADA`)
+                return
+            }
 
             changeRootFiles(originalIcons.map(icon =>
                 icon.id === draggedIconId ? { ...icon, xPos: currentX, yPos: currentY } : icon
@@ -215,6 +245,7 @@ export default function DashboardPage() {
 
     return (
         <>
+
             <div className="pointer-events-none fixed z-[-3] flex justify-center items-center w-full min-h-screen">
                 <DotLottieReact
                     src="https://lottie.host/e580eaa4-d189-480f-a6ce-f8c788dff90d/MP2FjoJFFE.lottie"
@@ -231,7 +262,8 @@ export default function DashboardPage() {
                 style={{ backgroundImage: `url(${localStorage.getItem('background')})` }}></div>)}
             {hasDesktops && (<div className={`${start ? 'opacity-100 ' : 'blur-3xl opacity-0'} transition-[opacity,filter] duration-1500 scale-101 flex min-h-screen w-full fixed 
                 bg-cover bg-center z-[-1]`}
-                style={{ backgroundImage: `url(${currentDesktop?.backgroundImage})` }}></div>)}
+                style={{ backgroundImage: `url(${currentDesktop?.backgroundImage})` }}
+            ></div>)}
             {hasDesktops ? '' : (<PersonalDesktopWindow onFinish={(bool) => setHasDesktops(bool)} />)}
 
             <ConfigWindow />
@@ -244,7 +276,8 @@ export default function DashboardPage() {
             <ImageViewerWindow />
             <SocialWindow />
             <OpenLinkWindow url={openLink.url as string} />
-            <div className={`${start ? 'opacity-100' : 'opacity-0'} transition-opacity duration-1000 flex flex-col w-full h-screen overflow-hidden text-white`}>
+            <div className={`${start ? 'opacity-100' : 'opacity-0'} transition-opacity duration-1000 flex flex-col w-full h-screen overflow-hidden text-white relative`}>
+
                 <div className="flex flex-row flex-wrap justify-between items-center w-full gap-3 p-4">
                     <div className=" w-full max-w-50">
                         <button onClick={() => {
@@ -305,6 +338,10 @@ export default function DashboardPage() {
 
                 <div
                     ref={desktopRef} className="desktop-area flex-1 w-full relative mb-10 p-4 overflow-scroll">
+                    <div className={`${saving ? 'opacity-100 z-101' : 'opacity-0 z-0'} select-none pointer-none:  p-2 px-3 rounded-sm backdrop-blur-sm bg-black/20 flex flex-row gap-2 absolute top-0 right-5 justify-center items-center transition-opacity duration-300`}>
+                        <img src="public/assets/images/changes.png" className="w-8" />
+                        <p className="text-[17px]">Posições atualizadas</p>
+                    </div>
                     {rootFiles.map((icon) => (
                         <DraggableIcon
                             key={icon.id}

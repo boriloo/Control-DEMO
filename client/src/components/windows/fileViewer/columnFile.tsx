@@ -97,7 +97,7 @@ export default function ColumnFile({ file, animationKey, index, imageValidations
         >
             <img src={imageReturn()} alt="" className="max-h-8 w-8 object-contain transition-all group-hover:ml-0.5" />
             <div className="flex flex-col">
-                <p className="text-[18px] w-full max-w-70 truncate transition-all group-hover:ml-1">{file.name}</p>
+                <p className="text-[18px] w-full max-w-85 truncate transition-all group-hover:ml-1">{file.name}</p>
                 <p className="text-[14px] mt-[-5px] opacity-80 transition-all group-hover:ml-1">{imageValidations[file.url as string] ? 'imagem' : file.fileType}</p>
             </div>
             <p className="ml-[-5px] p-1 px-2 opacity-0 transition-all rounded-md group-hover:opacity-100 group-hover:ml-2 text-blue-500 bg-blue-800/15">Clique para abrir</p>

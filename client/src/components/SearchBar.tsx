@@ -3,24 +3,34 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useUser } from "../context/AuthContext";
 // import { FullFileData, listenToAllFilesByDesktop } from "../services/file";
-import { FileType, FullFileData } from "../types/file";
 import { useRootContext } from "../context/RootContext";
 import { useAppContext } from "../context/AppContext";
 import { useWindowContext } from "../context/WindowContext";
+import { FileData, FileType } from "../types/file";
+import { useFileContext } from "../context/FileContext";
+import { getAllFilesFromDesktopService } from "../services/fileServices";
 
 export default function SearchBar() {
+    const { allFiles, changeAllFiles } = useFileContext()
     const { t } = useTranslation();
     const { root } = useRootContext();
     const { minimazeAllWindows } = useAppContext();
     const { newFile, imgViewer, openLink, fileViewer } = useWindowContext();
     const { user, currentDesktop } = useUser();
-    const [allFiles, setAllFiles] = useState<FullFileData[]>([]);
     const [searchTerm, setSearchTerm] = useState<string>('');
     const [imageValidations, setImageValidations] = useState<Record<string, boolean>>({});
 
     function getDomainFromUrl(url: string): string {
         try {
-            return new URL(url).hostname;
+            const hostname = new URL(url).hostname;
+
+            const parts = hostname.split(".");
+
+            const isCompoundSuffix = parts.length > 2 && parts[parts.length - 2].length <= 3;
+            const rootDomain = isCompoundSuffix
+                ? parts.slice(-3).join(".")
+                : parts.slice(-2).join(".");
+            return rootDomain;
         } catch {
             return "";
         }
@@ -29,20 +39,23 @@ export default function SearchBar() {
     useEffect(() => {
         if (!user || !currentDesktop?.id) return;
 
-        // const unsubscribeAll = listenToAllFilesByDesktop(
-        //     user.uid as string,
-        //     currentDesktop.id,
-        //     (newFiles) => {
-        //         setAllFiles(newFiles);
-        //     }
-        // );
+        const getAllFiles = async () => {
+            try {
+                const files = await getAllFilesFromDesktopService(currentDesktop.id)
 
-        // return () => unsubscribeAll();
+                changeAllFiles(files)
 
-    }, [currentDesktop?.id, user?.uid]);
+            } catch (err) {
+                alert(err)
+            }
+        }
+
+        getAllFiles()
+
+    }, [currentDesktop?.id, user?.id]);
 
 
-    // Arquivos pesquisa filtradas
+
     const filteredFiles = useMemo(() => {
         if (searchTerm.trim() === '') {
             return [];
@@ -53,10 +66,10 @@ export default function SearchBar() {
         );
     }, [searchTerm, allFiles]);
 
-    // Manter validações de imagem atualizadas
+
     useEffect(() => {
         filteredFiles.forEach(file => {
-            if (file.type === 'link' && file.url && !imageValidations[file.url]) {
+            if (file.fileType === 'link' && file.url && !imageValidations[file.url]) {
                 validateImage(file.url).then(isValid => {
                     setImageValidations(prev => ({
                         ...prev,
@@ -100,8 +113,6 @@ export default function SearchBar() {
         switch (fileType) {
             case 'folder':
                 return '/assets/images/open-folder.png'
-            case 'text':
-                return '/assets/images/text-file.png'
             case 'link':
                 const domain = getDomainFromUrl(fileUrl);
                 if (imageValidations[fileUrl]) {
@@ -127,21 +138,22 @@ export default function SearchBar() {
         }
     }
 
-    const returnAction = useCallback((file: FullFileData) => {
+    const returnAction = useCallback((file: FileData) => {
         if (!root.canOpenWindow) return;
 
         newFile.setFile(file)
         minimazeAllWindows();
-        if (file.type === "link") {
+        if (file.fileType === "link") {
             if (!file.url) return;
             if (imageValidations[file.url]) {
                 imgViewer.setFile(file);
                 imgViewer.openWindow();
             } else {
+                openLink.setName(file.name)
                 openLink.setUrl(file.url as string);
                 openLink.openWindow();
             }
-        } else if (file.type === "folder") {
+        } else if (file.fileType === "folder") {
             fileViewer.openWindow();
             fileViewer.setFile(file)
         }
@@ -166,10 +178,10 @@ export default function SearchBar() {
                     <div key={file.id} onClick={() => returnAction(file)} className="min-h-13 group flex flex-row justify-between relative rounded-md 
                     cursor-pointer hover:bg-zinc-800 overflow-hidden transition-all">
                         <div className="flex flex-row gap-2 p-3 w-full items-center">
-                            <img src={imageReturn(file.type, file.url as string)} className="w-7 max-h-5 object-contain" alt={file.name} />
+                            <img src={imageReturn(file.fileType, file.url as string)} className="w-7 max-h-5 object-contain" alt={file.name} />
                             <div className="flex flex-col">
                                 <p className="text-[18px] max-w-55 truncate">{file.name}</p>
-                                <p className="text-[14px] mt-[-5px] opacity-80">{imageValidations[file.url as string] ? 'imagem' : file.type}</p>
+                                <p className="text-[14px] mt-[-5px] opacity-80">{imageValidations[file.url as string] ? 'imagem' : file.fileType}</p>
                             </div>
 
                         </div>

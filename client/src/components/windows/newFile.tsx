@@ -8,10 +8,12 @@ import { DotLottieReact } from "@lottiefiles/dotlottie-react";
 import { useAppContext } from "../../context/AppContext";
 import { createFileService } from "../../services/fileServices";
 import { FileData } from "../../types/file";
+import { useFileContext } from "../../context/FileContext";
 
 export type CreateFileType = "folder" | "link"
 
 export default function NewFileWindow() {
+    const { rootFiles, changeRootFiles, changeAllFiles, allFiles, standardFile } = useFileContext()
     const { callToast, nextIconPosition } = useAppContext();
     const { user, currentDesktop } = useUser();
     const { newFile } = useWindowContext();
@@ -20,10 +22,6 @@ export default function NewFileWindow() {
     const [name, setName] = useState<string | null>(null)
     const [url, setUrl] = useState<string | null>(null)
     const [loading, setLoading] = useState<boolean>(false)
-
-    useEffect(() => {
-        console.log('novo file3', newFile)
-    }, [])
 
     const normalizeUrl = (inputUrl: string | null): string | null => {
         if (!inputUrl) return null;
@@ -95,6 +93,12 @@ export default function NewFileWindow() {
         try {
             console.log(finalPayload)
             const fileCreated = await createFileService(currentDesktop.id, finalPayload as FileData);
+            if (finalPayload.parentId != 'root') {
+                changeAllFiles([...allFiles, standardFile(fileCreated)]);
+            } else {
+                changeRootFiles([...rootFiles, standardFile(fileCreated)]);
+            }
+
             console.log('fileCreated ', fileCreated)
             setName(null)
         } catch (error) {

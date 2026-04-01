@@ -1,4 +1,4 @@
-type FileType = 'folder' | 'link'
+export type FileType = 'folder' | 'link'
 
 export type FileData = {
     id: string,
