@@ -8,11 +8,13 @@ import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { getDesktopByIdService, getDesktopByOwnerService } from "../../services/desktopServices";
 import { DesktopData } from "../../types/desktop";
+import { useFileContext } from "../../context/FileContext";
 // import { collection, onSnapshot, query, where } from "firebase/firestore";
 // import { db } from "../../firebase/config";
 
 export default function ListDesktopsWindow() {
     const { t } = useTranslation();
+    const { changeRootFiles } = useFileContext();
     const { user, currentDesktop, changeCurrentDesktop, toBase64Image } = useUser();
     const { minimazeAllWindows } = useAppContext();
     const { listdt, newdt, dtConfig } = useWindowContext();
@@ -45,6 +47,8 @@ export default function ListDesktopsWindow() {
     const handleChangeDesktop = async (id: string) => {
         setLoading(true)
         try {
+
+            changeRootFiles([])
 
             const response = await getDesktopByIdService(id)
 

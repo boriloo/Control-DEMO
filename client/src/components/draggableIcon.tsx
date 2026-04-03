@@ -1,33 +1,41 @@
 import { useRef } from 'react';
-import Draggable, { DraggableData, DraggableEvent } from 'react-draggable';
+// import Draggable, { DraggableData, DraggableEvent } from 'react-draggable';
 import Icon from './icon';
 import { FileData } from '../types/file';
 
 
 type DraggableIconProps = {
+  index: number,
   icon: FileData;
   beingDragged: boolean;
-  onStart: (e: DraggableEvent, data: DraggableData, iconId: string) => void;
-  onDrag: (e: DraggableEvent, data: DraggableData, iconId: string) => void;
-  onStop: (e: DraggableEvent, data: DraggableData, iconId: string) => void;
+  position: { x: number; y: number };
+  dragStart: (e: React.MouseEvent<HTMLDivElement>) => void;
 };
 
-export function DraggableIcon({ icon, beingDragged, onStart, onDrag, onStop }: DraggableIconProps) {
-  const position = { x: icon.xPos, y: icon.yPos }
-  const nodeRef = useRef(null);
+export function DraggableIcon({ index, icon, beingDragged, position, dragStart }: DraggableIconProps) {
+  const elementRef = useRef<HTMLDivElement>(null);
+
   return (
-    <Draggable
-      nodeRef={nodeRef}
-      key={icon.id}
-      position={position}
-      onStart={(e, data) => onStart(e, data, icon.id)}
-      onDrag={(e, data) => onDrag(e, data, icon.id)}
-      onStop={(e, data) => onStop(e, data, icon.id)}
-      bounds={{ left: 0, top: 0 }}
+    <div
+      className='animate-scale origin-center select-none'
+      ref={elementRef}
+      data-id={icon.id}
+      onMouseDown={dragStart}
+      style={{
+        animationDelay: `${index * 40}ms`,
+        transform: "scale(0)",
+        opacity: '0',
+        position: "absolute",
+        top: position.y,
+        left: position.x,
+        transition: beingDragged ? "none" : "top 0.2s ease-out, left 0.2s ease-out",
+        zIndex: beingDragged ? 100 : 1,
+        willChange: "top, left",
+      }}
     >
-      <div ref={nodeRef} className={`absolute cursor-move flex flex-row justify-center w-24 h-24 ${beingDragged ? 'z-100' : 'transition-all duration-100'}`}>
+      <div className={`w-24 h-24 flex flex-row justify-center`}>
         <Icon icon={icon} beingDragged={beingDragged} />
       </div>
-    </Draggable>
+    </div>
   );
 }

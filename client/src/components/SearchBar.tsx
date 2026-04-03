@@ -162,7 +162,7 @@ export default function SearchBar() {
 
 
     return (
-        <div className="w-full max-w-[400px] relative">
+        <div className="w-full max-w-[400px] relative select-none">
             <Search className='absolute left-3 z-10 top-1/2 -translate-y-1/2 text-zinc-200 transition-all duration-300' />
             <input
                 onChange={(e) => setSearchTerm(e.target.value)}

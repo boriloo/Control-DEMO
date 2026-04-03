@@ -13,10 +13,12 @@ import { useAppContext } from "../../context/AppContext";
 import { FileData } from "../../types/file";
 import { DesktopData } from "../../types/desktop";
 import { deleteDesktopService, getDesktopByIdService, getDesktopByOwnerService, updateDesktopService } from "../../services/desktopServices";
+import { useFileContext } from "../../context/FileContext";
 // import { FullFileData, listenToAllFilesByDesktop } from "../../services/file";
 
 
 export default function DesktopConfigWindow() {
+    const { changeRootFiles } = useFileContext();
     const { callToast } = useAppContext();
     const { user, currentDesktop, changeCurrentDesktop, setHasDesktops, toBase64Image } = useUser();
     const { dtConfig } = useWindowContext();
@@ -111,6 +113,8 @@ export default function DesktopConfigWindow() {
     const handleChangeDesktop = async (id: string) => {
         setLoading(true)
         try {
+            changeRootFiles([])
+
             const response = await getDesktopByIdService(id)
 
             changeCurrentDesktop(response)

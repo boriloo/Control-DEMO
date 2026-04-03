@@ -140,8 +140,8 @@ export default function Icon({ icon, beingDragged }: IconProps) {
             <div className={`${beingDragged ? 'scale-106' : 'group-hover:scale-103'} max-w-13 flex justify-center items-center h-8 max-h-8 transition-transform origin-center drop-shadow-zinc-950/40 drop-shadow-md`}>
                 <img src={imageSrc} alt={icon.name} className="w-full h-full object-contain pointer-events-none select-none " />
             </div>
-            <p className={`${beingDragged ? 'scale-106' : 'group-hover:scale-103'} group-hover:bg-black/60 text-[14px]/5 p-1 heigt bg-black/30 backdrop-blur-sm rounded-md line-clamp-2 text-center 
-            max-w-19 transition-all origin-top text-shadow-md`}>{icon.name}</p>
+            <p className={`${beingDragged ? 'scale-106' : 'group-hover:scale-103'} group-hover:bg-black/60 text-[14px]/5 p-1 bg-black/40 backdrop-blur-sm rounded-md line-clamp-2 text-center 
+            max-w-19 transition-all origin-top text-shadow-sm text-shadow-black/60`}>{icon.name}</p>
         </div>
     );
 }

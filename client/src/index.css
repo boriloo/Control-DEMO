@@ -89,3 +89,19 @@ input:-webkit-autofill:active {
   white-space: nowrap;
   animation: expandIn 0.35s cubic-bezier(0.4, 0, 0.2, 1) forwards;
 }
+
+@keyframes scaleIn {
+  from {
+    transform: scale(0);
+    opacity: 0;
+  }
+
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.animate-scale {
+  animation: scaleIn 0.5s 1s forwards;
+}
