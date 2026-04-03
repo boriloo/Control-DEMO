@@ -18,7 +18,7 @@ import { deleteDesktopService, getDesktopByIdService, getDesktopByOwnerService, 
 
 export default function DesktopConfigWindow() {
     const { callToast } = useAppContext();
-    const { user, currentDesktop, changeCurrentDesktop, setHasDesktops, standardDesktop } = useUser();
+    const { user, currentDesktop, changeCurrentDesktop, setHasDesktops, toBase64Image } = useUser();
     const { dtConfig } = useWindowContext();
 
     const [loading, setLoading] = useState<boolean>(false)
@@ -87,15 +87,17 @@ export default function DesktopConfigWindow() {
         try {
             const bgForReq = currentImage ? currentImage : undefined
             const response = await updateDesktopService(windowDesktop.id, { name: desktopName, backgroundImage: bgForReq, })
+
+
+            console.log('desktopiii ', response)
+
             setCurrentImage(null)
 
-            const updatedDesktop = standardDesktop(response);
-
-            setWindowDesktop(updatedDesktop);
-            dtConfig.setDesktop(updatedDesktop);
+            setWindowDesktop({ ...response, backgroundImage: toBase64Image(response.backgroundImage) });
+            dtConfig.setDesktop({ ...response, backgroundImage: toBase64Image(response.backgroundImage) });
 
             if (response.id === currentDesktop?.id) {
-                changeCurrentDesktop(updatedDesktop)
+                changeCurrentDesktop(response)
             }
 
             callToast({ message: 'Fundo do desktop alterado!', type: 'success' })
@@ -110,11 +112,10 @@ export default function DesktopConfigWindow() {
         setLoading(true)
         try {
             const response = await getDesktopByIdService(id)
-            const updatedDesktop = standardDesktop(response)
 
-            changeCurrentDesktop(updatedDesktop)
+            changeCurrentDesktop(response)
 
-            localStorage.setItem('last-desktop', updatedDesktop.id);
+            localStorage.setItem('last-desktop', response.id);
 
         } catch (err) {
             console.log(err)
@@ -260,7 +261,7 @@ export default function DesktopConfigWindow() {
                             <h1 className="text-2xl">Tela de Fundo</h1>
                             <p className="text-md mt-[-12px] mb-1">Imagem exibida no fundo do Desktop atual.</p>
 
-                            {currentImage && !loading && (<p className="mb-[-5px] p-1 px-2 bg-white/10 rounded-lg">Prévia</p>)}
+                            {currentImage && !loading && (<p className="mb-[-5px] p-1 px-2 bg-white/10 rounded-lg">Prévia do Fundo</p>)}
 
                             <div className={`${loading ? 'saturate-0 pointer-events-none opacity-50 scale-90' : ''} origin-left flex flex-col transition-all w-full`}>
                                 <ClickableImageInput onFileSelected={(file) => {

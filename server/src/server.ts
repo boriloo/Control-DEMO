@@ -7,6 +7,7 @@ import { authMiddleware } from "./middlewares/authMiddleware";
 import cookieParser from 'cookie-parser';
 import { desktopRouter } from "./routes/desktopRouter";
 import { fileRouter } from "./routes/fileRouter";
+import prisma from "./lib/prisma";
 
 
 const app = express();
@@ -30,3 +31,12 @@ app.use("/auth", authRouter)
 app.use("/user", authMiddleware, userRouter)
 app.use("/desktop", authMiddleware, desktopRouter)
 app.use("/file", authMiddleware, fileRouter)
+
+app.get('/test-prisma', async (req, res) => {
+    try {
+        const users = await prisma.user.findMany()
+        res.json({ success: true, users })
+    } catch (err) {
+        res.json({ success: false, error: err })
+    }
+})

@@ -16,7 +16,7 @@ import { CreateDesktopData } from "../../types/desktop";
 export default function NewDesktopWindow() {
     const { callToast } = useAppContext();
     const { newdt } = useWindowContext();
-    const { user, changeCurrentDesktop, standardDesktop } = useUser();
+    const { user, changeCurrentDesktop } = useUser();
     const [imageSelected, setImageSelected] = useState<File>()
     const [desktopName, setDesktopName] = useState<string | null>()
     const [loading, setLoading] = useState<boolean>(false)
@@ -35,11 +35,8 @@ export default function NewDesktopWindow() {
             if (!imageSelected || !user || !desktopName) return;
             const response = await createDesktopService({ name: desktopName, backgroundImage: imageSelected } as CreateDesktopData)
 
-            const updatedDesktop = standardDesktop(response)
 
-            localStorage.setItem('background', updatedDesktop.backgroundImage);
-
-            changeCurrentDesktop(updatedDesktop)
+            changeCurrentDesktop(response)
 
             newdt.closeWindow();
 

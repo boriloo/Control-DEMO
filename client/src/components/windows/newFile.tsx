@@ -13,7 +13,7 @@ import { useFileContext } from "../../context/FileContext";
 export type CreateFileType = "folder" | "link"
 
 export default function NewFileWindow() {
-    const { rootFiles, changeRootFiles, changeAllFiles, allFiles, standardFile } = useFileContext()
+    const { rootFiles, changeRootFiles, changeAllFiles, allFiles } = useFileContext()
     const { callToast, nextIconPosition } = useAppContext();
     const { user, currentDesktop } = useUser();
     const { newFile } = useWindowContext();
@@ -94,9 +94,9 @@ export default function NewFileWindow() {
             console.log(finalPayload)
             const fileCreated = await createFileService(currentDesktop.id, finalPayload as FileData);
             if (finalPayload.parentId != 'root') {
-                changeAllFiles([...allFiles, standardFile(fileCreated)]);
+                changeAllFiles([...allFiles, fileCreated]);
             } else {
-                changeRootFiles([...rootFiles, standardFile(fileCreated)]);
+                changeRootFiles([...rootFiles, fileCreated]);
             }
 
             console.log('fileCreated ', fileCreated)

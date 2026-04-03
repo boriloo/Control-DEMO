@@ -21,16 +21,15 @@ interface UserContextProps {
     isAuthenticated: boolean;
     user: UserData | null;
     changeUser: (user: UserData) => void;
-    standardUser: (user: any) => UserData;
     currentDesktop: DesktopData | null;
     changeCurrentDesktop: (desktop: DesktopData) => void;
-    standardDesktop: (desktop: any) => DesktopData;
     authLoginUser: (data: LoginData) => Promise<void>;
     authRegisterUser: (data: RegisterData) => Promise<void>;
     authLogoutUser: () => Promise<void>;
     isLoading: boolean;
     hasDesktops: boolean;
     setHasDesktops: (value: boolean) => void;
+    toBase64Image: (value: any) => void;
 }
 
 const UserContext = createContext<UserContextProps | undefined>(undefined);
@@ -50,52 +49,47 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
 
     const changeCurrentDesktop = useCallback((desktop: any) => {
-        setCurrentDesktop(desktop)
+        setCurrentDesktop({
+            ...desktop,
+            backgroundImage: toBase64Image(desktop.backgroundImage) as string
+        })
+        localStorage.setItem('last-desktop', desktop.id);
     }, [currentDesktop])
 
+
     const changeUser = useCallback((user: UserData) => {
-        setUser(user)
-    }, [user])
+        setUser({
+            ...user,
+            profileImage: toBase64Image(user.profileImage) as string
+        })
+    }, [])
 
-    const standardUser = (user: any) => {
-        return {
-            id: user.id,
-            name: user.name,
-            email: user.email,
-            profileImage: user.profile_image
-                ? user.profile_image.startsWith('data:')
-                    ? user.profile_image
-                    : `data:image/png;base64,${user.profile_image}`
-                : null,
-            filterBlur: user.filter_blur,
-            filterDark: user.filter_dark,
-            filterColor: user.filter_color,
-            createdAt: user.created_at,
-        } as UserData
+
+    const toBase64Image = (image: any): string | null => {
+        if (!image) return null
+
+        if (typeof image === 'string' && image.startsWith('data:')) return image
+
+        if (typeof image === 'string') return `data:image/png;base64,${image}`
+
+        if (Buffer.isBuffer(image)) return `data:image/png;base64,${image.toString('base64')}`
+
+        if (image instanceof Uint8Array) return `data:image/png;base64,${Buffer.from(image).toString('base64')}`
+
+        return null
     }
 
-    const standardDesktop = (desktop: any) => {
-        return {
-            id: desktop.id,
-            name: desktop.name,
-            ownerId: desktop.owner_id,
-            backgroundImage: desktop.background_image.startsWith('data:')
-                ? desktop.background_image
-                : `data:image/png;base64,${desktop.background_image}`,
-            createdAt: desktop.created_at,
-        } as DesktopData
-    }
 
-    
     useEffect(() => {
         const initApp = async () => {
             setIsLoading(true);
             try {
                 const currentUser = await getMeService();
-                
-                const standart = standardUser(currentUser)
 
-                setUser(standart as UserData);
+                setUser({
+                    ...currentUser,
+                    profileImage: toBase64Image(currentUser.profileImage)
+                })
 
                 setIsAuthenticated(true);
 
@@ -110,18 +104,20 @@ export function AuthProvider({ children }: { children: ReactNode }) {
                     setHasDesktops(true);
 
                     if (localStorageDesktop) {
-                        const desktop = await getDesktopByIdService(localStorageDesktop)
+                        try {
+                            const desktop = await getDesktopByIdService(localStorageDesktop)
 
-                        const standart = standardDesktop(desktop)
-
-                        setCurrentDesktop(standart as DesktopData);
-
-                    } else {
-                        const standart = standardDesktop(firstDesktop)
-
-                        setCurrentDesktop(standart as DesktopData);
+                            setCurrentDesktop({
+                                ...desktop,
+                                backgroundImage: toBase64Image(desktop.backgroundImage)
+                            })
+                        } catch (err) {
+                            setCurrentDesktop({
+                                ...firstDesktop,
+                                backgroundImage: toBase64Image(firstDesktop.backgroundImage)
+                            })
+                        }
                     }
-
                 }
             } catch (err) {
                 setIsAuthenticated(false);
@@ -180,16 +176,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
                 isAuthenticated,
                 user,
                 changeUser,
-                standardUser,
                 currentDesktop,
                 changeCurrentDesktop,
-                standardDesktop,
                 authLoginUser,
                 authRegisterUser,
                 isLoading,
                 authLogoutUser,
                 hasDesktops,
-                setHasDesktops
+                setHasDesktops,
+                toBase64Image
             }}
         >
             {children}

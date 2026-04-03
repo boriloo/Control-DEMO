@@ -11,6 +11,7 @@ export type UpdateDesktopData = {
 
 export type DesktopData = {
     id: string,
+    ownerId: string,
     name: string,
     backgroundImage: string,
     createdAt: Date

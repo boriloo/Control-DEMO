@@ -90,7 +90,7 @@ export const authLogoutController = async (req: Request, res: Response) => {
             httpOnly: true,
             secure: false,
             sameSite: 'strict',
-            path: '/', // MUITO importante
+            path: '/',
         });
 
         return res.status(200).json({ message: 'User logged out' })

@@ -13,7 +13,7 @@ import { DesktopData } from "../../types/desktop";
 
 export default function ListDesktopsWindow() {
     const { t } = useTranslation();
-    const { user, currentDesktop, changeCurrentDesktop, standardDesktop } = useUser();
+    const { user, currentDesktop, changeCurrentDesktop, toBase64Image } = useUser();
     const { minimazeAllWindows } = useAppContext();
     const { listdt, newdt, dtConfig } = useWindowContext();
     const [loading, setLoading] = useState<boolean>(false);
@@ -33,19 +33,7 @@ export default function ListDesktopsWindow() {
         const getAllDesktops = async () => {
             const responseDesktops = await getDesktopByOwnerService();
 
-            const desktops = responseDesktops.map((desktop: any) => {
-                return {
-                    id: desktop.id,
-                    name: desktop.name,
-                    ownerId: desktop.owner_id,
-                    backgroundImage: desktop.background_image.startsWith('data:')
-                        ? desktop.background_image
-                        : `data:image/png;base64,${desktop.background_image}`,
-                    createdAt: desktop.created_at,
-                }
-            })
-
-            const otherDesktops = desktops.filter((desktop: DesktopData) => desktop.id !== currentDesktop?.id);
+            const otherDesktops = responseDesktops.filter((desktop: DesktopData) => desktop.id !== currentDesktop?.id);
 
             setAllDesktops(otherDesktops)
         }
@@ -57,13 +45,12 @@ export default function ListDesktopsWindow() {
     const handleChangeDesktop = async (id: string) => {
         setLoading(true)
         try {
-            
+
             const response = await getDesktopByIdService(id)
-            const updatedDesktop = standardDesktop(response)
 
-            changeCurrentDesktop(updatedDesktop)
+            changeCurrentDesktop(response)
 
-            localStorage.setItem('last-desktop', updatedDesktop.id);
+            localStorage.setItem('last-desktop', response.id);
 
         } catch (err) {
             console.log(err)
@@ -138,14 +125,17 @@ export default function ListDesktopsWindow() {
                                     <Menu onClick={() => {
                                         minimazeAllWindows()
                                         dtConfig.openWindow()
-                                        dtConfig.setDesktop(desktop)
+                                        dtConfig.setDesktop({
+                                            ...desktop,
+                                            backgroundImage: toBase64Image(desktop.backgroundImage) ?? desktop.backgroundImage
+                                        })
 
                                     }} className="cursor-pointer transition-all opacity-0 group-hover:opacity-100 hover:bg-blue-500/15 hover:border-blue-500 hover:text-blue-500 w-9 h-9 p-1 bg-white/5 border border-white/40 rounded-md" />
                                     <ExternalLink onClick={() => handleChangeDesktop(desktop.id)} className="cursor-pointer transition-all opacity-0 group-hover:opacity-100 hover:bg-blue-500/15 hover:border-blue-500 hover:text-blue-500 w-9 h-9 p-1 bg-white/5 border border-white/40 rounded-md" />
                                 </div>
                             </div>
                         )) :
-                        <div className="p-2 w-full flex flex-col items-center gap-2">
+                        <div className="p-2 w-full flex flex-col items-center gap-2 mt-6">
                             <Bot size={60} />
                             <h1 className="text-center text-xl">{t("listdt.lost_1")}</h1>
                             <h1 className="text-center text-xl">{t("listdt.lost_2")}</h1>

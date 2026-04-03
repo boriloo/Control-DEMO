@@ -11,7 +11,7 @@ import { getFileByIdService, getFileParentNamesService, getFilesFromParentServic
 import { useFileContext } from "../../context/FileContext";
 
 export default function FileWindow() {
-    const { standardFile, allFiles } = useFileContext()
+    const { allFiles } = useFileContext()
     const { minimazeAllWindows } = useAppContext();
     const { user, currentDesktop } = useUser()
     const { fileViewer, newFile } = useWindowContext();
@@ -34,14 +34,10 @@ export default function FileWindow() {
             try {
                 const files = await getFilesFromParentService(currentDesktop?.id, fileViewer.file.id)
 
-                const standardFiles = files.map((file: FileData) => {
-                    return standardFile(file)
-                })
-
                 type FileType = "folder" | "link" | "file";
                 const typeOrder: Record<FileType, number> = { folder: 0, link: 1, file: 2 };
 
-                const sortedArray = standardFiles.sort((a: { fileType: FileType }, b: { fileType: FileType }) => {
+                const sortedArray = files.sort((a: { fileType: FileType }, b: { fileType: FileType }) => {
                     return typeOrder[a.fileType] - typeOrder[b.fileType];
                 });
                 setInternalFiles(sortedArray);
@@ -132,8 +128,7 @@ export default function FileWindow() {
             setLoading(true)
             const file = await getFileByIdService(pathId, currentDesktop?.id)
 
-            const stfile = standardFile(file)
-            fileViewer.setFile(stfile)
+            fileViewer.setFile(file)
         } catch (err) {
             throw err
         } finally {

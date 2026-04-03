@@ -6,15 +6,11 @@ export type UserData = {
     name: string;
     email: string;
     password: string;
-    filterDark: BasicFilter,
-    filterBlur: BasicFilter,
-    filterColor: ColorFilter,
+    profileImage: Buffer | string;
+    createdAt: Date;
 }
 
 export type updateUserData = {
     name?: string,
     profileImage?: Buffer,
-    filterDark?: BasicFilter,
-    filterBlur?: BasicFilter,
-    filterColor?: ColorFilter,
 }
