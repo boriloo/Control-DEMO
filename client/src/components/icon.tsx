@@ -11,7 +11,7 @@ interface IconProps {
 export default function Icon({ icon, beingDragged }: IconProps) {
 
     const { root } = useRootContext();
-    const { fileViewer, openLink, imgViewer, newFile } = useWindowContext();
+    const { fileViewer, openLink, imgViewer, newFile, contextMenu } = useWindowContext();
     const [imageSrc, setImageSrc] = useState<string>("/assets/images/file.png");
     // const [loading, setLoading] = useState<>
     const [isValidImage, setIsValidImage] = useState<boolean | null>(null)
@@ -135,12 +135,14 @@ export default function Icon({ icon, beingDragged }: IconProps) {
 
 
     return (
-        <div onDoubleClick={returnAction} className={`${beingDragged ? 'scale-105 bg-blue-500/25' : 'hover:bg-white/15'} transition-all p-1 px-2 duration-300 group select-none flex flex-col justify-center 
+        <div onDoubleClick={returnAction} className={`${contextMenu.selectedIconId === icon.id ? 'bg-blue-500/30  border-blue-500' : `border-transparent ${beingDragged ? 'scale-105 bg-blue-500/25' : 'hover:bg-white/15'}`} 
+        border-2  transition-all p-1 px-2 duration-300 group select-none flex flex-col justify-center 
         items-center gap-2 w-20 h-full max-h-40  rounded-sm cursor-pointer `}>
             <div className={`${beingDragged ? 'scale-106' : 'group-hover:scale-103'} max-w-13 flex justify-center items-center h-8 max-h-8 transition-transform origin-center drop-shadow-zinc-950/40 drop-shadow-md`}>
                 <img src={imageSrc} alt={icon.name} className="w-full h-full object-contain pointer-events-none select-none " />
             </div>
-            <p className={`${beingDragged ? 'scale-106' : 'group-hover:scale-103'} group-hover:bg-black/60 text-[14px]/5 p-1 bg-black/40 backdrop-blur-sm rounded-md line-clamp-2 text-center 
+            <p className={`${contextMenu.selectedIconId === icon.id ? 'bg-black/70' : `group-hover:bg-black/60 bg-black/40 ${beingDragged ? 'scale-106' : 'group-hover:scale-103'}`}  
+             text-[14px]/5 p-1  backdrop-blur-sm rounded-md line-clamp-2 text-center 
             max-w-19 transition-all origin-top text-shadow-sm text-shadow-black/60`}>{icon.name}</p>
         </div>
     );

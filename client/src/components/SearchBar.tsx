@@ -167,8 +167,8 @@ export default function SearchBar() {
             <input
                 onChange={(e) => setSearchTerm(e.target.value)}
                 value={searchTerm}
-                className="peer w-full h-10 pl-11 pr-4 cursor-pointer transition-all duration-300 outline-none border-1 border-transparent
-                            bg-black/40 backdrop-blur-md hover:bg-black/45 focus:bg-black/55 focus:backdrop-blur-lg focus:border-blue-500 rounded-full"
+                className="peer w-full h-10 pl-11 pr-4 cursor-pointer transition-all duration-300 outline-none border-[2px] border-transparent
+                            bg-black/40 backdrop-blur-md hover:bg-black/45 focus:bg-black/55 focus:backdrop-blur-lg focus:border-blue-300 rounded-full"
                 placeholder={t("dashboard.search")}
             />
             <div className={`z-10 absolute transition-all pointer-events-none peer-focus:pointer-events-auto hover:pointer-events-auto

@@ -1,4 +1,5 @@
 import { useConfigHook } from "./configHook";
+import { useContextMenuHook } from "./contextMenuHook";
 import { useDesktopConfigHook } from "./desktopConfig";
 import { useFileHook } from "./fileHook";
 import { useImageViewerHook } from "./imageViewerHook";
@@ -21,5 +22,6 @@ export function useAllWindows() {
         dtConfig: useDesktopConfigHook(),
         imgViewer: useImageViewerHook(),
         social: useSocialHook(),
+        contextMenu: useContextMenuHook()
     };
 }

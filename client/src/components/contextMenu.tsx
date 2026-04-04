@@ -1,24 +1,21 @@
-interface ContextFunctions {
-    label: string;
-    action: () => void;
-}
+import { useWindowContext } from "../context/WindowContext";
 
-interface ContextMenuProps {
-    visible: boolean;
-    functions: ContextFunctions[]
-    position: { top: number, left: number }
-}
+export default function ContextMenu() {
+    const { contextMenu } = useWindowContext();
+    const visible = contextMenu.isVisible
+    const position = contextMenu.position
+    const functions = contextMenu.functions
 
-export default function ContextMenu({ visible, functions, position }: ContextMenuProps) {
     return (
         <div
-            className={`${visible ? 'opacity-100' : 'opacity-0'} transition-all absolute bg-zinc-800 w-full max-w-[250px] rounded-md shadow-lg`}
-            style={{ top: position.top, left: position.left }}
+            className={`${visible ? 'opacity-100 z-40' : 'opacity-0'} transition-opacity absolute bg-zinc-900/70 backdrop-blur-md w-full max-w-[230px] rounded-md shadow-lg`}
+            style={{ top: position.y, left: position.x }}
         >
             {functions.map((func) => (
                 <div
                     key={func.label}
-                    className="px-4 py-2 text-sm text-white hover:bg-blue-600 cursor-pointer"
+                    onClick={func.action}
+                    className="p-4 py-3 text-[15px] text-white rounded-sm hover:bg-zinc-950/80 hover:text-blue-500 hover:font-normal cursor-pointer transition-all"
                 >
                     {func.label}
                 </div>

@@ -25,6 +25,7 @@ import { FileData } from "../../types/file";
 import { getFilesFromDesktopService, updateFilePositionService } from "../../services/fileServices";
 import { useAppContext } from "../../context/AppContext";
 import { useFileContext } from "../../context/FileContext";
+import ContextMenu from "../../components/contextMenu";
 
 
 export default function DashboardPage() {
@@ -33,13 +34,12 @@ export default function DashboardPage() {
     const { t } = useTranslation();
     const { root } = useRootContext();
     const { user, hasDesktops, setHasDesktops, currentDesktop } = useUser();
-    const { newFile, listdt, openLink } = useWindowContext();
+    const { newFile, listdt, openLink, contextMenu } = useWindowContext();
     const [start, setStart] = useState<boolean>(false);
     const [timer, setTimer] = useState<number>(0)
     const [beingDragged, setBeingDragged] = useState<string>('')
     const [saving, setSaving] = useState<boolean>(false)
     const filesMap = useRef<Map<string, { id: string; xPos: number; yPos: number }>>(new Map());
-    const [desktopFiles, setDesktopFiles] = useState<{ id: string, x: number, y: number }[]>([])
     const [isDraggin, setIsDraggin] = useState<boolean>(false);
     const [lastDraggedId, setLastDraggedId] = useState<string>('');
 
@@ -154,82 +154,6 @@ export default function DashboardPage() {
     }, []);
 
 
-    // const handleDragStart = useCallback((e: DraggableEvent, data: DraggableData, iconId: string) => {
-    //     root.setCanOpenWindow(true);
-    //     initialDragState.current = rootFiles;
-    //     setBeingDragged(iconId);
-
-    //     const icon = rootFiles.find(i => i.id === iconId);
-    //     if (icon && e instanceof MouseEvent) {
-    //         dragOffset.current = {
-    //             x: e.clientX - icon.xPos,
-    //             y: e.clientY - icon.yPos,
-    //         };
-    //     }
-    // }, [rootFiles]);
-
-    // const handleDrag = useCallback((e: DraggableEvent, data: DraggableData, draggedIconId: string) => {
-    //     root.setCanOpenWindow(false);
-    // }, [])
-
-    // const handleDragStop = useCallback((e: DraggableEvent, data: DraggableData, draggedIconId: string) => {
-    //     setBeingDragged('')
-    //     initialDragState.current = null;
-
-    //     const GRID_SIZE = 100;
-    //     const roundToGrid = (value: number) => Math.round(value / GRID_SIZE) * GRID_SIZE;
-
-    //     const currentX = roundToGrid(data.x);
-    //     const currentY = roundToGrid(data.y);
-
-    //     const originalIcons = rootFiles;
-    //     const draggedIconOriginal = originalIcons.find(i => i.id === draggedIconId);
-    //     if (!draggedIconOriginal) return;
-
-    //     const existingIcon = originalIcons.find(icon =>
-    //         icon.id !== draggedIconId &&
-    //         currentX === icon.xPos &&
-    //         currentY === icon.yPos
-    //     );
-
-    //     if (existingIcon) {
-    //         filesMap.current.set(draggedIconId, { id: draggedIconId, xPos: existingIcon.xPos, yPos: existingIcon.yPos });
-    //         filesMap.current.set(existingIcon.id, { id: existingIcon.id, xPos: draggedIconOriginal.xPos, yPos: draggedIconOriginal.yPos });
-
-    //         const root = rootFiles.map((file) => {
-    //             return {
-    //                 id: file.id,
-    //                 xPos: file.xPos,
-    //                 yPos: file.yPos
-    //             }
-    //         })
-
-    //         if (root as any === filesMap.current) return
-
-    //         changeRootFiles(originalIcons.map(icon => {
-    //             if (icon.id === draggedIconId) return { ...icon, xPos: existingIcon.xPos, yPos: existingIcon.yPos };
-    //             if (icon.id === existingIcon.id) return { ...icon, xPos: draggedIconOriginal.xPos, yPos: draggedIconOriginal.yPos };
-    //             return icon;
-    //         }));
-    //     } else {
-    //         filesMap.current.set(draggedIconId, { id: draggedIconId, xPos: currentX, yPos: currentY });
-
-
-    //         if (draggedIconOriginal.xPos === currentX &&
-    //             draggedIconOriginal.yPos === currentY
-    //         ) {
-    //             console.log(`NAO MUDA NADA`)
-    //             return
-    //         }
-
-    //         changeRootFiles(originalIcons.map(icon =>
-    //             icon.id === draggedIconId ? { ...icon, xPos: currentX, yPos: currentY } : icon
-    //         ));
-    //     }
-
-    //     checkOverflow();
-    // }, [rootFiles, checkOverflow])
-
     useDraggableScroll(desktopRef);
 
     useEffect(() => {
@@ -245,42 +169,6 @@ export default function DashboardPage() {
             window.removeEventListener('resize', checkOverflow);
         };
     }, [rootFiles, checkOverflow]);
-
-
-
-
-
-
-
-
-
-
-
-    const returnPositionById = useCallback((id: string) => {
-        const file = desktopFiles.find((f) => f.id === id);
-
-        if (!file) return { x: 0, y: 0 };
-
-        return {
-            x: file.x,
-            y: file.y
-        };
-    }, [desktopFiles]);
-
-
-    useEffect(() => {
-
-        const mappedFiles = rootFiles.map((file) => {
-            return {
-                id: file.id,
-                x: file.xPos,
-                y: file.yPos,
-            }
-        })
-
-        setDesktopFiles(mappedFiles)
-
-    }, [rootFiles])
 
 
 
@@ -365,20 +253,94 @@ export default function DashboardPage() {
         activeElementRef.current = null;
     }, [isDraggin, lastDraggedId, rootFiles, changeRootFiles]);
 
+    useEffect(() => {
+        const disableRightClick = (e: MouseEvent) => e.preventDefault();
+        document.addEventListener('contextmenu', disableRightClick);
+
+        return () => document.removeEventListener('contextmenu', disableRightClick);
+    }, []);
+
+    const handleContextClick = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
+
+        if (e.button != 2) {
+            contextMenu.setIsVisible(false)
+            contextMenu.setSelectedIconId('')
+            return;
+        };
+
+        contextMenu.setPosition({
+            x: e.clientX, y: e.clientY
+        })
+        contextMenu.setIsVisible(true)
+
+        const elementIsIcon = (e.target as HTMLElement).closest('[data-id]') as HTMLElement;
+
+
+        if (elementIsIcon) {
+            contextMenu.setSelectedIconId(elementIsIcon.dataset.id as string)
+            contextMenu.setFunctions([
+                {
+                    label: 'Excluir Arquivo',
+                    action: () => { console.log('receba') }
+                },
+                {
+                    label: 'Editar Arquivo',
+                    action: () => { console.log('receba') }
+                },
+            ])
+        } else {
+            contextMenu.setSelectedIconId('')
+            contextMenu.setFunctions([
+                {
+                    label: 'Criar Arquivo',
+                    action: () => {
+                        newFile.setFile(null)
+                        newFile.openWindow()
+                        contextMenu.setIsVisible(false)
+                    }
+                },
+                {
+                    label: 'Alterar Desktop',
+                    action: () => {
+                        newFile.setFile(null)
+                        newFile.openWindow()
+                        contextMenu.setIsVisible(false)
+                    }
+                }
+            ])
+        };
 
 
 
+    }, [])
 
+    const handleMouseDown = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
 
+        if (e.button === 2) {
+            handleContextClick(e);
+            return;
+        }
 
+        contextMenu.setSelectedIconId('')
 
+        const element = (e.target as HTMLElement).closest('[data-id]') as HTMLElement;
+        if (!element || !desktopRef.current) {
+            contextMenu.setIsVisible(false);
+            return;
+        }
 
+        desktopRect.current = desktopRef.current.getBoundingClientRect();
+        const rect = element.getBoundingClientRect();
+        dragOffset.current = {
+            x: e.clientX - rect.left,
+            y: e.clientY - rect.top
+        };
 
-
-
-
-
-
+        activeElementRef.current = element;
+        setLastDraggedId(element.dataset.id || '');
+        setIsDraggin(true);
+        contextMenu.setIsVisible(false);
+    }, [handleContextClick, contextMenu]);
 
 
     return (
@@ -404,6 +366,7 @@ export default function DashboardPage() {
             ></div>)}
             {hasDesktops ? '' : (<PersonalDesktopWindow onFinish={(bool) => setHasDesktops(bool)} />)}
 
+
             <ConfigWindow />
             <NewFileWindow />
             <ProfileWindow />
@@ -413,9 +376,10 @@ export default function DashboardPage() {
             <DesktopConfigWindow />
             <ImageViewerWindow />
             <SocialWindow />
+
             <OpenLinkWindow url={openLink.url as string} />
             <div className={`${start ? 'opacity-100' : 'opacity-0'} transition-opacity duration-1000 flex flex-col w-full h-screen overflow-hidden text-white relative select-none`}>
-
+                <ContextMenu />
                 <div className="flex flex-row flex-wrap justify-between items-center w-full gap-3 p-4">
                     <div className=" w-full max-w-50">
                         <button onClick={() => {
@@ -474,24 +438,27 @@ export default function DashboardPage() {
                 } className={`${contentToBottom ? 'opacity-100' : 'opacity-0 pointer-events-none'} border-transparent border-[2px] hover:border-blue-500 cursor-pointer transition-all z-20 w-15 h-15 p-3 
                         text-blue-500 rounded-full bg-black/30 backdrop-blur-md fixed bottom-14 left-[50%] translate-x-[-50%]`} />
 
+                <div className={`${saving ? 'opacity-100 z-42' : 'opacity-0 z-0'} select-none pointer-none: p-2 px-3 rounded-sm backdrop-blur-sm bg-black/20 flex flex-row gap-2 absolute 
+                top-20 right-5 justify-center items-center transition-opacity duration-300`}>
+                    <img src="public/assets/images/changes.png" className="w-8" />
+                    <p className="text-[17px]">Posições atualizadas</p>
+                </div>
+
                 <div
+                    onMouseDown={handleMouseDown}
                     onMouseMove={moverMouse}
                     onMouseUp={soltarMouse}
                     onMouseLeave={soltarMouse}
                     ref={desktopRef}
                     className={`desktop-area flex-1 w-full relative mb-10 p-4 overflow-scroll select-none`}>
-                    <div className={`${saving ? 'opacity-100 z-101' : 'opacity-0 z-0'} select-none pointer-none:  p-2 px-3 rounded-sm backdrop-blur-sm bg-black/20 flex flex-row gap-2 absolute top-0 right-5 justify-center items-center transition-opacity duration-300`}>
-                        <img src="public/assets/images/changes.png" className="w-8" />
-                        <p className="text-[17px]">Posições atualizadas</p>
-                    </div>
+
                     {rootFiles.map((icon, index) => (
                         <DraggableIcon
                             index={index}
                             key={icon.id}
                             icon={icon}
                             beingDragged={lastDraggedId === icon.id && isDraggin}
-                            position={returnPositionById(icon.id)}
-                            dragStart={clicarMouse}
+                            position={{ x: icon.xPos, y: icon.yPos }}
                         />
                     ))}
                 </div>

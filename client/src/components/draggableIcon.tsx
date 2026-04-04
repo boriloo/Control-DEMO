@@ -9,10 +9,10 @@ type DraggableIconProps = {
   icon: FileData;
   beingDragged: boolean;
   position: { x: number; y: number };
-  dragStart: (e: React.MouseEvent<HTMLDivElement>) => void;
+
 };
 
-export function DraggableIcon({ index, icon, beingDragged, position, dragStart }: DraggableIconProps) {
+export function DraggableIcon({ index, icon, beingDragged, position}: DraggableIconProps) {
   const elementRef = useRef<HTMLDivElement>(null);
 
   return (
@@ -20,7 +20,6 @@ export function DraggableIcon({ index, icon, beingDragged, position, dragStart }
       className='animate-scale origin-center select-none'
       ref={elementRef}
       data-id={icon.id}
-      onMouseDown={dragStart}
       style={{
         animationDelay: `${index * 40}ms`,
         transform: "scale(0)",
@@ -29,7 +28,7 @@ export function DraggableIcon({ index, icon, beingDragged, position, dragStart }
         top: position.y,
         left: position.x,
         transition: beingDragged ? "none" : "top 0.2s ease-out, left 0.2s ease-out",
-        zIndex: beingDragged ? 100 : 1,
+        zIndex: beingDragged ? 30 : 1,
         willChange: "top, left",
       }}
     >
