@@ -9,7 +9,7 @@ import { updateUserData } from "../../../types/auth"
 
 export default function AccountOption() {
     const { callToast } = useAppContext();
-    const { user, currentDesktop, changeUser, standardUser } = useUser()
+    const { user, currentDesktop, changeUser } = useUser()
     const [currentImage, setCurrentImage] = useState<File | null>(null)
     const [loading, setLoading] = useState<boolean>(false)
     const [username, setUsername] = useState<string>('')
@@ -28,8 +28,8 @@ export default function AccountOption() {
             setLoading(true)
             const pictureForReq = currentImage ? currentImage : undefined
             const updatedUser = await updateUserService({ name: username, profileImage: pictureForReq } as updateUserData)
-            const formattedUser = standardUser(updatedUser);
-            changeUser(formattedUser);
+
+            changeUser(updatedUser);
             setCurrentImage(null)
             callToast({ message: 'Avatar alterado com sucesso!', type: 'success' })
         } catch (err) {

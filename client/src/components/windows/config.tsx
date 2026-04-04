@@ -1,5 +1,5 @@
 import { Maximize, Minus, Palette, Shield, User, X } from "lucide-react"
-import { useEffect, useState } from "react"
+import { useState } from "react"
 import { useWindowContext } from "../../context/WindowContext";
 import AppearanceOption from "./configOptions/appearance";
 import { useUser } from "../../context/AuthContext";
@@ -9,7 +9,6 @@ import AccountOption from "./configOptions/account";
 export type tabs = "account" | "security" | "appearance"
 
 export default function ConfigWindow() {
-    const { user, userFilters } = useUser();
     const { config } = useWindowContext();
     const [isFullsceen, setIsFullscreen] = useState<boolean>(false)
 
@@ -36,7 +35,7 @@ export default function ConfigWindow() {
 
     return (
         config.currentStatus != "closed" && (<div onClick={handleAreaClick} className={`${isFullsceen ? 'pb-[40px]' : ' p-2 pb-[50px]'} 
-            ${config.currentStatus === "open" ? userFilters : 'pointer-events-none'} 
+            ${config.currentStatus === "open" ? returnFilterEffects() : 'pointer-events-none'} 
         fixed z-100 flex-1 flex justify-center items-center w-full h-screen transition-all duration-500 cursor-pointer`}>
             <div className={`${isFullsceen ? 'max-w-full max-h-full' : 'rounded-lg max-w-[1200px] max-h-[700px]'} ${config.currentStatus === "open" ? 'scale-100' : 'scale-0 '} 
                 cursor-default origin-bottom relative transition-all rounded-lg duration-300 flex flex-col bg-zinc-900 w-full h-full overflow-hidden`}
@@ -64,7 +63,7 @@ export default function ConfigWindow() {
                             <Shield />
                             <p className="overflow-hidden max-w-0 transition-all group-hover:pr-10 group-hover:ml-2 group-hover:max-w-80 text-lg">Segurança</p>
                         </div> */}
-                        
+
                         <div onClick={() => config.setCurrentTab('appearance')} className={`${config.currentTab === 'appearance' ? 'bg-blue-500 hover:bg-blue-600' : 'hover:bg-zinc-800'} 
                             flex flex-row w-full items-center cursor-pointer rounded-md p-2 gap-0 transition-all hover:gap-1`}>
                             <Palette />

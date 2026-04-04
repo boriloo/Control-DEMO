@@ -103,5 +103,5 @@ input:-webkit-autofill:active {
 }
 
 .animate-scale {
-  animation: scaleIn 0.5s 1s forwards;
+  animation: scaleIn 0.5s 0.7s forwards;
 }

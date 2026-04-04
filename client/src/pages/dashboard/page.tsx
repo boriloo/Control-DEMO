@@ -34,7 +34,7 @@ export default function DashboardPage() {
     const { t } = useTranslation();
     const { root } = useRootContext();
     const { user, hasDesktops, setHasDesktops, currentDesktop } = useUser();
-    const { newFile, listdt, openLink, contextMenu } = useWindowContext();
+    const { newFile, listdt, openLink, contextMenu, dtConfig } = useWindowContext();
     const [start, setStart] = useState<boolean>(false);
     const [timer, setTimer] = useState<number>(0)
     const [beingDragged, setBeingDragged] = useState<string>('')
@@ -176,23 +176,6 @@ export default function DashboardPage() {
     const dragOffset = useRef<{ x: number; y: number }>({ x: 0, y: 0 });
     const desktopRect = useRef<DOMRect | null>(null);
 
-    const clicarMouse = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
-        const element = (e.target as HTMLElement).closest('[data-id]') as HTMLElement;
-        if (!element || !desktopRef.current) return;
-
-        // Guardamos o tamanho e posição da área de trabalho NO MOMENTO DO CLIQUE
-        desktopRect.current = desktopRef.current.getBoundingClientRect();
-
-        const rect = element.getBoundingClientRect();
-        dragOffset.current = {
-            x: e.clientX - rect.left,
-            y: e.clientY - rect.top
-        };
-
-        activeElementRef.current = element;
-        setLastDraggedId(element.dataset.id || '');
-        setIsDraggin(true);
-    }, []);
 
     const moverMouse = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
         if (!activeElementRef.current || !isDraggin || !desktopRect.current || !desktopRef.current) return;
@@ -302,8 +285,8 @@ export default function DashboardPage() {
                 {
                     label: 'Alterar Desktop',
                     action: () => {
-                        newFile.setFile(null)
-                        newFile.openWindow()
+                        dtConfig.setDesktop(currentDesktop)
+                        dtConfig.openWindow()
                         contextMenu.setIsVisible(false)
                     }
                 }

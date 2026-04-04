@@ -1,4 +1,5 @@
 import { ChevronDown, X } from "lucide-react"
+import { Folder, Link } from 'lucide-react';
 import { useEffect, useState } from "react"
 import { useWindowContext } from "../../context/WindowContext";
 import { returnFilterEffects } from "../../types/auth";
@@ -15,7 +16,7 @@ export type CreateFileType = "folder" | "link"
 export default function NewFileWindow() {
     const { rootFiles, changeRootFiles, changeAllFiles, allFiles } = useFileContext()
     const { callToast, nextIconPosition } = useAppContext();
-    const { user, currentDesktop } = useUser();
+    const { user, currentDesktop, userFilters } = useUser();
     const { newFile } = useWindowContext();
     const [fileType, setFileType] = useState<CreateFileType>('folder')
     const [drop, setDrop] = useState<boolean>(false)
@@ -46,8 +47,6 @@ export default function NewFileWindow() {
             return;
         }
 
-        console.log('estou criand arquivo novo ', nextIconPosition)
-
         setLoading(true)
 
         const basePayload = {
@@ -66,17 +65,10 @@ export default function NewFileWindow() {
         }
 
         switch (fileType) {
-            // case 'text':
-            //     const content = "";
-            //     finalPayload.content = content;
-            //     finalPayload.sizeInBytes = new Blob([content]).size;
-            //     break;
-
             case 'link':
                 const finalUrl = normalizeUrl(url);
 
                 if (!finalUrl) {
-                    alert("Por favor, insira uma URL válida.");
                     return;
                 }
 
@@ -90,6 +82,7 @@ export default function NewFileWindow() {
                 console.error("Tipo de ficheiro desconhecido:", fileType);
                 return;
         }
+
         try {
             console.log(finalPayload)
             const fileCreated = await createFileService(currentDesktop.id, finalPayload as FileData);
@@ -141,77 +134,60 @@ export default function NewFileWindow() {
         setUrl(null);
     }
 
+    const handleAreaClick = (e: React.MouseEvent<HTMLElement>) => {
+        if (e.target != e.currentTarget) return;
+        setDrop(false);
+        newFile.closeWindow();
+        setName(null);
+        setUrl(null);
+    }
+
+
     return (
-        <div className={`${newFile.currentStatus === 'open' ? returnFilterEffects(user) : 'pointer-events-none '} 
+        <div onClick={handleAreaClick} className={`${newFile.currentStatus === 'open' ? returnFilterEffects() : 'pointer-events-none'} 
         transition-all duration-500 fixed z-200 w-full h-screen flex justify-center items-center p-4 pb-[50px] cursor-pointer`}>
             <div className={`${newFile.currentStatus === 'open' ? 'scale-100' : 'scale-0'} cursor-default bg-zinc-900 origin-center rounded-md p-4 w-full max-w-[600px] 
             max-h-full flex flex-col gap-4 overflow-y-auto transition-all relative shadow-[inset_0_4px_5px_rgba(255,255,255,0.09),0_5px_10px_rgba(0,0,0,0.3)]`}>
                 <X onClick={closeWindow} size={35}
                     className="absolute top-0 right-0 p-2 rounded-bl-lg cursor-pointer transition-all hover:bg-red-500" />
                 <h1 className="text-[20px] flex gap-1.5">Criar um novo item em <p className="text-blue-500 max-w-50 truncate">{newFile.file ? `${newFile.file.name} (${newFile.file.fileType})` : `${currentDesktop?.name} (Desktop)`}</p></h1>
-                <div className={`${loading && 'saturate-0 pointer-events-none opacity-60'} flex flex-col gap-3`}>
-                    <button onClick={() => setDrop(!drop)} className={`${drop ? 'border-white rounded-t-md' : 'border-blue-500 rounded-md'} flex flex-row gap-2 p-4 
-                    border-1  items-center 
-                        cursor-pointer transition-all hover:bg-zinc-800`}>
-                        <img src={imageReturn()} className="w-7" />
-                        <p className="text-lg">{textReturn()}</p>
-                        <ChevronDown size={26} className={`${drop ? '' : 'rotate-180 text-blue-500'} transition-all ml-auto`} />
-                    </button>
-                    <div className={`${drop ? 'max-h-full' : 'max-h-0 py-0'} p-2 transition-all overflow-hidden flex flex-col bg-zinc-950 mt-[-10px] gap-2 rounded-b-xl`}>
-                        <div onClick={() => { setFileType('folder'); setDrop(true) }}
-                            className={`${fileType === 'folder' ? 'border-blue-500 text-blue-500' : 'border-transparent'} 
-                            border-1 p-2 flex flex-row gap-4 transition-all hover:bg-zinc-900 rounded-md cursor-pointer select-none`}>
-                            <img src="/assets/images/open-folder.png" className="w-6" />
-                            Pasta
+                <div className={`${loading && 'saturate-0 pointer-events-none opacity-60'} flex flex-col gap-3 items-center`}>
+
+
+                    <div className="w-full flex flex-row gap-2">
+                        <div onClick={() => { setFileType('folder'); setDrop(true) }} className={`${fileType === 'folder' ? 'bg-blue-500 border-blue-400/70' : 'border-zinc-700 hover:bg-zinc-800 '} 
+                        flex-1 p-4 flex flex-col gap-2 rounded-xl border-2 justify-between items-center transition-all cursor-pointer select-none`}>
+                            <Folder size={35} className={`${fileType === 'folder' ? 'text-white' : 'text-zinc-400 scale-80 origin-bottom'} transition-all`} />
+                            <p className={`${fileType === 'folder' ? 'text-white' : 'text-zinc-400 scale-80 origin-top'} text-[20px] transition-all`}>Pasta</p>
                         </div>
-
-                        {/* VERSAO LANCAMENTO */}
-
-                        {/* <div onClick={() => { setFileType('text'); setDrop(true) }} className={`${fileType === 'text' ? 'border-blue-500 text-blue-500' : 'border-transparent'} 
-                            border-1 p-2 flex flex-row gap-4 transition-all hover:bg-zinc-900 rounded-md cursor-pointer select-none`}>
-                            <img src="/assets/images/text-file.png" className="w-6" />
-                            Texto
-                        </div> */}
-
-                        <div onClick={() => { setFileType('link'); setDrop(true) }}
-                            className={`${fileType === 'link' ? 'border-blue-500 text-blue-500' : 'border-transparent'} 
-                            border-1 p-2 flex flex-row gap-4 transition-all hover:bg-zinc-900 rounded-md cursor-pointer select-none`}>
-                            <img src="/assets/images/link.png" className="w-6" />
-                            Link
+                        <div onClick={() => { setFileType('link'); setDrop(true) }} className={`${fileType === 'link' ? 'bg-blue-500 border-blue-400/70' : 'border-zinc-700 hover:bg-zinc-800 '} 
+                        flex-1 p-4 flex flex-col gap-2 rounded-xl border-2 justify-between items-center transition-all cursor-pointer select-none`}>
+                            <Link size={35} className={`${fileType === 'link' ? 'text-white' : 'text-zinc-400 scale-80 origin-bottom'} transition-all`} />
+                            <p className={`${fileType === 'link' ? 'text-white' : 'text-zinc-400 scale-80 origin-top'} text-[20px] transition-all`}>Link</p>
                         </div>
-
-                        {/* VERSAO LANCAMENTO */}
-
-                        {/* <div onClick={() => { setFileType('drive'); setDrop(true) }}
-                            className={`${fileType === 'drive' ? 'border-blue-500 border-1 bg-blue-500/10' : 'border-transparent'} 
-                             p-2 flex flex-row gap-4 transition-all rounded-md cursor-pointer select-none
-                            bg-gradient-to-r from-blue-500/20 to-transparent hover:bg-blue-500/5`}>
-                            <img src="/assets/images/google-drive.png" className="w-6" />
-                            Google Drive
-                        </div> */}
 
                     </div>
 
-                    <div className="flex flex-col gap-1">
-                        <p>Nome</p>
+                    <div className="flex flex-col gap-1 mt-2 w-full">
+                        <p className="text-lg">Nome</p>
                         <div className="flex flex-col">
-                            <input value={name ?? ''} onChange={(e) => setName(e.target.value)} type="text" className="border-none outline-[1.5px] p-1 px-2 outline-transparent 
-                            transition-all cursor-pointer hover:bg-zinc-800 rounded-sm focus:outline-blue-500 focus:cursor-text" />
-                            <div className="w-full h-[1px] bg-zinc-400"></div>
+                            <input value={name ?? ''} onChange={(e) => setName(e.target.value)} type="text" className="border-1 border-zinc-600 outline-none transition-all text-[16px] bg-zinc-800/70 hover:bg-zinc-700/40  
+                                cursor-pointer focus:cursor-text p-1.5 px-2.5 rounded-sm focus:border-blue-500 focus:bg-zinc-700/60 focus:text-blue-100 w-full" />
                         </div>
                     </div>
 
-                    {fileType === 'link' && (<div className="flex flex-col gap-1">
-                        <p>URL</p>
+                    <div style={{
+                        transition: 'opacity 0.6s, height 0.2s'
+                    }} className={`${fileType === 'link' ? 'h-20' : 'opacity-0 h-0 '} transition-all flex flex-col gap-1 w-full overflow-hidden`}>
+                        <p className="text-lg">URL</p>
                         <div className="flex flex-col">
-                            <input value={url ?? ''} onChange={(e) => setUrl(e.target.value)} type="text" className="border-none outline-[1.5px] p-1 px-2 
-                            outline-transparent transition-all cursor-pointer hover:bg-zinc-700 rounded-sm focus:outline-blue-500 focus:cursor-text" />
-                            <div className="w-full h-[1px] bg-zinc-400"></div>
+                            <input value={url ?? ''} onChange={(e) => setUrl(e.target.value)} type="text" className="border-1 border-zinc-600 outline-none transition-all text-[16px] bg-zinc-800/70 hover:bg-zinc-700/40  
+                                cursor-pointer focus:cursor-text p-1.5 px-2.5 rounded-sm focus:border-blue-500 focus:bg-zinc-700/60 focus:text-blue-100 w-full" />
                         </div>
-                    </div>)}
-                    <div className="flex flex-row w-full justify-end">
-                        <button onClick={handleCreateFile} className="p-1 px-5 text-lg font-medium border-1 border-whit cursor-pointer transition-all 
-                        hover:text-blue-500 hover:border-blue-500 hover:bg-zinc-900 rounded-md">
+                    </div>
+                    <div className="flex flex-row w-[40%] hover:w-[70%] transition-all mt-2">
+                        <button onClick={handleCreateFile} className="p-1.5 px-5 text-[20px] font-medium cursor-pointer transition-all 
+                         bg-blue-500 hover:bg-white hover:text-blue-600 rounded-md w-full">
                             {loading ? <DotLottieReact
                                 src="https://lottie.host/e580eaa4-d189-480f-a6ce-f8c788dff90d/MP2FjoJFFE.lottie"
                                 className="w-15 p-0"

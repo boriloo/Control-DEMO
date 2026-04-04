@@ -18,6 +18,7 @@ import { FileData } from "../types/file";
 
 interface UserContextProps {
     userFilters: any;
+    setUserFilters: (filter: string) => void;
     isAuthenticated: boolean;
     user: UserData | null;
     changeUser: (user: UserData) => void;
@@ -41,11 +42,32 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const [user, setUser] = useState<UserData | null>(null);
     const [isLoading, setIsLoading] = useState<boolean>(true)
     const [hasDesktops, setHasDesktops] = useState<boolean>(false);
-    const [userFilters, setUserFilters] = useState<any>()
+    const [userFilters, setUserFilters] = useState<string>()
 
     useEffect(() => {
-        setUserFilters(returnFilterEffects(user))
-    }, [user?.filterBlur, user?.filterColor, user?.filterDark])
+        const darkFilter = localStorage.getItem('dark-filter')
+        const blurFilter = localStorage.getItem('blur-filter')
+        const colorFilter = localStorage.getItem('color-filter')
+
+
+        if (darkFilter) {
+            localStorage.setItem('dark-filter', darkFilter)
+        } else {
+            localStorage.setItem('dark-filter', 'low')
+        }
+
+        if (blurFilter) {
+            localStorage.setItem('blur-filter', blurFilter)
+        } else {
+            localStorage.setItem('blur-filter', 'low')
+        }
+
+        if (colorFilter) {
+            localStorage.setItem('color-filter', colorFilter)
+        } else {
+            localStorage.setItem('color-filter', '')
+        }
+    }, [])
 
 
     const changeCurrentDesktop = useCallback((desktop: any) => {
@@ -173,6 +195,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         <UserContext.Provider
             value={{
                 userFilters,
+                setUserFilters,
                 isAuthenticated,
                 user,
                 changeUser,

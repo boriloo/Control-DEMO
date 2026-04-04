@@ -1,23 +1,22 @@
 import { useEffect, useState } from "react"
 import { useUser } from "../../../context/AuthContext"
 import { DotLottieReact } from "@lottiefiles/dotlottie-react"
-import { BasicFilter, ColorFilter } from "../../../types/auth"
+import { BasicFilter, ColorFilter, returnFilterEffects } from "../../../types/auth"
 import { useAppContext } from "../../../context/AppContext"
 
 export default function AppearanceOption() {
     const { callToast } = useAppContext();
-    const { user, currentDesktop, hasDesktops, authChangeUserFilters } = useUser()
+    const { user, currentDesktop, hasDesktops, setUserFilters, userFilters } = useUser()
     const [loading, setLoading] = useState<boolean>(false)
     const [darkFilter, setDarkFilter] = useState<BasicFilter>('low')
     const [blurFilter, setBlurFilter] = useState<BasicFilter>('low')
     const [colorFilter, setColorFilter] = useState<ColorFilter>('color')
 
     useEffect(() => {
-        if (!user) return;
-        setDarkFilter(user.filterDark as BasicFilter)
-        setBlurFilter(user.filterBlur as BasicFilter)
-        setColorFilter(user.filterColor as ColorFilter)
-    }, [user])
+        setDarkFilter(localStorage.getItem('dark-filter') as BasicFilter)
+        setBlurFilter(localStorage.getItem('blur-filter') as BasicFilter)
+        setColorFilter(localStorage.getItem('color-filter') as ColorFilter)
+    }, [userFilters])
 
 
     if (!currentDesktop) return;
@@ -27,7 +26,11 @@ export default function AppearanceOption() {
         if (!currentDesktop) return;
         try {
             setLoading(true)
-            await authChangeUserFilters(darkFilter, blurFilter, colorFilter)
+            localStorage.setItem('dark-filter', darkFilter)
+            localStorage.setItem('blur-filter', blurFilter)
+            localStorage.setItem('color-filter', colorFilter)
+            const classes = returnFilterEffects()
+            setUserFilters(classes)
             callToast({ message: 'Filtros alterados com sucesso!', type: 'success' })
         } catch (err) {
             console.log('ERRO AO ATUALIZAR IMAGEM PELAS CONFIGURAÇÕES: ', err)
