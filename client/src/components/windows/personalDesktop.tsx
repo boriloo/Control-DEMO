@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { ClickableImageInput } from "../imageInput";
 // import { createDesktop, updateDesktopBackground } from "../../services/desktop";
 // import { getDownloadURL, getStorage, ref, uploadBytes } from "firebase/storage"
@@ -7,13 +7,15 @@ import { DotLottieReact } from "@lottiefiles/dotlottie-react";
 import { LogOut } from "lucide-react";
 import { createDesktopService } from "../../services/desktopServices";
 import { CreateDesktopData } from "../../types/desktop";
+import { useAppContext } from "../../context/AppContext";
 
 interface PersonalProps {
     onFinish: (boolean: true) => void;
 }
 
 export default function PersonalDesktopWindow({ onFinish }: PersonalProps) {
-    const { user, changeCurrentDesktop, authLogoutUser } = useUser();
+    const { setBlackScreen } = useAppContext()
+    const { user, authLogoutUser, changeCurrentDesktop, hasDesktops } = useUser();
     const [imageSelected, setImageSelected] = useState<File>()
     const [desktopName, setDesktopName] = useState<string | null>()
     const [loading, setLoading] = useState<boolean>(false)
@@ -21,56 +23,49 @@ export default function PersonalDesktopWindow({ onFinish }: PersonalProps) {
     const [done2, setDone2] = useState<boolean>(false)
     const [percentage, setPercentage] = useState<number>(0)
 
+    useEffect(() => {
+        if (!hasDesktops) {
+            setBlackScreen(false)
+        }
+    }, [hasDesktops])
+
     const handleSubmit = async () => {
         if (!imageSelected) return;
         try {
-            const localUrl = URL.createObjectURL(imageSelected)
-            // setLoading(true)
+            setLoading(true)
+
             if (!imageSelected || !user || !desktopName) return;
+
+            setPercentage(prev => (prev + 33.3))
 
             const newDesktop = await createDesktopService({ name: desktopName, backgroundImage: imageSelected } as CreateDesktopData)
 
-            // setPercentage(prev => (prev + 16.66))
+            setPercentage(prev => (prev + 33.3))
 
-            // const storage = getStorage();
-            // setPercentage(prev => (prev + 16.66))
+            changeCurrentDesktop(newDesktop)
 
-            // const storageRef = ref(storage, `desktops/${newDesktop.id}/background`);
-            // setPercentage(prev => (prev + 16.66))
+            setPercentage(prev => (prev + 33.3))
 
-            // const snapshot = await uploadBytes(storageRef, imageSelected);
-            // setPercentage(prev => (prev + 16.66))
-
-            // const downloadURL = await getDownloadURL(snapshot.ref);
-            // setPercentage(prev => (prev + 16.66))
-
-            // const updatedDesktop = await updateDesktopBackground(newDesktop.id, downloadURL)
-
-            localStorage.setItem('background', newDesktop.backgroundImage);
-
-            // changeCurrentDesktop(updatedDesktop)
-            setPercentage(prev => (prev + 18.66))
             setTimeout(() => {
                 setDone(true)
+                setBlackScreen(false)
                 setTimeout(() => {
                     setDone2(true)
                     setTimeout(() => {
                         onFinish(true)
+                        setLoading(false)
                     }, 1000)
                 }, 2000)
             }, 1000)
         } catch (err) {
             console.log('Erro ao criar: ', err)
-            setLoading(false)
-        } finally {
-            // setLoading(false)
         }
     }
 
 
     return (
         <div
-            className={`${done2 ? '' : 'bg-zinc-900'} absolute z-200  w-full min-h-screen flex justify-center items-center p-8`}>
+            className={`${done2 ? '' : 'bg-zinc-900'} ${hasDesktops ? 'opacity-0' : ''} transition-all absolute z-200 w-full min-h-screen flex justify-center items-center p-8`}>
             <div className={`${done2 ? 'opacity-0 pointer-events-none' : done ? 'opacity-100' : 'opacity-0 pointer-events-none'} transition-all duration-500 
             absolute z-200 bg-zinc-900 w-full min-h-screen flex justify-center items-center p-4`}>
                 <h1 className={`${done ? 'opacity-100 mt-0' : 'opacity-0 mt-7'} transition-all duration-700 text-[40px] text-center`}>Tudo pronto. <br /> Aproveite :)</h1>
@@ -118,11 +113,11 @@ export default function PersonalDesktopWindow({ onFinish }: PersonalProps) {
                     <h1 className="text-[55px] gap-1">Crie seu primeiro <p className="text-blue-500">Desktop</p></h1>
                     <div className="flex flex-col gap-1 w-full">
                         <p className="text-xl">Nome</p>
-                        <input type="text" onChange={(e) => setDesktopName(e.target.value)} className="outline-none transition-all text-lg hover:bg-zinc-800 border-b-1 
-                    cursor-pointer focus:cursor-text p-1 px-2 rounded-t-sm focus:border-blue-500 focus:text-blue-100 border-white/50 w-full max-w-[500px]" />
+                        <input type="text" onChange={(e) => setDesktopName(e.target.value)} className="border-1 border-zinc-600 outline-none transition-all text-lg bg-zinc-800 hover:bg-zinc-700/50  
+                                cursor-pointer focus:cursor-text p-0.5 px-1.5 rounded-sm focus:border-blue-500 focus:bg-zinc-700/80 focus:text-blue-100 w-full max-w-[300px]" />
                     </div>
                     <div className="flex flex-col gap-2 w-full max-w-[1000px]">
-                        <p className="text-lg">Tela de fundo</p>
+                        <p className="text-lg">Plano de fundo</p>
 
                         <ClickableImageInput onFileSelected={(file) => {
                             setImageSelected(file)

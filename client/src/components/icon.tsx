@@ -112,7 +112,7 @@ export default function Icon({ icon, beingDragged }: IconProps) {
 
     const returnAction = useCallback(() => {
 
-        if (!root.canOpenWindow) return;
+        if (!root.canOpenWindow || beingDragged) return;
         newFile.setFile(icon)
         if (icon.fileType === "link") {
             if (!icon.url) return;

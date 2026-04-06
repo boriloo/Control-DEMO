@@ -19,7 +19,7 @@ import { useFileContext } from "../../context/FileContext";
 
 export default function DesktopConfigWindow() {
     const { changeRootFiles } = useFileContext();
-    const { callToast } = useAppContext();
+    const { callToast, setBlackScreen } = useAppContext();
     const { user, currentDesktop, changeCurrentDesktop, setHasDesktops, toBase64Image } = useUser();
     const { dtConfig } = useWindowContext();
 
@@ -143,6 +143,7 @@ export default function DesktopConfigWindow() {
                 const otherDesktops = desktops.filter((d: any) => d.id !== dtConfig.desktop?.id);
 
                 if (otherDesktops.length === 0) {
+                    setBlackScreen(true)
                     setTimeout(() => {
                         setHasDesktops(false);
                     }, 1000)
@@ -157,7 +158,6 @@ export default function DesktopConfigWindow() {
             setConfirmDelete(false);
             dtConfig.closeWindow();
             dtConfig.setDesktop(null);
-            callToast({ message: 'Desktop excluído!', type: 'success' });
 
         } catch (err) {
             console.error("Erro ao deletar desktop:", err);
@@ -168,8 +168,10 @@ export default function DesktopConfigWindow() {
 
     return (
 
+
+
         <div onMouseDown={handleMouseDown} onMouseUp={handleMouseUp}
-            className={`${isFullsceen ? 'pb-[40px]' : ' p-2 pb-[50px]'} ${dtConfig.currentStatus === "open" ? returnFilterEffects(user) : 'pointer-events-none'} 
+            className={`${isFullsceen ? 'pb-[40px]' : ' p-2 pb-[50px]'} ${dtConfig.currentStatus === "open" ? returnFilterEffects() : 'pointer-events-none'} 
         fixed z-100 flex-1 flex justify-center items-center w-full h-screen transition-all duration-500 cursor-pointer`}>
 
             <div className={`${confirmDelete ? '' : 'pointer-events-none opacity-0'} transition-all cursor-default fixed top-0 bg-black/70 w-full h-full z-100 flex 
@@ -190,7 +192,7 @@ export default function DesktopConfigWindow() {
                          border-zinc-300 cursor-pointer transition-all hover:bg-zinc-300/10 hover:text-white rounded-md">
                             Voltar
                         </button>
-                        <button onClick={deleteDesktopFunction} className={`${`${formattedUserName}/${formattedDtName}` === deleteInput ? '' : 'pointer-events-none saturate-0 opacity-70'} flex-1 p-1 px-5 text-lg text-red-500 border-1 border-red-500 cursor-pointer transition-all 
+                        <button disabled={`${formattedUserName}/${formattedDtName}` != deleteInput} onClick={deleteDesktopFunction} className={`${`${formattedUserName}/${formattedDtName}` === deleteInput ? '' : 'pointer-events-none saturate-0 opacity-70'} flex-1 p-1 px-5 text-lg text-red-500 border-1 border-red-500 cursor-pointer transition-all 
                         hover:bg-red-500 hover:text-white rounded-md`}>
                             Excluir Desktop
                         </button>
@@ -250,19 +252,18 @@ export default function DesktopConfigWindow() {
 
                         <div className="flex flex-col w-full items-start gap-4">
                             <h1 className="text-2xl">Informações</h1>
-
                             <div className="flex flex-col gap-1 w-full">
-                                <p>Nome do Desktop</p>
+                                <p className="text-lg">Nome do Desktop</p>
                                 <input value={desktopName} onChange={(e) => {
                                     setDesktopName(e.target.value)
-                                }} type="text" className="border-1 border-zinc-800 border-b-white/70  outline-none transition-all text-lg hover:bg-zinc-800  
-                                cursor-pointer focus:cursor-text p-0.5 px-1 rounded-t-sm focus:border-blue-500 focus:text-blue-100 w-full max-w-[300px]" />
+                                }} type="text" className="border-1 border-zinc-600 outline-none transition-all text-lg bg-zinc-800 hover:bg-zinc-700/50 mt-1
+                                cursor-pointer focus:cursor-text p-0.5 px-1.5 rounded-sm focus:border-blue-500 focus:bg-zinc-700/80 focus:text-blue-100 w-full max-w-[300px]" />
                             </div>
 
 
                             <div className="w-[100%] h-[1px] mt-1 bg-zinc-400/50"></div>
 
-                            <h1 className="text-2xl">Tela de Fundo</h1>
+                            <h1 className="text-2xl">Plano de Fundo</h1>
                             <p className="text-md mt-[-12px] mb-1">Imagem exibida no fundo do Desktop atual.</p>
 
                             {currentImage && !loading && (<p className="mb-[-5px] p-1 px-2 bg-white/10 rounded-lg">Prévia do Fundo</p>)}

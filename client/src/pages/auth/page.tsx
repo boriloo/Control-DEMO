@@ -39,7 +39,7 @@ const registerSchema = z.object({
 type FormData = z.infer<typeof loginSchema> | z.infer<typeof registerSchema>;
 
 export default function AuthPage() {
-    const { authLoginUser, authRegisterUser } = useUser();
+    const { authLoginUser, authRegisterUser, changeUser } = useUser();
     const navigate = useNavigate();
     const [rememberMe, setRememberMe] = useState<boolean>(false);
     const [seePass, setSeePass] = useState<boolean>(false);
@@ -69,7 +69,9 @@ export default function AuthPage() {
                 setSent(true);
                 const loginData = data as z.infer<typeof loginSchema>
                 console.log('REMEMBER ME?', rememberMe)
-                await authLoginUser({ email: loginData.email, password: loginData.password, rememberMe } as LoginData);
+                const user = await authLoginUser({ email: loginData.email, password: loginData.password, rememberMe } as LoginData);
+
+                changeUser(user)
                 setApproved(true)
 
                 setTimeout(() => {

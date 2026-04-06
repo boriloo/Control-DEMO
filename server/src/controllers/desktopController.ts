@@ -52,10 +52,6 @@ export const getDesktopByOwnerController = async (req: Request, res: Response) =
         return res.status(201).json(desktops);
     } catch (err: any) {
 
-        if (err.message === "No desktops were found.") {
-            return res.status(404).json({ error: err.message })
-        }
-
         return res.status(500).json({ error: 'Server Error' })
     }
 }

@@ -23,19 +23,19 @@ export const isSingleDesktopOwner = async (req: Request, res: Response, next: Ne
 
 }
 
-export const isDesktopsOwner = async (req: Request, res: Response, next: NextFunction) => {
-    const ownerId = (req as any).userId
+// export const isDesktopsOwner = async (req: Request, res: Response, next: NextFunction) => {
+//     const ownerId = (req as any).userId
 
-    try {
-        const response = await pool.query('SELECT id FROM desktops WHERE owner_id = $1', [ownerId])
+//     try {
+//         const response = await pool.query('SELECT id FROM desktops WHERE owner_id = $1', [ownerId])
 
-        if (response.rows.length > 0) {
-            next();
-        } else {
-            return res.status(403).json({ error: "No Desktops were found." });
-        }
-    } catch {
-        return res.status(500).json({ error: "Server Error." })
-    }
+//         if (response.rows.length > 0) {
+//             next();
+//         } else {
+//             return res.status(403).json({ error: "No Desktops were found." });
+//         }
+//     } catch {
+//         return res.status(500).json({ error: "Server Error." })
+//     }
 
-}
+// }

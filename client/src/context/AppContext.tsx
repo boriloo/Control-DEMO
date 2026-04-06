@@ -16,6 +16,8 @@ interface AppContextType {
     toast: Toast;
     nextIconPosition: { x: number; y: number } | null;
     changeNextIconPosition: (position: { x: number; y: number }) => void;
+    blackScreen: boolean;
+    setBlackScreen: (value: boolean) => void;
 };
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
@@ -26,6 +28,7 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
     const [toast, setToast] = useState<Toast>({ message: 'Hmmm...', type: 'message' })
     const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
     const [nextIconPosition, setNextIconPosition] = useState<{ x: number; y: number } | null>(null)
+    const [blackScreen, setBlackScreen] = useState<boolean>(false)
 
     const changeNextIconPosition = (position: { x: number; y: number }) => {
         setNextIconPosition(position);
@@ -83,7 +86,9 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
         toastOpen,
         toast,
         nextIconPosition,
-        changeNextIconPosition
+        changeNextIconPosition,
+        blackScreen,
+        setBlackScreen,
     }}>
         {children}
     </AppContext.Provider>;

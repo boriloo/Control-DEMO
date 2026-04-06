@@ -125,7 +125,7 @@ export default function ImageViewerWindow() {
 
 
     return (
-        <div onClick={handleAreaClick} className={`${isFullsceen ? 'pb-[40px]' : ' p-2 pb-[50px]'} ${imgViewer.currentStatus === "open" ? returnFilterEffects(user) : 'pointer-events-none'} 
+        <div onClick={handleAreaClick} className={`${isFullsceen ? 'pb-[40px]' : ' p-2 pb-[50px]'} ${imgViewer.currentStatus === "open" ? returnFilterEffects() : 'pointer-events-none'} 
         fixed z-100 flex-1 flex justify-center items-center w-full h-screen transition-all duration-500 cursor-pointer`}>
 
             <div className={`${imgFull ? '' : 'scale-90 opacity-0 pointer-events-none'} transition-all w-full min-h-screen fixed inset-0 bg-zinc-950 z-100 pb-10 flex justify-center items-center`}>

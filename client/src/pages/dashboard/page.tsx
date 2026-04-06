@@ -30,46 +30,66 @@ import ContextMenu from "../../components/contextMenu";
 
 export default function DashboardPage() {
     const { rootFiles, changeRootFiles } = useFileContext();
-    const { changeNextIconPosition } = useAppContext();
+    const { changeNextIconPosition, blackScreen } = useAppContext();
     const { t } = useTranslation();
     const { root } = useRootContext();
     const { user, hasDesktops, setHasDesktops, currentDesktop } = useUser();
     const { newFile, listdt, openLink, contextMenu, dtConfig } = useWindowContext();
     const [start, setStart] = useState<boolean>(false);
     const [timer, setTimer] = useState<number>(0)
-    const [beingDragged, setBeingDragged] = useState<string>('')
     const [saving, setSaving] = useState<boolean>(false)
     const filesMap = useRef<Map<string, { id: string; xPos: number; yPos: number }>>(new Map());
     const [isDraggin, setIsDraggin] = useState<boolean>(false);
+    const [isMoving, setIsMoving] = useState<boolean>(false);
     const [lastDraggedId, setLastDraggedId] = useState<string>('');
-
+    const [filesBeforeReq, setFilesBeforeReq] = useState<FileData[]>([])
+    const originalFilesRef = useRef<FileData[]>([]);
 
     useEffect(() => {
-        if (timer === 0) {
-            if (beingDragged != '') return;
-            if (filesMap.current.size === 0) return;
-
-            (async () => {
-                setSaving(true)
-                const movedFiles = Array.from(filesMap.current.values());
-                await updateFilePositionService(movedFiles);
-                filesMap.current.clear();
-            })();
-
-            setTimeout(() => { setSaving(false) }, 2000);
-
-            filesMap.current.clear();
-
+        if (isDraggin || filesMap.current.size === 0) {
+            setTimer(20);
             return;
-        };
+        }
+
+
+        if (timer === 0) {
+            const saveChanges = async () => {
+
+                const movedFiles = Array.from(filesMap.current.values());
+
+                const hasChanged = Array.from(filesMap.current.values()).some(movedFile => {
+                    const original = originalFilesRef.current.find(f => f.id === movedFile.id);
+                    return original && (original.xPos !== movedFile.xPos || original.yPos !== movedFile.yPos);
+                });
+
+                if (!hasChanged) {
+                    filesMap.current.clear();
+                    return;
+                }
+
+                try {
+                    await updateFilePositionService(movedFiles);
+                    originalFilesRef.current = rootFiles;
+                    filesMap.current.clear();
+                } catch (err) {
+                    console.error("Erro ao salvar", err);
+                } finally {
+                    setSaving(true);
+                    setTimeout(() => setSaving(false), 2000);
+                }
+            };
+
+            saveChanges();
+            return;
+        }
 
         const interval = setInterval(() => {
-            setTimer(prev => prev - 1);
+            setTimer(prev => Math.max(prev - 1, 0));
             console.log(timer)
         }, 1000);
 
         return () => clearInterval(interval);
-    }, [timer]);
+    }, [timer, isDraggin]);
 
 
     const findNextAvailablePosition = (icons: FileData[], containerWidth: number): { x: number; y: number } | null => {
@@ -105,7 +125,7 @@ export default function DashboardPage() {
             changeNextIconPosition(nextPosition);
         };
 
-        setTimer(5)
+        setTimer(20)
 
     }, [rootFiles]);
 
@@ -118,8 +138,8 @@ export default function DashboardPage() {
         const getAllFiles = async () => {
             try {
                 const files = await getFilesFromDesktopService(currentDesktop.id)
-
                 changeRootFiles(files)
+                originalFilesRef.current = files;
 
             } catch (err) {
                 alert(err)
@@ -169,79 +189,6 @@ export default function DashboardPage() {
             window.removeEventListener('resize', checkOverflow);
         };
     }, [rootFiles, checkOverflow]);
-
-
-
-    const activeElementRef = useRef<HTMLElement | null>(null);
-    const dragOffset = useRef<{ x: number; y: number }>({ x: 0, y: 0 });
-    const desktopRect = useRef<DOMRect | null>(null);
-
-
-    const moverMouse = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
-        if (!activeElementRef.current || !isDraggin || !desktopRect.current || !desktopRef.current) return;
-
-        const x = e.clientX - desktopRect.current.left + desktopRef.current.scrollLeft - dragOffset.current.x;
-        const y = e.clientY - desktopRect.current.top + desktopRef.current.scrollTop - dragOffset.current.y;
-
-
-        activeElementRef.current.style.left = `${x}px`;
-        activeElementRef.current.style.top = `${y}px`;
-    }, [isDraggin]);
-
-    const soltarMouse = useCallback(() => {
-        if (!isDraggin || !activeElementRef.current) return;
-
-        const draggedIconId = lastDraggedId;
-        const GRID_SIZE = 100;
-
-        const rawX = parseInt(activeElementRef.current.style.left);
-        const rawY = parseInt(activeElementRef.current.style.top);
-
-        let currentX = Math.round(rawX / GRID_SIZE) * GRID_SIZE;
-        let currentY = Math.round(rawY / GRID_SIZE) * GRID_SIZE;
-
-        if (currentX < 0) currentX = 0
-        if (currentY < 0) currentY = 0
-
-        activeElementRef.current.style.left = `${currentX}px`;
-        activeElementRef.current.style.top = `${currentY}px`;
-
-        const draggedIconOriginal = rootFiles.find(i => i.id === draggedIconId);
-        if (!draggedIconOriginal) return;
-
-        const existingIcon = rootFiles.find(icon =>
-            icon.id !== draggedIconId &&
-            currentX === icon.xPos &&
-            currentY === icon.yPos
-        );
-
-        if (existingIcon) {
-            filesMap.current.set(draggedIconId, { id: draggedIconId, xPos: existingIcon.xPos, yPos: existingIcon.yPos });
-            filesMap.current.set(existingIcon.id, { id: existingIcon.id, xPos: draggedIconOriginal.xPos, yPos: draggedIconOriginal.yPos });
-
-            changeRootFiles(rootFiles.map(icon => {
-                if (icon.id === draggedIconId) return { ...icon, xPos: existingIcon.xPos, yPos: existingIcon.yPos };
-                if (icon.id === existingIcon.id) return { ...icon, xPos: draggedIconOriginal.xPos, yPos: draggedIconOriginal.yPos };
-                return icon;
-            }));
-        } else {
-            filesMap.current.set(draggedIconId, { id: draggedIconId, xPos: currentX, yPos: currentY });
-            changeRootFiles(rootFiles.map(icon =>
-                icon.id === draggedIconId ? { ...icon, xPos: currentX, yPos: currentY } : icon
-            ));
-        }
-
-        setIsDraggin(false);
-        setLastDraggedId('');
-        activeElementRef.current = null;
-    }, [isDraggin, lastDraggedId, rootFiles, changeRootFiles]);
-
-    useEffect(() => {
-        const disableRightClick = (e: MouseEvent) => e.preventDefault();
-        document.addEventListener('contextmenu', disableRightClick);
-
-        return () => document.removeEventListener('contextmenu', disableRightClick);
-    }, []);
 
     const handleContextClick = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
 
@@ -294,8 +241,13 @@ export default function DashboardPage() {
         };
 
 
+    }, [currentDesktop])
 
-    }, [])
+
+
+    const activeElementRef = useRef<HTMLElement | null>(null);
+    const dragOffset = useRef<{ x: number; y: number }>({ x: 0, y: 0 });
+    const desktopRect = useRef<DOMRect | null>(null);
 
     const handleMouseDown = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
 
@@ -326,8 +278,83 @@ export default function DashboardPage() {
     }, [handleContextClick, contextMenu]);
 
 
+    const moverMouse = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
+        if (!activeElementRef.current || !isDraggin || !desktopRect.current || !desktopRef.current) return;
+        setIsMoving(true)
+
+        const x = e.clientX - desktopRect.current.left + desktopRef.current.scrollLeft - dragOffset.current.x;
+        const y = e.clientY - desktopRect.current.top + desktopRef.current.scrollTop - dragOffset.current.y;
+
+
+        activeElementRef.current.style.left = `${x}px`;
+        activeElementRef.current.style.top = `${y}px`;
+    }, [isDraggin]);
+
+    const soltarMouse = useCallback(() => {
+        if (!isDraggin || !activeElementRef.current) return;
+
+        const draggedIconId = lastDraggedId;
+        const GRID_SIZE = 100;
+
+        const rawX = parseInt(activeElementRef.current.style.left);
+        const rawY = parseInt(activeElementRef.current.style.top);
+
+        let currentX = Math.round(rawX / GRID_SIZE) * GRID_SIZE;
+        let currentY = Math.round(rawY / GRID_SIZE) * GRID_SIZE;
+
+        if (currentX < 0) currentX = 0
+        if (currentY < 0) currentY = 0
+
+        activeElementRef.current.style.left = `${currentX}px`;
+        activeElementRef.current.style.top = `${currentY}px`;
+
+        const draggedIconOriginal = rootFiles.find(i => i.id === draggedIconId);
+        if (!draggedIconOriginal) return;
+
+        const existingIcon = rootFiles.find(icon =>
+            icon.id !== draggedIconId &&
+            currentX === icon.xPos &&
+            currentY === icon.yPos
+        );
+
+        if (existingIcon) {
+            filesMap.current.set(draggedIconId, { id: draggedIconId, xPos: existingIcon.xPos, yPos: existingIcon.yPos });
+            filesMap.current.set(existingIcon.id, { id: existingIcon.id, xPos: draggedIconOriginal.xPos, yPos: draggedIconOriginal.yPos });
+
+            changeRootFiles(rootFiles.map(icon => {
+                if (icon.id === draggedIconId) return { ...icon, xPos: existingIcon.xPos, yPos: existingIcon.yPos };
+                if (icon.id === existingIcon.id) return { ...icon, xPos: draggedIconOriginal.xPos, yPos: draggedIconOriginal.yPos };
+                return icon;
+            }));
+        } else {
+            filesMap.current.set(draggedIconId, { id: draggedIconId, xPos: currentX, yPos: currentY });
+
+            changeRootFiles(rootFiles.map(icon =>
+                icon.id === draggedIconId ? { ...icon, xPos: currentX, yPos: currentY } : icon
+            ));
+        }
+
+        setIsDraggin(false);
+        setIsMoving(false);
+        setLastDraggedId('');
+        activeElementRef.current = null;
+    }, [isDraggin, lastDraggedId, rootFiles, changeRootFiles]);
+
+    useEffect(() => {
+        const disableRightClick = (e: MouseEvent) => e.preventDefault();
+        document.addEventListener('contextmenu', disableRightClick);
+
+        return () => document.removeEventListener('contextmenu', disableRightClick);
+    }, []);
+
+
+
+
+
+
     return (
         <>
+            <div className={`${blackScreen ? '' : 'opacity-0 pointer-none select-none'} transition-all duration-600 pointer-events-none z-201 absolute bg-black w-full h-screen`} />
 
             <div className="pointer-events-none fixed z-[-3] flex justify-center items-center w-full min-h-screen">
                 <DotLottieReact
@@ -440,7 +467,7 @@ export default function DashboardPage() {
                             index={index}
                             key={icon.id}
                             icon={icon}
-                            beingDragged={lastDraggedId === icon.id && isDraggin}
+                            beingDragged={lastDraggedId === icon.id && isMoving}
                             position={{ x: icon.xPos, y: icon.yPos }}
                         />
                     ))}

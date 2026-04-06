@@ -39,10 +39,6 @@ export const getDesktopByOwnerService = async (ownerId: string) => {
         where: { ownerId },
     });
 
-    if (desktops.length === 0) {
-        throw new Error("No desktops were found.");
-    }
-
     return desktops.map((desktop) => ({
         ...desktop,
         backgroundImage: desktop.backgroundImage ? Buffer.from(desktop.backgroundImage).toString('base64') : null,
@@ -72,6 +68,10 @@ export const updateDesktopService = async (id: string, data: { name?: string; ba
 // DELETE DESKTOP
 export const deleteDesktopService = async (id: string) => {
     try {
+        await prisma.file.deleteMany({
+            where: { desktopId: id }
+        })
+
         await prisma.desktop.delete({
             where: { id },
         });

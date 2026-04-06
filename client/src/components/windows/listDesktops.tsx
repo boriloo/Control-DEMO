@@ -56,6 +56,7 @@ export default function ListDesktopsWindow() {
 
             localStorage.setItem('last-desktop', response.id);
 
+            listdt.closeWindow()
         } catch (err) {
             console.log(err)
             throw err
@@ -67,15 +68,15 @@ export default function ListDesktopsWindow() {
     }
 
     return (
-        listdt.currentStatus != 'closed' && <div onClick={handleAreaClick} className={`${listdt.currentStatus === 'open' ? returnFilterEffects(user) : 'pointer-events-none '} 
+        listdt.currentStatus != 'closed' && <div onClick={handleAreaClick} className={`${listdt.currentStatus === 'open' ? returnFilterEffects() : 'pointer-events-none '} 
         transition-all duration-500 fixed z-100 w-full h-screen flex justify-center items-center p-4 pb-[50px] cursor-pointer`}>
             <div className={`${listdt.currentStatus === 'open' ? 'scale-100' : 'scale-0'} cursor-default bg-zinc-900 origin-center rounded-md p-4 w-full 
                 max-w-[700px] max-h-full flex flex-col gap-4 overflow-y-auto transition-all relative pb-10 `}>
                 <X onClick={listdt.minimizeWindow} size={35} className="absolute top-0 right-0 p-2 rounded-bl-lg cursor-pointer transition-all hover:bg-red-500" />
                 <h1 className="text-[24px]">{t("listdt.title")}</h1>
                 <div className={`${loading ? 'opacity-20 saturate-0 pointer-events-none' : ''} transition-all flex flex-col gap-2 w-full max-h-[500px] overflow-y-auto`}>
-                    <div className="group flex flex-row w-full p-3 justify-between items-center rounded-sm border border-blue-500 transition-all hover:bg-zinc-950">
-                        <div className="w-full gap-1 flex flex-row text-lg text-blue-300">
+                    <div className="group flex flex-row w-full p-3 justify-between items-center rounded-sm border-2 border-blue-500 transition-all bg-blue-950/30 hover:bg-blue-950/60 ">
+                        <div className="w-full gap-1 flex flex-row text-lg text-blue-400 font-medium">
                             <p>Atual -</p>
                             {currentDesktop?.name}
                         </div>

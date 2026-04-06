@@ -1,8 +1,7 @@
-import { Maximize, Minus, Palette, Shield, User, X } from "lucide-react"
+import { Maximize, Minus, Palette, User, X } from "lucide-react"
 import { useState } from "react"
 import { useWindowContext } from "../../context/WindowContext";
 import AppearanceOption from "./configOptions/appearance";
-import { useUser } from "../../context/AuthContext";
 import { returnFilterEffects } from "../../types/auth";
 import AccountOption from "./configOptions/account";
 

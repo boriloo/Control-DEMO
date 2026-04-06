@@ -24,7 +24,7 @@ interface UserContextProps {
     changeUser: (user: UserData) => void;
     currentDesktop: DesktopData | null;
     changeCurrentDesktop: (desktop: DesktopData) => void;
-    authLoginUser: (data: LoginData) => Promise<void>;
+    authLoginUser: (data: LoginData) => Promise<UserData>;
     authRegisterUser: (data: RegisterData) => Promise<void>;
     authLogoutUser: () => Promise<void>;
     isLoading: boolean;
@@ -102,55 +102,54 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
 
 
-    useEffect(() => {
-        const initApp = async () => {
-            setIsLoading(true);
-            try {
-                const currentUser = await getMeService();
+    const initApp = useCallback(async () => {
+        setIsLoading(true);
+        try {
+            const currentUser = await getMeService();
+            setUser({
+                ...currentUser,
+                profileImage: toBase64Image(currentUser.profileImage)
+            });
+            setIsAuthenticated(true);
 
-                setUser({
-                    ...currentUser,
-                    profileImage: toBase64Image(currentUser.profileImage)
-                })
+            const desktops = await getDesktopByOwnerService();
+            if (desktops && desktops.length > 0) {
+                setHasDesktops(true);
+                const localStorageDesktop = localStorage.getItem('last-desktop');
+                const firstDesktop = desktops[0];
 
-                setIsAuthenticated(true);
-
-                const desktops = await getDesktopByOwnerService();
-
-                const firstDesktop = desktops[0]
-
-                const localStorageDesktop = localStorage.getItem('last-desktop')
-
-                if (desktops && desktops.length > 0) {
-
-                    setHasDesktops(true);
-
-                    if (localStorageDesktop) {
-                        try {
-                            const desktop = await getDesktopByIdService(localStorageDesktop)
-
-                            setCurrentDesktop({
-                                ...desktop,
-                                backgroundImage: toBase64Image(desktop.backgroundImage)
-                            })
-                        } catch (err) {
-                            setCurrentDesktop({
-                                ...firstDesktop,
-                                backgroundImage: toBase64Image(firstDesktop.backgroundImage)
-                            })
-                        }
+                if (localStorageDesktop) {
+                    try {
+                        const desktop = await getDesktopByIdService(localStorageDesktop);
+                        setCurrentDesktop({
+                            ...desktop,
+                            backgroundImage: toBase64Image(desktop.backgroundImage)
+                        });
+                    } catch (err) {
+                        setCurrentDesktop({
+                            ...firstDesktop,
+                            backgroundImage: toBase64Image(firstDesktop.backgroundImage)
+                        });
                     }
+                } else {
+                    setCurrentDesktop({
+                        ...firstDesktop,
+                        backgroundImage: toBase64Image(firstDesktop.backgroundImage)
+                    });
                 }
-            } catch (err) {
-                setIsAuthenticated(false);
-                setUser(null);
-            } finally {
-                setIsLoading(false);
             }
-        };
-
-        initApp();
+        } catch (err) {
+            setIsAuthenticated(false);
+            setUser(null);
+        } finally {
+            setIsLoading(false);
+        }
     }, []);
+
+
+    useEffect(() => {
+        initApp();
+    }, [initApp]);
 
 
     async function authLoginUser(data: LoginData) {
@@ -160,6 +159,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             localStorage.setItem("accessToken", token);
             setUser(userData);
             setIsAuthenticated(true);
+            await initApp();
+            return userData.user;
         } catch (err) {
             throw err;
         }
