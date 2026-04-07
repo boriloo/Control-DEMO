@@ -14,7 +14,8 @@ function App() {
         <AppProvider>
           <AuthProvider>
             <FileProvider>
-              <div className="flex min-h-screen w-full">
+              <div
+                className="flex min-h-screen w-full">
                 <PageRouter />
               </div >
               <Toast />

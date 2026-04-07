@@ -142,7 +142,7 @@ export default function FileWindow() {
 
         <div onClick={handleAreaClick} className={`${isFullsceen ? 'pb-[40px]' : ' p-2 pb-[50px]'} ${fileViewer.currentStatus === "open" ? returnFilterEffects() : 'pointer-events-none'} 
         fixed z-100 flex-1 flex justify-center items-center w-full h-screen transition-all duration-500 cursor-pointer`}>
-            <div className={`${isFullsceen ? 'max-w-full max-h-full' : 'rounded-lg max-w-[1200px] max-h-[700px]'} ${fileViewer.currentStatus === "open" ? 'scale-100' : 'scale-0 '} 
+            <div  className={`${isFullsceen ? 'max-w-full max-h-full' : 'rounded-lg max-w-[1200px] max-h-[700px]'} ${fileViewer.currentStatus === "open" ? 'scale-100' : 'scale-0 '} 
                 bg-zinc-900 cursor-default origin-bottom relative transition-all duration-300 flex flex-col w-full h-full overflow-y-auto select-none`}>
                 <div className="z-50 sticky select-none top-0 w-full bg-black/50 h-8 flex flex-row justify-between items-center backdrop-blur-[2px]">
                     <p className="p-2">Pasta</p>
@@ -179,12 +179,12 @@ export default function FileWindow() {
                                 <Plus size={25} />
                                 Criar
                             </div>
-                            <div className="flex flex-col items-center p-2 px-4 gap-1 bg-zinc-800 w-full max-w-20 cursor-pointer 
+                            {/* <div className="flex flex-col items-center p-2 px-4 gap-1 bg-zinc-800 w-full max-w-20 cursor-pointer 
                             border-zinc-500/40 transition-all rounded-md hover:bg-blue-600/10 hover:text-blue-500 hover:border-blue-500
                             inset-shadow-sm inset-shadow-zinc-600 shadow-md hover:inset-shadow-blue-900">
                                 <ExternalLink size={25} />
                                 Abrir
-                            </div>
+                            </div> */}
                             <div className="flex flex-col items-center p-2 px-4 gap-1 bg-zinc-800 w-full max-w-20 cursor-pointer 
                             border-zinc-500/40 transition-all rounded-md hover:bg-red-600/20 hover:text-red-500 hover:border-red-500
                             inset-shadow-sm inset-shadow-zinc-600 shadow-md hover:inset-shadow-red-900">

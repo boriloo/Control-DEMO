@@ -4,6 +4,7 @@ import { useWindowContext } from "../../../context/WindowContext"
 import { useAppContext } from "../../../context/AppContext"
 import { Menu, Trash } from "lucide-react"
 import { FileData } from "../../../types/file"
+import { useUser } from "../../../context/AuthContext"
 
 export interface ColumnFileProps {
     file: FileData
@@ -13,6 +14,7 @@ export interface ColumnFileProps {
 }
 
 export default function ColumnFile({ file, animationKey, index, imageValidations }: ColumnFileProps) {
+    const { currentBgColor } = useUser();
     const { root } = useRootContext();
     const { minimazeAllWindows } = useAppContext();
     const { newFile, imgViewer, openLink, fileViewer } = useWindowContext();
@@ -88,8 +90,8 @@ export default function ColumnFile({ file, animationKey, index, imageValidations
         <div
             key={`${file.id}-${animationKey}`}
             onClick={() => returnAction()}
-            className="group flex flex-row p-3 gap-3 rounded-md bg-linear-to-b from-zinc-900 to-zinc-800/60 transition-all cursor-pointer bg-zinc-900 hover:bg-zinc-800/85 animate-slideIn opacity-0 items-center
-            inset-shadow-xs inset-shadow-zinc-700 shadow-md min-w-40"
+            className={`group flex flex-row p-3 gap-3 rounded-md bg-linear-to-b from-zinc-[${currentBgColor}] to-zinc-800/60 transition-all cursor-pointer bg-zinc-900 hover:bg-zinc-800/85 animate-slideIn opacity-0 items-center
+            inset-shadow-xs inset-shadow-zinc-700 shadow-md min-w-40`}
             style={{
                 animationDelay: `${index * 120}ms`,
                 animationFillMode: 'forwards'

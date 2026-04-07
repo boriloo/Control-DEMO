@@ -33,6 +33,7 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
     const changeNextIconPosition = (position: { x: number; y: number }) => {
         setNextIconPosition(position);
     }
+    
 
     const callToast = ({ message, type }: Toast) => {
         if (timeoutRef.current) {

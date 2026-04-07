@@ -76,30 +76,27 @@ export default function NewDesktopWindow() {
                         <p>(Caso não escolhida, será a padrão)</p>
                     )} */}
                 </div>
-                <div className="flex flex-col gap-2 w-full items-start max-w-[1000px]">
+                {/* <div className="flex flex-col gap-2 w-full items-start max-w-[1000px]">
                     <p className="text-lg">Tipo de Desktop</p>
                     <div className="flex flex-row gap-2 w-full">
                         <div className="flex-1 relative">
 
-                            {/* VERSAO LANCAMENTO */}
-
-                            {/* <button
+                            <button
                                 onClick={() => setDesktopType('personal')}
                                 className={`${desktopType === 'personal' ? 'bg-blue-500' : 'hover:bg-white/10'} 
                                 peer font-medium border border-blue-500 rounded-md p-2 w-full transition-all cursor-pointer`}
                             >
                                 Pessoal
-                            </button> */}
+                            </button>
 
                             <p className="bg-zinc-900/30 backdrop-blur-sm rounded-lg p-1 px-2 absolute top-0 left-[50%] mt-[-65px] 
                             translate-x-[-50%] w-[90%] peer-hover:opacity-100 opacity-0 transition-opacity duration-400 text-center">Apenas para você, deixe tudo do seu jeito</p>
                         </div>
                         <div className="flex-1 relative">
 
-                            {/* VERSAO LANCAMENTO */}
 
-                            {/* <button onClick={() => setDesktopType('team')} className={`${desktopType === 'team' ? 'bg-blue-500' : 'hover:bg-white/10'} 
-                              peer font-medium border-1 border-blue-500 rounded-md p-2 w-full transition-all cursor-pointer `}>Equipe</button> */}
+                            <button onClick={() => setDesktopType('team')} className={`${desktopType === 'team' ? 'bg-blue-500' : 'hover:bg-white/10'} 
+                              peer font-medium border-1 border-blue-500 rounded-md p-2 w-full transition-all cursor-pointer `}>Equipe</button>
 
                             <p className="bg-zinc-900/30 backdrop-blur-sm rounded-lg p-1 px-2 absolute top-0 left-[50%] mt-[-65px] 
                             translate-x-[-50%] w-[90%] peer-hover:opacity-100 opacity-0 transition-opacity duration-400 text-center">Adicione membros, e compartilhe seus arquivos</p>
@@ -107,7 +104,7 @@ export default function NewDesktopWindow() {
 
 
                     </div>
-                </div>
+                </div> */}
                 <button onClick={handleSubmit} disabled={!imageSelected || !desktopName || loading} className={`${!imageSelected || !desktopName ? 'pointer-events-none saturate-0 opacity-40' : ''}
                     bg-blue-500 border-none text-xl ${loading ? 'saturate-0 pointer-events-none' : 'p-2'} flex justify-center px-6 font-medium cursor-pointer mt-2 rounded-sm transition-all hover:bg-blue-600`}>
                     {loading ? <DotLottieReact

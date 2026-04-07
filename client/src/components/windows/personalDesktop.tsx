@@ -110,7 +110,7 @@ export default function PersonalDesktopWindow({ onFinish }: PersonalProps) {
                         </button>
                     </div>
 
-                    <h1 className="text-[55px] gap-1">Crie seu primeiro <p className="text-blue-500">Desktop</p></h1>
+                    <h1 className="text-[55px] gap-1">Crie seu primeiro <p className="text-blue-500 mt-[-10px]">Desktop</p></h1>
                     <div className="flex flex-col gap-1 w-full">
                         <p className="text-xl">Nome</p>
                         <input type="text" onChange={(e) => setDesktopName(e.target.value)} className="border-1 border-zinc-600 outline-none transition-all text-lg bg-zinc-800 hover:bg-zinc-700/50  

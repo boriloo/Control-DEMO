@@ -7,13 +7,12 @@ import {
     useCallback,
 } from "react";
 import { useAppContext } from "./AppContext";
-import { BasicFilter, ColorFilter, LoginData, RegisterData, returnFilterEffects, UserData } from "../types/auth";
+import { LoginData, RegisterData, UserData } from "../types/auth";
 import { authLoginService, authLogoutService, authRefreshService, authRegisterService } from "../services/authServices";
-import { api } from "../lib/axiosConfig";
 import { getMeService } from "../services/userServices";
 import { getDesktopByIdService, getDesktopByOwnerService } from "../services/desktopServices";
 import { DesktopData } from "../types/desktop";
-import { FileData } from "../types/file";
+import { getSwatches } from 'colorthief';
 
 
 interface UserContextProps {
@@ -31,6 +30,7 @@ interface UserContextProps {
     hasDesktops: boolean;
     setHasDesktops: (value: boolean) => void;
     toBase64Image: (value: any) => void;
+    currentBgColor: string;
 }
 
 const UserContext = createContext<UserContextProps | undefined>(undefined);
@@ -43,6 +43,34 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const [isLoading, setIsLoading] = useState<boolean>(true)
     const [hasDesktops, setHasDesktops] = useState<boolean>(false);
     const [userFilters, setUserFilters] = useState<string>()
+    const [currentBgColor, changeCurrentBgColor] = useState<string>('')
+
+    useEffect(() => {
+        const getColorB = async () => {
+            const base64 = currentDesktop?.backgroundImage;
+            if (!base64) return;
+
+            const img = new Image();
+            img.src = base64;
+            await new Promise((resolve) => (img.onload = resolve));
+
+            const color = (await getSwatches(img)).Vibrant?.color as any;
+
+            console.log(color)
+            if (!color) return;
+
+            const factor = 0.18;
+            const r = Math.round(color._r * factor);
+            const g = Math.round(color._g * factor);
+            const b = Math.round(color._b * factor);
+
+            const hex = `#${[r, g, b].map(v => v.toString(16).padStart(2, '0')).join('')}`;
+            changeCurrentBgColor(hex);
+        };
+
+        getColorB();
+    }, [currentDesktop]);
+
 
     useEffect(() => {
         const darkFilter = localStorage.getItem('dark-filter')
@@ -65,7 +93,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         if (colorFilter) {
             localStorage.setItem('color-filter', colorFilter)
         } else {
-            localStorage.setItem('color-filter', '')
+            localStorage.setItem('color-filter', 'color')
         }
     }, [])
 
@@ -208,7 +236,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
                 authLogoutUser,
                 hasDesktops,
                 setHasDesktops,
-                toBase64Image
+                toBase64Image,
+                currentBgColor
             }}
         >
             {children}

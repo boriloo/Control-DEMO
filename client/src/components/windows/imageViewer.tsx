@@ -186,11 +186,11 @@ export default function ImageViewerWindow() {
 
                     <div className="flex flex-row gap-3 items-center p-1 px-3">
                         <Trash onClick={() => setConfirmDelete(true)} size={40} className="p-2 transition-all cursor-pointer hover:bg-zinc-700 rounded-sm" />
-                        <div className="h-5 w-[1px] bg-zinc-700"></div>
-                        <div>
+                        {/* <div className="h-5 w-[1px] bg-zinc-700"></div> */}
+                        {/* <div>
                             <FolderUp size={40} className="peer p-2 transition-all cursor-pointer hover:bg-zinc-700 rounded-sm" />
                             <p className="absolute mt-[-78px] ml-[-30px] transition-all bg-zinc-950/50 p-1 px-2 rounded-sm backdrop-blur-sm opacity-0 peer-hover:opacity-100">Mover para</p>
-                        </div>
+                        </div> */}
                         <div className="h-5 w-[1px] bg-zinc-700"></div>
                         <Maximize2 onClick={() => setImgFull(true)} size={40} className="p-2 transition-all cursor-pointer hover:bg-zinc-700 rounded-sm" />
                     </div>

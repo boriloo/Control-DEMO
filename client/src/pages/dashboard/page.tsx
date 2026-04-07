@@ -354,7 +354,7 @@ export default function DashboardPage() {
 
     return (
         <>
-            <div className={`${blackScreen ? '' : 'opacity-0 pointer-none select-none'} transition-all duration-600 pointer-events-none z-201 absolute bg-black w-full h-screen`} />
+            <div className={`${blackScreen ? '' : 'opacity-0 pointer-none select-none'} transition-opacity duration-600 pointer-events-none z-201 absolute bg-black w-full h-screen`} />
 
             <div className="pointer-events-none fixed z-[-3] flex justify-center items-center w-full min-h-screen">
                 <DotLottieReact
