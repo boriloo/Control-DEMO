@@ -12,7 +12,7 @@ type DraggableIconProps = {
 
 };
 
-export function DraggableIcon({ index, icon, beingDragged, position}: DraggableIconProps) {
+export function DraggableIcon({ index, icon, beingDragged, position }: DraggableIconProps) {
   const elementRef = useRef<HTMLDivElement>(null);
 
   return (
@@ -25,8 +25,8 @@ export function DraggableIcon({ index, icon, beingDragged, position}: DraggableI
         transform: "scale(0)",
         opacity: '0',
         position: "absolute",
-        top: position.y,
-        left: position.x,
+        top: position.y + 10,
+        left: position.x + 10,
         transition: beingDragged ? "none" : "top 0.2s ease-out, left 0.2s ease-out",
         zIndex: beingDragged ? 30 : 1,
         willChange: "top, left",

@@ -33,7 +33,7 @@ export default function DashboardPage() {
     const { changeNextIconPosition, blackScreen } = useAppContext();
     const { t } = useTranslation();
     const { root } = useRootContext();
-    const { user, hasDesktops, setHasDesktops, currentDesktop } = useUser();
+    const { user, hasDesktops, setHasDesktops, currentDesktop, bgColors } = useUser();
     const { newFile, listdt, openLink, contextMenu, dtConfig } = useWindowContext();
     const [start, setStart] = useState<boolean>(false);
     const [timer, setTimer] = useState<number>(0)
@@ -44,6 +44,14 @@ export default function DashboardPage() {
     const [lastDraggedId, setLastDraggedId] = useState<string>('');
     const [filesBeforeReq, setFilesBeforeReq] = useState<FileData[]>([])
     const originalFilesRef = useRef<FileData[]>([]);
+
+    useEffect(() => {
+        document.documentElement.style.setProperty('--color-darker', bgColors.darker);
+        document.documentElement.style.setProperty('--color-dark', bgColors.dark);
+        document.documentElement.style.setProperty('--color-regular', bgColors.regular);
+        document.documentElement.style.setProperty('--color-light', bgColors.light);
+        document.documentElement.style.setProperty('--color-lighter', bgColors.lighter);
+    }, [bgColors]);
 
     useEffect(() => {
         if (isDraggin || filesMap.current.size === 0) {
@@ -305,8 +313,8 @@ export default function DashboardPage() {
         if (currentX < 0) currentX = 0
         if (currentY < 0) currentY = 0
 
-        activeElementRef.current.style.left = `${currentX}px`;
-        activeElementRef.current.style.top = `${currentY}px`;
+        activeElementRef.current.style.left = `${currentX + 10}px`;
+        activeElementRef.current.style.top = `${currentY + 10}px`;
 
         const draggedIconOriginal = rootFiles.find(i => i.id === draggedIconId);
         if (!draggedIconOriginal) return;
@@ -346,8 +354,6 @@ export default function DashboardPage() {
 
         return () => document.removeEventListener('contextmenu', disableRightClick);
     }, []);
-
-
 
 
 

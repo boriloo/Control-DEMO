@@ -30,7 +30,7 @@ interface UserContextProps {
     hasDesktops: boolean;
     setHasDesktops: (value: boolean) => void;
     toBase64Image: (value: any) => void;
-    currentBgColor: string;
+    bgColors: any;
 }
 
 const UserContext = createContext<UserContextProps | undefined>(undefined);
@@ -43,10 +43,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const [isLoading, setIsLoading] = useState<boolean>(true)
     const [hasDesktops, setHasDesktops] = useState<boolean>(false);
     const [userFilters, setUserFilters] = useState<string>()
-    const [currentBgColor, changeCurrentBgColor] = useState<string>('')
+    const [bgColors, setBgColors] = useState({
+        darker: '',
+        dark: '',
+        regular: '',
+        light: '',
+        lighter: ''
+    });
+
 
     useEffect(() => {
         const getColorB = async () => {
+
             const base64 = currentDesktop?.backgroundImage;
             if (!base64) return;
 
@@ -54,18 +62,31 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             img.src = base64;
             await new Promise((resolve) => (img.onload = resolve));
 
-            const color = (await getSwatches(img)).Vibrant?.color as any;
+            const response = (await getSwatches(img)) as any;
+            let color;
+
+            if (response.Vibrant) {
+                color = response.Vibrant.color
+            } else {
+                color = response.Muted.color
+            }
 
             console.log(color)
-            if (!color) return;
 
-            const factor = 0.18;
-            const r = Math.round(color._r * factor);
-            const g = Math.round(color._g * factor);
-            const b = Math.round(color._b * factor);
+            const { _r: r, _g: g, _b: b } = color;
 
-            const hex = `#${[r, g, b].map(v => v.toString(16).padStart(2, '0')).join('')}`;
-            changeCurrentBgColor(hex);
+            const toHex = (r: number, g: number, b: number) =>
+                `#${[r, g, b].map(v => Math.min(255, Math.max(0, Math.round(v))).toString(16).padStart(2, '0')).join('')}`;
+
+            setBgColors({
+                darker: toHex(r * 0.04, g * 0.04, b * 0.12), // Midnight Blue (Base fria)
+                dark: toHex(r * 0.15, g * 0.12, b * 0.30), // Deep Violet (Contraste forte)
+                regular: toHex(r * 0.45, g * 0.45, b * 0.50), // Neutro balanceado
+                light: toHex(r * 0.95, g * 0.85, b * 0.65), // Champagne/Ouro (Complementar quente)
+                lighter: toHex(r * 1.15, g * 1.10, b * 1.05)  // Marfim (Brilho suave)
+            });
+
+
         };
 
         getColorB();
@@ -237,7 +258,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
                 hasDesktops,
                 setHasDesktops,
                 toBase64Image,
-                currentBgColor
+                bgColors
             }}
         >
             {children}

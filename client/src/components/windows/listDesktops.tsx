@@ -56,7 +56,7 @@ export default function ListDesktopsWindow() {
 
             localStorage.setItem('last-desktop', response.id);
 
-            listdt.closeWindow()
+            // listdt.closeWindow()
         } catch (err) {
             console.log(err)
             throw err
@@ -70,13 +70,13 @@ export default function ListDesktopsWindow() {
     return (
         listdt.currentStatus != 'closed' && <div onClick={handleAreaClick} className={`${listdt.currentStatus === 'open' ? returnFilterEffects() : 'pointer-events-none '} 
         transition-all duration-500 fixed z-100 w-full h-screen flex justify-center items-center p-4 pb-[50px] cursor-pointer`}>
-            <div className={`${listdt.currentStatus === 'open' ? 'scale-100' : 'scale-0'} cursor-default bg-zinc-900 origin-center rounded-md p-4 w-full 
+            <div style={{ transition: 'background-color 1s, scale 0.2s, opacity 0.2s' }} className={`${listdt.currentStatus === 'open' ? 'scale-100' : 'scale-0 opacity-0'} cursor-default bg-(--color-dark) origin-center rounded-md p-4 w-full 
                 max-w-[700px] max-h-full flex flex-col gap-4 overflow-y-auto transition-all relative pb-10 `}>
                 <X onClick={listdt.minimizeWindow} size={35} className="absolute top-0 right-0 p-2 rounded-bl-lg cursor-pointer transition-all hover:bg-red-500" />
                 <h1 className="text-[24px]">{t("listdt.title")}</h1>
-                <div className={`${loading ? 'opacity-20 saturate-0 pointer-events-none' : ''} transition-all flex flex-col gap-2 w-full max-h-[500px] overflow-y-auto`}>
-                    <div className="group flex flex-row w-full p-3 justify-between items-center rounded-sm border-2 border-blue-500 transition-all bg-blue-950/30 hover:bg-blue-950/60 ">
-                        <div className="w-full gap-1 flex flex-row text-lg text-blue-400 font-medium">
+                <div className={`${loading ? 'opacity-20 saturate-0 pointer-events-none' : ''} transition-all flex flex-col gap-3 w-full max-h-[500px] items-center overflow-y-auto`}>
+                    <div className="group flex flex-row w-full p-3 justify-between bg-(--color-light) items-center rounded-sm  transition-all hover:bg-(--color-lighter)  ">
+                        <div className="w-full gap-1 flex flex-row text-lg white font-medium">
                             <p>Atual -</p>
                             {currentDesktop?.name}
                         </div>
@@ -105,9 +105,10 @@ export default function ListDesktopsWindow() {
                     </div>
                     {allDesktops.length >= 1 ?
                         allDesktops.map((desktop) => (
-                            <div key={desktop.id} className="group flex flex-row w-full p-3 justify-between items-center 
-                            rounded-sm border border-white/30 transition-all hover:bg-zinc-950">
-                                <h1 className="text-lg">
+                            <div key={desktop.id} onClick={() => handleChangeDesktop(desktop.id)} className="group flex flex-row w-[98%] p-3 items-center bg-(--color-darker) border-2 border-transparent 
+                            cursor-pointer hover:bg-(--color-regular)/40 hover:scale-102 hover:border-(--color-light) relative overflow-hidden
+                            rounded-sm transition-all justify-start gap-6">
+                                <h1 className="text-lg group-hover:scale-105 transition-all">
                                     {desktop.name}
 
 
@@ -117,6 +118,8 @@ export default function ListDesktopsWindow() {
 
 
                                 </h1>
+
+                                <p className="transition-all opacity-0 ml-[-10px] group-hover:opacity-100 group-hover:ml-0 text-(--color-lighter)">Clique para abrir</p>
                                 <div className="flex flex-row gap-2 items-center">
 
 
@@ -127,7 +130,8 @@ export default function ListDesktopsWindow() {
                                     </p> */}
 
 
-                                    <Menu onClick={() => {
+                                    <Menu onClick={(e) => {
+                                        e.stopPropagation();
                                         minimazeAllWindows()
                                         dtConfig.openWindow()
                                         dtConfig.setDesktop({
@@ -135,8 +139,12 @@ export default function ListDesktopsWindow() {
                                             backgroundImage: toBase64Image(desktop.backgroundImage) ?? desktop.backgroundImage
                                         })
 
-                                    }} className="cursor-pointer transition-all opacity-0 group-hover:opacity-100 hover:bg-blue-500/15 hover:border-blue-500 hover:text-blue-500 w-9 h-9 p-1 bg-white/5 border border-white/40 rounded-md" />
-                                    <ExternalLink onClick={() => handleChangeDesktop(desktop.id)} className="cursor-pointer transition-all opacity-0 group-hover:opacity-100 hover:bg-blue-500/15 hover:border-blue-500 hover:text-blue-500 w-9 h-9 p-1 bg-white/5 border border-white/40 rounded-md" />
+                                    }}
+                                        size={4}
+                                        className="absolute right-0 h-full cursor-pointer transition-all opacity-0 group-hover:opacity-100 group-hover:w-20
+                                    hover:border-(--color-lighter)  w-0 p-2 hover:bg-(--color-lighter) hover:text-(--color-dark)
+                                    bg-(--color-light)" />
+
                                 </div>
                             </div>
                         )) :
@@ -151,8 +159,8 @@ export default function ListDesktopsWindow() {
                         minimazeAllWindows();
                         newdt.openWindow();
                         dtConfig.setDesktop(null)
-                    }} className={`sticky max-w-55 mt-5 bottom-0 left-[50%] bg-zinc-900 translate-x-[-50%] border border-blue-500 transition-all cursor-pointer 
-            hover:bg-blue-500 p-2 px-3 rounded-sm font-medium`}>{t("listdt.create")}</button>
+                    }} className={`sticky max-w-55 mt-5 bottom-0 left-[50%] bg-(--color-light) translate-x-[-50%]  transition-all cursor-pointer 
+            hover:bg-white hover:text-(--color-regular) p-2 px-3 rounded-sm font-medium`}>{t("listdt.create")}</button>
                 </div>
             </div>
         </div>
