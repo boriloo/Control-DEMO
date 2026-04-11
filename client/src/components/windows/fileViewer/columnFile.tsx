@@ -14,7 +14,6 @@ export interface ColumnFileProps {
 }
 
 export default function ColumnFile({ file, animationKey, index, imageValidations }: ColumnFileProps) {
-    const { currentBgColor } = useUser();
     const { root } = useRootContext();
     const { minimazeAllWindows } = useAppContext();
     const { newFile, imgViewer, openLink, fileViewer } = useWindowContext();
@@ -90,8 +89,9 @@ export default function ColumnFile({ file, animationKey, index, imageValidations
         <div
             key={`${file.id}-${animationKey}`}
             onClick={() => returnAction()}
-            className={`group flex flex-row p-3 gap-3 rounded-md bg-linear-to-b from-zinc-[${currentBgColor}] to-zinc-800/60 transition-all cursor-pointer bg-zinc-900 hover:bg-zinc-800/85 animate-slideIn opacity-0 items-center
-            inset-shadow-xs inset-shadow-zinc-700 shadow-md min-w-40`}
+            className={`group flex flex-row p-3 gap-3 rounded-md bg-linear-to-b from-(--color-regular)/10 to-(--color-regular)/55 transition-all cursor-pointer bg-(--color-dark) 
+                hover:bg-(--color-regular)/80 hover:to-(--color-light)/15 animate-slideIn opacity-0 items-center
+            shadow-md min-w-40`}
             style={{
                 animationDelay: `${index * 120}ms`,
                 animationFillMode: 'forwards'
@@ -102,10 +102,10 @@ export default function ColumnFile({ file, animationKey, index, imageValidations
                 <p className="text-[18px] w-full max-w-85 truncate transition-all group-hover:ml-1">{file.name}</p>
                 <p className="text-[14px] mt-[-5px] opacity-80 transition-all group-hover:ml-1">{imageValidations[file.url as string] ? 'imagem' : file.fileType}</p>
             </div>
-            <p className="ml-[-5px] p-1 px-2 opacity-0 transition-all rounded-md group-hover:opacity-100 group-hover:ml-2 text-blue-500 bg-blue-800/15">Clique para abrir</p>
+            <p className="ml-[-5px] p-1 px-2 opacity-0 transition-all rounded-md group-hover:opacity-100 group-hover:ml-2 text-(--color-lighter) bg-(--color-light)/15">Clique para abrir</p>
             <div className="ml-auto flex flex-row gap-3">
-                <Menu className="cursor-pointer transition-all opacity-0 scale-75 group-hover:scale-100 group-hover:opacity-100 hover:bg-blue-500/15 
-                                        hover:border-blue-500 hover:text-blue-500 w-9 h-9 p-1.5 bg-white/5 border border-white/40 rounded-md" />
+                <Menu className="cursor-pointer transition-all opacity-0 scale-75 group-hover:scale-100 group-hover:opacity-100 hover:bg-(--color-lighter)/15 
+                                        hover:border-(--color-lighter) hover:text-(--color-lighter) w-9 h-9 p-1.5 bg-white/5 border border-white/40 rounded-md" />
                 <Trash className="cursor-pointer transition-all opacity-0 scale-75 group-hover:scale-100 group-hover:opacity-100 hover:bg-red-700/15 
                                         hover:border-red-500 hover:text-red-500 w-9 h-9 p-1.5 bg-white/5 border border-white/40 rounded-md" />
             </div>

@@ -70,13 +70,17 @@ export default function ListDesktopsWindow() {
     return (
         listdt.currentStatus != 'closed' && <div onClick={handleAreaClick} className={`${listdt.currentStatus === 'open' ? returnFilterEffects() : 'pointer-events-none '} 
         transition-all duration-500 fixed z-100 w-full h-screen flex justify-center items-center p-4 pb-[50px] cursor-pointer`}>
-            <div style={{ transition: 'background-color 1s, scale 0.2s, opacity 0.2s' }} className={`${listdt.currentStatus === 'open' ? 'scale-100' : 'scale-0 opacity-0'} cursor-default bg-(--color-dark) origin-center rounded-md p-4 w-full 
+            <div style={{ transition: 'background-color 1s, scale 0.2s, opacity 0.2s' }} className={`${listdt.currentStatus === 'open' ? 'scale-100' : 'scale-50 opacity-0'} cursor-default bg-(--color-dark) origin-center rounded-md p-4 w-full 
                 max-w-[700px] max-h-full flex flex-col gap-4 overflow-y-auto transition-all relative pb-10 `}>
                 <X onClick={listdt.minimizeWindow} size={35} className="absolute top-0 right-0 p-2 rounded-bl-lg cursor-pointer transition-all hover:bg-red-500" />
                 <h1 className="text-[24px]">{t("listdt.title")}</h1>
                 <div className={`${loading ? 'opacity-20 saturate-0 pointer-events-none' : ''} transition-all flex flex-col gap-3 w-full max-h-[500px] items-center overflow-y-auto`}>
-                    <div className="group flex flex-row w-full p-3 justify-between bg-(--color-light) items-center rounded-sm  transition-all hover:bg-(--color-lighter)  ">
-                        <div className="w-full gap-1 flex flex-row text-lg white font-medium">
+                    <div onClick={() => {
+                        minimazeAllWindows()
+                        dtConfig.openWindow()
+                        dtConfig.setDesktop(currentDesktop)
+                    }} className="group flex flex-row w-full p-4 justify-start bg-(--color-light) items-center rounded-sm  transition-all hover:bg-(--color-lighter) overflow-hidden cursor-pointer relative gap-2">
+                        <div className="gap-1 flex flex-row text-lg white font-medium h-7.5 group-hover:scale-105 transition-all">
                             <p>Atual -</p>
                             {currentDesktop?.name}
                         </div>
@@ -87,6 +91,9 @@ export default function ListDesktopsWindow() {
 
                             {/* ({currentDesktop?.type}) */}
                         </h1>
+
+                        <p className="transition-all opacity-0 ml-[-10px] group-hover:opacity-100 group-hover:ml-1 text-white bg-black/30 p-1 px-2 rounded-sm">Clique para editar</p>
+
                         <div className="flex flex-row gap-2 items-center">
                             <p className="transition-all opacity-0 group-hover:opacity-100 mr-[-5px] group-hover:mr-1">
 
@@ -95,20 +102,22 @@ export default function ListDesktopsWindow() {
                                 {/* {currentDesktop?.members.length} {''}
                                 {currentDesktop?.members.length && currentDesktop?.members.length > 1 ? t("listdt.members") : t("listdt.member")} */}
                             </p>
-                            <Menu onClick={() => {
-                                minimazeAllWindows()
-                                dtConfig.openWindow()
-                                dtConfig.setDesktop(currentDesktop)
-                            }} className="cursor-pointer transition-all opacity-0 group-hover:opacity-100 hover:bg-blue-500/15 hover:border-blue-500 
-                            hover:text-blue-500 w-9 h-9 p-1 bg-white/5 border border-white/40 rounded-md" />
+                            {/* <div
+                                className="absolute right-0 h-full cursor-pointer transition-all opacity-0 group-hover:opacity-100 group-hover:w-28
+                                    hover:border-(--color-lighter)  w-0 p-2 bg-(--color-lighter) text-white
+                                    flex flex-row items-center gap-2 justify-center">
+                                <Menu size={28} />
+                                <p className="text-[18px]">Editar</p>
+                            </div> */}
+
                         </div>
                     </div>
                     {allDesktops.length >= 1 ?
                         allDesktops.map((desktop) => (
                             <div key={desktop.id} onClick={() => handleChangeDesktop(desktop.id)} className="group flex flex-row w-[98%] p-3 items-center bg-(--color-darker) border-2 border-transparent 
                             cursor-pointer hover:bg-(--color-regular)/40 hover:scale-102 hover:border-(--color-light) relative overflow-hidden
-                            rounded-sm transition-all justify-start gap-6">
-                                <h1 className="text-lg group-hover:scale-105 transition-all">
+                            rounded-sm transition-all justify-start gap-4">
+                                <h1 className="text-lg group-hover:scale-105 transition-all h-7.5">
                                     {desktop.name}
 
 
@@ -130,7 +139,7 @@ export default function ListDesktopsWindow() {
                                     </p> */}
 
 
-                                    <Menu onClick={(e) => {
+                                    <div onClick={(e) => {
                                         e.stopPropagation();
                                         minimazeAllWindows()
                                         dtConfig.openWindow()
@@ -140,10 +149,12 @@ export default function ListDesktopsWindow() {
                                         })
 
                                     }}
-                                        size={4}
-                                        className="absolute right-0 h-full cursor-pointer transition-all opacity-0 group-hover:opacity-100 group-hover:w-20
+                                        className="absolute right-0 h-full cursor-pointer transition-all opacity-0 group-hover:opacity-100 group-hover:w-28
                                     hover:border-(--color-lighter)  w-0 p-2 hover:bg-(--color-lighter) hover:text-(--color-dark)
-                                    bg-(--color-light)" />
+                                    bg-(--color-light) flex flex-row items-center gap-2 justify-center">
+                                        <Menu size={28} />
+                                        <p className="text-[18px]">Editar</p>
+                                    </div>
 
                                 </div>
                             </div>

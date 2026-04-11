@@ -20,6 +20,7 @@ export function DraggableIcon({ index, icon, beingDragged, position }: Draggable
       className='animate-scale origin-center select-none'
       ref={elementRef}
       data-id={icon.id}
+      data-name={icon}
       style={{
         animationDelay: `${index * 40}ms`,
         transform: "scale(0)",

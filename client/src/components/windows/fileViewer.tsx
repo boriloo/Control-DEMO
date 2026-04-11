@@ -142,8 +142,8 @@ export default function FileWindow() {
 
         <div onClick={handleAreaClick} className={`${isFullsceen ? 'pb-[40px]' : ' p-2 pb-[50px]'} ${fileViewer.currentStatus === "open" ? returnFilterEffects() : 'pointer-events-none'} 
         fixed z-100 flex-1 flex justify-center items-center w-full h-screen transition-all duration-500 cursor-pointer`}>
-            <div  className={`${isFullsceen ? 'max-w-full max-h-full' : 'rounded-lg max-w-[1200px] max-h-[700px]'} ${fileViewer.currentStatus === "open" ? 'scale-100' : 'scale-0 '} 
-                bg-zinc-900 cursor-default origin-bottom relative transition-all duration-300 flex flex-col w-full h-full overflow-y-auto select-none`}>
+            <div className={`${isFullsceen ? 'max-w-full max-h-full' : 'rounded-lg max-w-[1200px] max-h-[700px]'} ${fileViewer.currentStatus === "open" ? 'scale-100' : 'scale-0 '} 
+                bg-(--color-dark) cursor-default origin-bottom relative transition-all duration-300 flex flex-col w-full h-full overflow-y-auto select-none`}>
                 <div className="z-50 sticky select-none top-0 w-full bg-black/50 h-8 flex flex-row justify-between items-center backdrop-blur-[2px]">
                     <p className="p-2">Pasta</p>
                     <div className="flex flex-row h-full">
@@ -153,52 +153,50 @@ export default function FileWindow() {
                     </div>
                 </div>
                 <div className="flex flex-col w-full p-4 gap-4 items-center">
-                    <div className="flex row items-start gap-2 w-full flex-wrap">
+                    <div className="flex row items-start gap-4 w-full flex-wrap">
                         <div className="flex-1 flex flex-col gap-2">
                             <p>Endereço</p>
-                            <div className=" p-1 px-2 flex flex-row bg-black/30 rounded-md border-1 border-zinc-600 items-center">
-                                <FolderRoot size={16} className="opacity-60 mr-1" />
+                            <div className=" p-1 px-2 flex flex-row bg-black/30 rounded-md border-1 border-(--color-light)/60 items-center">
+                                <FolderRoot size={16} className="mr-2 text-(--color-light)" />
                                 {path && path.map((pathSegment) => (
                                     <div className="flex flex-row items-center">
-                                        <p key={pathSegment.name} onClick={() => handlePathClick(pathSegment.id)} className="p-0.5 px-2 rounded-sm transition-all cursor-pointer hover:bg-zinc-800 hover:px-3  max-w-40 truncate">
+                                        <p key={pathSegment.name} onClick={() => handlePathClick(pathSegment.id)} className="p-0.5 px-2 rounded-sm transition-all cursor-pointer leading-5 h-7 hover:bg-zinc-800 
+                                        hover:px-3 max-w-40 truncate">
                                             {pathSegment.id ? pathSegment.name : currentDesktop?.name}
                                         </p>
-                                        <p className="opacity-40 ml-1 mr-1">|</p>
+                                        <p className="ml-1 mr-1 text-(--color-light)">|</p>
                                     </div>
                                 ))}
-                                <p className="p-0.5 px-2 rounded-sm bg-blue-500/10 text-blue-500 max-w-40 truncate animate-expand"
+                                <p className="p-0.5 ml-2 px-2 rounded-sm bg-(--color-light)/10 leading-5.5 text-(--color-lighter) max-w-40 truncate animate-expand h-7"
                                     key={animKey}>
                                     {fileViewer.file?.name}
                                 </p>
                             </div>
                         </div>
-                        <div className="flex flex-row gap-2 flex-1 max-w-65">
-                            <div onClick={handleCreateFile} className="flex flex-col items-center p-2 px-4 gap-1 bg-zinc-800 w-full max-w-20 
-                            cursor-pointer border-zinc-500/40 transition-all rounded-md hover:bg-zinc-700/80 hover:border-white/70
-                            inset-shadow-sm inset-shadow-zinc-600 shadow-md hover:inset-shadow-zinc-500">
+                        <div className="flex flex-row gap-4 flex-1 max-w-65">
+                            <div onClick={handleCreateFile} className="flex flex-col items-center p-2 px-4 gap-1 bg-(--color-light)/80 flex-1 
+                            cursor-pointer  transition-all rounded-md hover:bg-white hover:text-(--color-dark) hover:border-white/70 hover:scale-105">
                                 <Plus size={25} />
-                                Criar
+                                Novo
                             </div>
-                            {/* <div className="flex flex-col items-center p-2 px-4 gap-1 bg-zinc-800 w-full max-w-20 cursor-pointer 
-                            border-zinc-500/40 transition-all rounded-md hover:bg-blue-600/10 hover:text-blue-500 hover:border-blue-500
+                            {/* <div className="flex flex-col items-center p-2 px-4 gap-1 bg-(--color-regular) flex-1 cursor-pointer 
+                             transition-all rounded-md hover:bg-blue-600/10 hover:text-blue-500 hover:border-blue-500
                             inset-shadow-sm inset-shadow-zinc-600 shadow-md hover:inset-shadow-blue-900">
                                 <ExternalLink size={25} />
                                 Abrir
                             </div> */}
-                            <div className="flex flex-col items-center p-2 px-4 gap-1 bg-zinc-800 w-full max-w-20 cursor-pointer 
-                            border-zinc-500/40 transition-all rounded-md hover:bg-red-600/20 hover:text-red-500 hover:border-red-500
-                            inset-shadow-sm inset-shadow-zinc-600 shadow-md hover:inset-shadow-red-900">
+                            <div className="flex flex-col items-center p-2 px-4 gap-1 bg-(--color-light)/80 flex-1 cursor-pointer 
+                             transition-all rounded-md hover:bg-red-600/20 hover:text-red-500 hover:border-red-500 hover:scale-105">
                                 <Trash size={25} />
-                                Excluir
+                                Excluir Pasta
                             </div>
                         </div>
 
                     </div>
                 </div>
-                <div className="flex flex-row gap-1 rounded-md flex-1 bg-black/50 mx-4 mb-4 overflow-hidden min-h-[200px]">
-                    <div className="flex flex-col bg-zinc-900 h-full min-w-[200px] p-2"></div>
+                <div className="flex flex-row gap-1 rounded-md flex-1  mx-4 mb-4 overflow-hidden min-h-[200px]">
 
-                    <div className={`${!seeFiles && 'opacity-0'} flex flex-col relative gap-2 w-full p-2 overflow-y-auto scroll-smooth `}>
+                    <div className={`${!seeFiles && 'opacity-0'} flex flex-1 flex-col relative gap-2 w-full rounded-md p-2 overflow-y-auto scroll-smooth bg-(--color-darker)`}>
                         <div className={`${loading ? '' : 'opacity-0 pointer-events-none'} transition-all duration-500 flex flex-col gap-1 absolute z-10 justify-center 
                         items-center bg-zinc-950/80 inset-0`}>
                             <DotLottieReact

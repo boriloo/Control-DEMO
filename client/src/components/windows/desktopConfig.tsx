@@ -201,8 +201,8 @@ export default function DesktopConfigWindow() {
                 </div>
             </div>
 
-            <div className={`${isFullsceen ? 'max-w-full max-h-full' : 'rounded-lg max-w-[1200px] max-h-[700px]'} ${dtConfig.currentStatus === "open" ? 'scale-100' : 'scale-0 '} 
-                bg-zinc-900 cursor-default origin-center relative transition-all duration-300 flex flex-col w-full h-full overflow-y-auto`}>
+            <div key={dtConfig.desktop?.backgroundImage} className={`${isFullsceen ? 'max-w-full max-h-full' : 'rounded-lg max-w-[1200px] max-h-[700px]'} ${dtConfig.currentStatus === "open" ? 'scale-100' : 'scale-0 '} 
+                bg-(--color-dark) cursor-default origin-center relative transition-all duration-300 flex flex-col w-full h-full overflow-y-auto`}>
                 <div className="z-50 sticky select-none top-0 w-full bg-black/60 h-8 flex flex-row justify-between items-center backdrop-blur-[6px]">
                     <p className="p-2">Configurar Desktop</p>
                     <div className="flex flex-row h-full">
@@ -212,7 +212,7 @@ export default function DesktopConfigWindow() {
                 </div>
 
                 <div className="absolute w-full top-0 h-[450px] z-1 bg-cover bg-center" style={{ backgroundImage: `url(${windowDesktop?.backgroundImage})` }} />
-                <div className="absolute w-full h-[450px] z-2 bg-gradient-to-b from-zinc-900/30 from-0% to-zinc-900 to-78%" />
+                <div className="absolute w-full h-[450px] z-2 bg-gradient-to-b from-zinc-(--color-dark)/30 from-0% to-(--color-dark) to-78%" />
                 <div className="absolute w-full top-0 h-[450px] z-0 flex justify-center items-center">
                     <DotLottieReact
                         src="https://lottie.host/e580eaa4-d189-480f-a6ce-f8c788dff90d/MP2FjoJFFE.lottie"
@@ -223,11 +223,11 @@ export default function DesktopConfigWindow() {
                 </div>
 
                 {currentDesktop?.id === windowDesktop?.id ? (
-                    <p className="z-10 m-5 mb-[-55px] p-1 px-3 self-start border-1 border-blue-500 bg-blue-950/50 backdrop-blur-sm rounded-full">Desktop atual</p>
+                    <p className="z-10 m-5 mb-[-55px] p-1 px-3 self-start border-1 border-(--color-light) bg-(--color-light)/30 backdrop-blur-sm rounded-full">Desktop atual</p>
                 ) : (
                     <p onClick={() => handleChangeDesktop(windowDesktop?.id as string)} className="z-10 m-5 mb-[-55px] p-1 px-3 self-start border-1 
-                    border-white/80 bg-zinc-200/5 hover:border-blue-500 hover:bg-blue-950/50 transition-all
-                    hover:text-blue-500 backdrop-blur-sm rounded-full flex flex-row gap-1 items-center group cursor-pointer">Abrir Desktop  <ArrowRight size={20} className="opacity-0 
+                    border-white/80 bg-zinc-200/5 hover:border-(--color-light) hover:bg-(--color-darker)/90 transition-all
+                    hover:text-(--color-lighter) backdrop-blur-sm rounded-full flex flex-row gap-1 items-center group cursor-pointer">Abrir Desktop  <ArrowRight size={20} className="opacity-0 
                     max-w-0 transition-all group-hover:opacity-100 group-hover:max-w-5"/></p>
                 )}
 
@@ -244,7 +244,7 @@ export default function DesktopConfigWindow() {
                             <p>Espaço Ocupado</p>
                             <h1 className="text-[30px]">{allFiles.length} / 10 mil items</h1>
                             <div className="w-full bg-zinc-950 h-1 mt-2 rounded-md overflow-hidden">
-                                <div className="bg-blue-500 w-[34%] h-full"></div>
+                                <div className="bg-(--color-light) w-[34%] h-full"></div>
                             </div>
                         </div>
                     </div>
@@ -257,11 +257,11 @@ export default function DesktopConfigWindow() {
                                 <input value={desktopName} onChange={(e) => {
                                     setDesktopName(e.target.value)
                                 }} type="text" className="border-1 border-zinc-600 outline-none transition-all text-lg bg-zinc-800 hover:bg-zinc-700/50 mt-1
-                                cursor-pointer focus:cursor-text p-0.5 px-1.5 rounded-sm focus:border-blue-500 focus:bg-zinc-700/80 focus:text-blue-100 w-full max-w-[300px]" />
+                                cursor-pointer focus:cursor-text p-0.5 px-1.5 rounded-sm focus:border-(--color-light) focus:bg-zinc-700/80 focus:text-blue-100 w-full max-w-[300px]" />
                             </div>
 
 
-                            <div className="w-[100%] h-[1px] mt-1 bg-zinc-400/50"></div>
+                            <div className="w-[100%] h-[1px] mt-1 bg-(--color-whity)/50"></div>
 
                             <h1 className="text-2xl">Plano de Fundo</h1>
                             <p className="text-md mt-[-12px] mb-1">Imagem exibida no fundo do Desktop atual.</p>
@@ -274,7 +274,7 @@ export default function DesktopConfigWindow() {
                                 }} />
                             </div>
 
-                            <div className="w-[100%] h-[1px] mb-1 bg-zinc-400/50"></div>
+                            <div className="w-[100%] h-[1px] mb-1 bg-(--color-whity)/50"></div>
 
                             {loading ? (
                                 <div className={`
@@ -291,8 +291,8 @@ export default function DesktopConfigWindow() {
                                     disabled={(!desktopName || desktopName === windowDesktop?.name) && !currentImage}
                                     onClick={handleEditDesktop}
                                     className={`${(!desktopName || desktopName === windowDesktop?.name) && !currentImage
-                                        ? 'pointer-events-none saturate-0 opacity-50' : ''} border-1 border-blue-500 transition-all cursor-pointer 
-                                    hover:bg-blue-500 p-2 px-3 rounded-sm font-medium`}>Salvar Alterações</button>
+                                        ? 'pointer-events-none saturate-0 opacity-50' : ''} border-1 border-(--color-light) transition-all cursor-pointer 
+                                    hover:bg-(--color-light) p-2 px-3 rounded-sm font-medium`}>Salvar Alterações</button>
                             )}
 
                             <div className="bg-zinc-950/50 p-4 gap-3 flex flex-col w-full max-w-[400px] rounded-lg items-start border-1 border-zinc-800">
@@ -326,7 +326,7 @@ export default function DesktopConfigWindow() {
                                     p-3 px-3 rounded-md group hover:bg-zinc-800/70 transition-all select-none inset-shadow-sm inset-shadow-zinc-800 shadow-md">
                                         <div className="flex flex-row gap-2 items-center">
                                             <img src={`${member.userImage ?? 'assets/images/profile.png'}`} className={`
-                                                ${member.role === 'owner' && 'shadow-[0px_0px_10px_5px] shadow-blue-500/30 border-2 border-blue-400'} 
+                                                ${member.role === 'owner' && 'shadow-[0px_0px_10px_5px] shadow-(--color-light)/30 border-2 border-blue-400'} 
                                                 rounded-full w-12 h-12`} />
                                             <div className="flex flex-col">
                                                 <p className="text-lg flex gap-1 items-end">{member.userName} {member.userId === user.uid && (
@@ -335,10 +335,10 @@ export default function DesktopConfigWindow() {
                                             </div>
                                         </div>
                                         <div className="flex flex-row gap-3">
-                                            <Menu className="cursor-pointer transition-all opacity-0 scale-75 group-hover:scale-100 group-hover:opacity-100 hover:bg-blue-500/15 
-                                        hover:border-blue-500 hover:text-blue-500 w-9 h-9 p-1 bg-white/5 border border-white/40 rounded-md" />
-                                            <UserRound className="cursor-pointer transition-all opacity-0 scale-75 group-hover:scale-100 group-hover:opacity-100 hover:bg-blue-500/15 
-                                        hover:border-blue-500 hover:text-blue-500 w-9 h-9 p-1 bg-white/5 border border-white/40 rounded-md" />
+                                            <Menu className="cursor-pointer transition-all opacity-0 scale-75 group-hover:scale-100 group-hover:opacity-100 hover:bg-(--color-light)/15 
+                                        hover:border-(--color-light) hover:text-(--color-light) w-9 h-9 p-1 bg-white/5 border border-white/40 rounded-md" />
+                                            <UserRound className="cursor-pointer transition-all opacity-0 scale-75 group-hover:scale-100 group-hover:opacity-100 hover:bg-(--color-light)/15 
+                                        hover:border-(--color-light) hover:text-(--color-light) w-9 h-9 p-1 bg-white/5 border border-white/40 rounded-md" />
                                         </div>
                                     </div>
                                 )}

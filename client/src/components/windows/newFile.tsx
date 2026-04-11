@@ -90,6 +90,7 @@ export default function NewFileWindow() {
                 changeAllFiles([...allFiles, fileCreated]);
             } else {
                 changeRootFiles([...rootFiles, fileCreated]);
+                changeAllFiles([...allFiles, fileCreated]);
             }
 
             console.log('fileCreated ', fileCreated)
@@ -146,7 +147,7 @@ export default function NewFileWindow() {
     return (
         <div onClick={handleAreaClick} className={`${newFile.currentStatus === 'open' ? returnFilterEffects() : 'pointer-events-none'} 
         transition-all duration-500 fixed z-200 w-full h-screen flex justify-center items-center p-4 pb-[50px] cursor-pointer`}>
-            <div className={`${newFile.currentStatus === 'open' ? 'scale-100' : 'scale-0'} cursor-default bg-(--color-dark) origin-center rounded-md p-4 w-full max-w-[600px] 
+            <div className={`${newFile.currentStatus === 'open' ? 'scale-100' : 'scale-50 opacity-0'} cursor-default bg-(--color-dark) origin-center rounded-md p-4 w-full max-w-[600px] 
             max-h-full flex flex-col gap-4 overflow-y-auto transition-all relative`}>
                 <X onClick={closeWindow} size={35}
                     className="absolute top-0 right-0 p-2 rounded-bl-lg cursor-pointer transition-all hover:bg-red-500" />
@@ -156,16 +157,19 @@ export default function NewFileWindow() {
 
 
                     <div className="w-full flex flex-row gap-2">
-                        <div onClick={() => { setFileType('folder'); setDrop(true) }} className={`${fileType === 'folder' ? 'bg-(--color-lighter)/70 border-(--color-lighter)/70' : 'border-(--color-regular) hover:bg-(--color-regular)/50 '} 
+                        <div onClick={() => { setFileType('folder'); setDrop(true) }} className={`${fileType === 'folder' ? 'bg-(--color-light) border-(--color-lighter)/70 hover:bg-(--color-lighter)' :
+                            'border-(--color-regular) hover:bg-(--color-regular)/50 bg-(--color-darker)/30'} 
                         flex-1 p-4 flex flex-col gap-2 rounded-xl border-2 justify-between items-center transition-all cursor-pointer select-none`}>
                             <Folder size={35} className={`${fileType === 'folder' ? 'text-white' : 'text-(--color-lighter)/60  scale-80 origin-bottom'} transition-all`} />
                             <p className={`${fileType === 'folder' ? 'text-white' : 'text-(--color-lighter)/60  scale-80 origin-top'} text-[20px] transition-all`}>Pasta</p>
                         </div>
-                        <div onClick={() => { setFileType('link'); setDrop(true) }} className={`${fileType === 'link' ? 'bg-(--color-lighter)/70 border-(--color-lighter)/70' : 'border-(--color-regular) hover:bg-(--color-regular)/50 '} 
+                        <div onClick={() => { setFileType('link'); setDrop(true) }} className={`${fileType === 'link' ? 'bg-(--color-light) border-(--color-lighter)/70 hover:bg-(--color-lighter)' :
+                            'border-(--color-regular) hover:bg-(--color-regular)/50 bg-(--color-darker)/30'} 
                         flex-1 p-4 flex flex-col gap-2 rounded-xl border-2 justify-between items-center transition-all cursor-pointer select-none`}>
                             <Link size={35} className={`${fileType === 'link' ? 'text-white' : 'text-(--color-lighter)/60  scale-80 origin-bottom'} transition-all`} />
                             <p className={`${fileType === 'link' ? 'text-white' : 'text-(--color-lighter)/60  scale-80 origin-top'} text-[20px] transition-all`}>Link</p>
                         </div>
+
 
                     </div>
 

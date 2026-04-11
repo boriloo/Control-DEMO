@@ -26,15 +26,16 @@ import { getFilesFromDesktopService, updateFilePositionService } from "../../ser
 import { useAppContext } from "../../context/AppContext";
 import { useFileContext } from "../../context/FileContext";
 import ContextMenu from "../../components/contextMenu";
+import DeleteFileWindow from "../../components/windows/deleteFile";
 
 
 export default function DashboardPage() {
-    const { rootFiles, changeRootFiles } = useFileContext();
+    const { rootFiles, changeRootFiles, allFiles } = useFileContext();
     const { changeNextIconPosition, blackScreen } = useAppContext();
     const { t } = useTranslation();
     const { root } = useRootContext();
     const { user, hasDesktops, setHasDesktops, currentDesktop, bgColors } = useUser();
-    const { newFile, listdt, openLink, contextMenu, dtConfig } = useWindowContext();
+    const { newFile, listdt, openLink, contextMenu, dtConfig, deleteFile } = useWindowContext();
     const [start, setStart] = useState<boolean>(false);
     const [timer, setTimer] = useState<number>(0)
     const [saving, setSaving] = useState<boolean>(false)
@@ -51,6 +52,7 @@ export default function DashboardPage() {
         document.documentElement.style.setProperty('--color-regular', bgColors.regular);
         document.documentElement.style.setProperty('--color-light', bgColors.light);
         document.documentElement.style.setProperty('--color-lighter', bgColors.lighter);
+        document.documentElement.style.setProperty('--color-whity', bgColors.whity);
     }, [bgColors]);
 
     useEffect(() => {
@@ -214,16 +216,19 @@ export default function DashboardPage() {
         const elementIsIcon = (e.target as HTMLElement).closest('[data-id]') as HTMLElement;
 
 
+
         if (elementIsIcon) {
+            const icon = allFiles.filter((icon) => icon.id === elementIsIcon.dataset.id)[0]
+
             contextMenu.setSelectedIconId(elementIsIcon.dataset.id as string)
             contextMenu.setFunctions([
                 {
                     label: 'Excluir Arquivo',
-                    action: () => { console.log('receba') }
-                },
-                {
-                    label: 'Editar Arquivo',
-                    action: () => { console.log('receba') }
+                    action: () => {
+                        deleteFile.setFile(icon)
+                        deleteFile.openWindow()
+                        contextMenu.setIsVisible(false)
+                    }
                 },
             ])
         } else {
@@ -249,7 +254,7 @@ export default function DashboardPage() {
         };
 
 
-    }, [currentDesktop])
+    }, [currentDesktop, deleteFile])
 
 
 
@@ -392,6 +397,7 @@ export default function DashboardPage() {
             <DesktopConfigWindow />
             <ImageViewerWindow />
             <SocialWindow />
+            <DeleteFileWindow />
 
             <OpenLinkWindow url={openLink.url as string} />
             <div className={`${start ? 'opacity-100' : 'opacity-0'} transition-opacity duration-1000 flex flex-col w-full h-screen overflow-hidden text-white relative select-none`}>
@@ -403,7 +409,7 @@ export default function DashboardPage() {
                             newFile.openWindow()
                         }}
                             className="flex flex-row items-center justify-start gap-2 p-1 px-3 cursor-pointer rounded-md bg-black/40 backdrop-blur-md hover:bg-black/65 border-[1px] 
-                    border-transparent hover:text-blue-500 hover:border-blue-500 transition-all select-none">
+                    border-transparent hover:text-(--color-lighter) hover:border-(--color-lighter) transition-all select-none">
                             <CirclePlus />
                             <p className="text-lg">{t("dashboard.create")}</p>
                         </button>
@@ -413,13 +419,13 @@ export default function DashboardPage() {
                     {/* VERSÃO LANÇAMENTO */}
 
                     {/* <div onClick={listdt.openWindow} className="flex flex-row items-center justify-between gap-2 p-1 px-3 cursor-pointer rounded-md bg-black/40 backdrop-blur-md hover:bg-black/65 border-[1px] 
-                    border-white hover:text-blue-500 hover:border-blue-500 transition-all w-full max-w-50 select-none">
+                    border-white hover:text-(--color-lighter) hover:border-(--color-lighter) transition-all w-full max-w-50 select-none">
                             <p className="text-lg truncate">{currentDesktop?.name} ({currentDesktop?.type})</p>
                             <GripVertical />
                         </div> */}
 
                     <div onClick={listdt.openWindow} className="flex flex-row items-center justify-between gap-2 p-1 px-3 cursor-pointer rounded-md bg-black/40 backdrop-blur-md hover:bg-black/65 border-[1px] 
-                    border-white hover:text-blue-500 hover:border-blue-500 transition-all w-full max-w-50 select-none">
+                    border-white hover:text-(--color-lighter) hover:border-(--color-lighter) transition-all w-full max-w-50 select-none">
                         <p className="text-lg truncate">{currentDesktop?.name}</p>
                         <GripVertical />
                     </div>
@@ -430,29 +436,29 @@ export default function DashboardPage() {
                         if (!desktopRef.current) return;
                         desktopRef.current.scrollLeft = 0
                     }
-                } className={`${contentToLeft ? 'opacity-100' : 'opacity-0 pointer-events-none'} border-transparent border-[2px] hover:border-blue-500 cursor-pointer transition-all z-20 w-15 h-15 p-3 
-                        text-blue-500 rounded-full bg-black/30 backdrop-blur-md fixed left-3 top-[50%] translate-y-[-100%]`} />
+                } className={`${contentToLeft ? 'opacity-100' : 'opacity-0 pointer-events-none'} border-transparent border-[2px] hover:border-(--color-lighter) cursor-pointer transition-all z-20 w-15 h-15 p-3 
+                        text-(--color-lighter) rounded-full bg-black/30 backdrop-blur-md fixed left-3 top-[50%] translate-y-[-100%]`} />
                 <ArrowUpToLine onClick={
                     () => {
                         if (!desktopRef.current) return;
                         desktopRef.current.scrollTop = 0
                     }
-                } className={`${contentToTop ? 'opacity-100' : 'opacity-0 pointer-events-none'} border-transparent border-[2px] hover:border-blue-500 cursor-pointer transition-all z-20 w-15 h-15 p-3 
-                        text-blue-500 rounded-full bg-black/30 backdrop-blur-md fixed top-15 left-[50%] translate-x-[-50%]`} />
+                } className={`${contentToTop ? 'opacity-100' : 'opacity-0 pointer-events-none'} border-transparent border-[2px] hover:border-(--color-lighter) cursor-pointer transition-all z-20 w-15 h-15 p-3 
+                        text-(--color-lighter) rounded-full bg-black/30 backdrop-blur-md fixed top-15 left-[50%] translate-x-[-50%]`} />
                 <ArrowRightToLine onClick={
                     () => {
                         if (!desktopRef.current) return;
                         desktopRef.current.scrollLeft = desktopRef.current.scrollWidth - desktopRef.current.clientWidth
                     }
-                } className={`${contentToRight ? 'opacity-100' : 'opacity-0 pointer-events-none'} border-transparent border-[2px] hover:border-blue-500 cursor-pointer transition-all z-20 w-15 h-15 p-3 
-                        text-blue-500 rounded-full bg-black/30 backdrop-blur-md fixed right-3 top-[50%] translate-y-[-100%]`} />
+                } className={`${contentToRight ? 'opacity-100' : 'opacity-0 pointer-events-none'} border-transparent border-[2px] hover:border-(--color-lighter) cursor-pointer transition-all z-20 w-15 h-15 p-3 
+                        text-(--color-lighter) rounded-full bg-black/30 backdrop-blur-md fixed right-3 top-[50%] translate-y-[-100%]`} />
                 <ArrowDownToLine onClick={
                     () => {
                         if (!desktopRef.current) return;
                         desktopRef.current.scrollTop = desktopRef.current.scrollHeight - desktopRef.current.clientHeight
                     }
-                } className={`${contentToBottom ? 'opacity-100' : 'opacity-0 pointer-events-none'} border-transparent border-[2px] hover:border-blue-500 cursor-pointer transition-all z-20 w-15 h-15 p-3 
-                        text-blue-500 rounded-full bg-black/30 backdrop-blur-md fixed bottom-14 left-[50%] translate-x-[-50%]`} />
+                } className={`${contentToBottom ? 'opacity-100' : 'opacity-0 pointer-events-none'} border-transparent border-[2px] hover:border-(--color-lighter) cursor-pointer transition-all z-20 w-15 h-15 p-3 
+                        text-(--color-lighter) rounded-full bg-black/30 backdrop-blur-md fixed bottom-14 left-[50%] translate-x-[-50%]`} />
 
                 <div className={`${saving ? 'opacity-100 z-42' : 'opacity-0 z-0'} select-none pointer-none: p-2 px-3 rounded-sm backdrop-blur-sm bg-black/20 flex flex-row gap-2 absolute 
                 top-20 right-5 justify-center items-center transition-opacity duration-300`}>

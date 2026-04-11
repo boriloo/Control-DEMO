@@ -13,6 +13,7 @@ import { getMeService } from "../services/userServices";
 import { getDesktopByIdService, getDesktopByOwnerService } from "../services/desktopServices";
 import { DesktopData } from "../types/desktop";
 import { getSwatches } from 'colorthief';
+import { useWindowContext } from "./WindowContext";
 
 
 interface UserContextProps {
@@ -37,6 +38,7 @@ const UserContext = createContext<UserContextProps | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
     const { closeAllWindows } = useAppContext();
+    const { dtConfig } = useWindowContext();
     const [isAuthenticated, setIsAuthenticated] = useState<boolean>(true);
     const [currentDesktop, setCurrentDesktop] = useState<DesktopData | null>(null);
     const [user, setUser] = useState<UserData | null>(null);
@@ -48,13 +50,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         dark: '',
         regular: '',
         light: '',
-        lighter: ''
+        lighter: '',
+        whity: ''
     });
 
 
     useEffect(() => {
         const getColorB = async () => {
-
             const base64 = currentDesktop?.backgroundImage;
             if (!base64) return;
 
@@ -63,34 +65,41 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             await new Promise((resolve) => (img.onload = resolve));
 
             const response = (await getSwatches(img)) as any;
-            let color;
-
-            if (response.Vibrant) {
-                color = response.Vibrant.color
-            } else {
-                color = response.Muted.color
-            }
-
-            console.log(color)
+            const color = response.Vibrant ? response.Vibrant.color : response.Muted.color;
 
             const { _r: r, _g: g, _b: b } = color;
 
             const toHex = (r: number, g: number, b: number) =>
                 `#${[r, g, b].map(v => Math.min(255, Math.max(0, Math.round(v))).toString(16).padStart(2, '0')).join('')}`;
 
+
+            const getDesaturatedTone = (r: number, g: number, b: number, intensity: number, saturation: number = 0.15) => {
+                const gray = (r * 0.299 + g * 0.587 + b * 0.114);
+
+                const finalR = (gray * (1 - saturation) + r * saturation) * intensity;
+                const finalG = (gray * (1 - saturation) + g * saturation) * intensity;
+                const finalB = (gray * (1 - saturation) + b * saturation) * intensity;
+
+                return { r: finalR, g: finalG, b: finalB };
+            };
+
+            const cDarker = getDesaturatedTone(r, g, b, 0.05, 0.10);
+            const cDark = getDesaturatedTone(r, g, b, 0.17, 0.25);
+            const cRegular = getDesaturatedTone(r, g, b, 0.30, 0.50);
+            const cWhity = getDesaturatedTone(r, g, b, 3, 0.5);
+
             setBgColors({
-                darker: toHex(r * 0.04, g * 0.04, b * 0.12), // Midnight Blue (Base fria)
-                dark: toHex(r * 0.15, g * 0.12, b * 0.30), // Deep Violet (Contraste forte)
-                regular: toHex(r * 0.45, g * 0.45, b * 0.50), // Neutro balanceado
-                light: toHex(r * 0.95, g * 0.85, b * 0.65), // Champagne/Ouro (Complementar quente)
-                lighter: toHex(r * 1.15, g * 1.10, b * 1.05)  // Marfim (Brilho suave)
+                darker: toHex(cDarker.r, cDarker.g, cDarker.b),
+                dark: toHex(cDark.r, cDark.g, cDark.b),
+                regular: toHex(cRegular.r, cRegular.g, cRegular.b),
+                light: toHex(r * 0.95, g * 0.85, b * 0.65),
+                lighter: toHex(r * 1.10, g * 1.10, b * 1.05),
+                whity: toHex(cWhity.r, cWhity.g, cWhity.b),
             });
-
-
         };
 
         getColorB();
-    }, [currentDesktop]);
+    }, [currentDesktop, dtConfig.desktop]);
 
 
     useEffect(() => {

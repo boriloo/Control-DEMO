@@ -78,7 +78,7 @@ export default function SearchBar() {
                 });
             }
         });
-    }, [filteredFiles]);
+    }, [filteredFiles, allFiles]);
 
     function validateImage(url: string): Promise<boolean> {
         return new Promise((resolve) => {
@@ -168,27 +168,27 @@ export default function SearchBar() {
                 onChange={(e) => setSearchTerm(e.target.value)}
                 value={searchTerm}
                 className="peer w-full h-10 pl-11 pr-4 cursor-pointer transition-all duration-300 outline-none border-[2px] border-transparent
-                            bg-black/40 backdrop-blur-md hover:bg-black/45 focus:bg-black/55 focus:backdrop-blur-lg focus:border-blue-300 rounded-full"
+                            bg-black/40 backdrop-blur-md hover:bg-black/45 focus:bg-black/55 focus:backdrop-blur-lg focus:border-(--color-lighter) rounded-full"
                 placeholder={t("dashboard.search")}
             />
             <div className={`z-10 absolute transition-all pointer-events-none peer-focus:pointer-events-auto hover:pointer-events-auto
             peer-focus:opacity-100 hover:opacity-100 ${searchTerm.trim() !== '' ? '' : ''} 
-            opacity-0 flex flex-col bg-zinc-900 top-10 rounded-md w-full max-h-[300px] overflow-y-auto`}>
+            opacity-0 flex flex-col bg-(--color-dark) top-10 rounded-md w-full max-h-[300px] overflow-y-auto`}>
                 {filteredFiles.map((file) => (
                     <div key={file.id} onClick={() => returnAction(file)} className="min-h-13 group flex flex-row justify-between relative rounded-md 
-                    cursor-pointer hover:bg-zinc-800 overflow-hidden transition-all">
+                    cursor-pointer hover:bg-(--color-regular)/30 overflow-hidden transition-all">
                         <div className="flex flex-row gap-2 p-3 w-full items-center">
                             <img src={imageReturn(file.fileType, file.url as string)} className="w-7 max-h-5 object-contain" alt={file.name} />
                             <div className="flex flex-col">
                                 <p className="text-[18px] max-w-55 truncate">{file.name}</p>
                                 <p className="text-[14px] mt-[-5px] opacity-80">{imageValidations[file.url as string] ? 'imagem' : file.fileType}</p>
                             </div>
-
+                            <p className="ml-[-5px] p-1 px-2 opacity-0 transition-all rounded-md group-hover:opacity-100 group-hover:ml-2 text-(--color-lighter) bg-(--color-light)/15">Clique para abrir</p>
                         </div>
-                        <p className="absolute bg-blue-500 h-full right-0 flex items-center justify-end gap-2
+                        {/* <p className="absolute bg-(--color-light) h-full right-0 flex items-center justify-end gap-2
                     transition-all text-center font-medium text-lg overflow-hidden max-w-0 w-full group-hover:pr-3 group-hover:max-w-[95px]">
                             Abrir <ExternalLink size={20} />
-                        </p>
+                        </p> */}
                     </div>
                 ))}
             </div>
