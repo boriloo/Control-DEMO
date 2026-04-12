@@ -1,12 +1,15 @@
 import { useCallback, useEffect, useState } from "react"
 import { useWindowContext } from "../../context/WindowContext";
 import { returnFilterEffects } from "../../types/auth";
+import { deleteFileService } from "../../services/fileServices";
+import { useFileContext } from "../../context/FileContext";
 // import { createFile } from "../../services/file";
 
 
 export type CreateFileType = "folder" | "link"
 
 export default function DeleteFileWindow() {
+    const { rootFiles, changeRootFiles, allFiles, changeAllFiles } = useFileContext();
     const { deleteFile } = useWindowContext();
     const [fileType, setFileType] = useState<CreateFileType>('folder')
     const [name, setName] = useState<string | null>(null)
@@ -50,30 +53,35 @@ export default function DeleteFileWindow() {
                     setImageSrc("/assets/images/file.png")
                 }
                 break;
-            default:    
+            default:
                 break
         }
     }, [deleteFile.file]);
 
 
 
-    const imageReturn = useCallback(() => {
-        switch (deleteFile.file?.fileType) {
-            case ('folder'):
-                console.log('é paxta')
-                return '/assets/images/open-folder.png'
-            case ('link'):
-                console.log('é paxta')
-                const domain = getDomainFromUrl(deleteFile.file?.url as string);
-                if (domain) {
-                    return `https://www.google.com/s2/favicons?domain=${domain}&sz=256`;
-                } else {
-                    return "/assets/images/file.png"
-                }
-            default:
-                break
+    const handleDelete = useCallback(async () => {
+        console.log('um')
+        if (!deleteFile.file?.id) return
+        console.log('dois')
+        try {
+            await deleteFileService(deleteFile.file?.id as string)
+
+            deleteFile.closeWindow();
+
+            const filteredRootFiles = rootFiles.filter((file) => file.id != deleteFile.file?.id)
+
+            changeRootFiles(filteredRootFiles)
+
+            const filteredAllFiles = allFiles.filter((file) => file.id != deleteFile.file?.id)
+
+            changeAllFiles(filteredAllFiles)
+
+            deleteFile.setFile(null)
+        } catch (err) {
+            console.log(err)
         }
-    }, [deleteFile.file, imageSrc])
+    }, [deleteFile.file, rootFiles, allFiles])
 
 
     const handleAreaClick = (e: React.MouseEvent<HTMLElement>) => {
@@ -102,10 +110,7 @@ export default function DeleteFileWindow() {
                         transition-all hover:bg-(--color-lighter) hover:text-white rounded-md">
                             Voltar
                         </button>
-                        <button onClick={() => {
-                            window.open(url as string, '_blank')?.focus();
-                            deleteFile.closeWindow();
-                        }} className="flex-1 p-1 px-6 text-lg text-white bg-(--color-regular) cursor-pointer transition-all hover:bg-red-500 rounded-md">
+                        <button onClick={handleDelete} className="flex-1 p-1 px-6 text-lg text-white bg-(--color-regular) cursor-pointer transition-all hover:bg-red-500 rounded-md">
                             Excluir
                         </button>
                     </div>

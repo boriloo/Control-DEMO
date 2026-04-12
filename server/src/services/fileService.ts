@@ -94,13 +94,23 @@ export const updateFilePositionService = async (files: FilePositionsData[]) => {
   );
 };
 
+
 // DELETE FILE
 export const deleteFileService = async (id: string) => {
-  try {
-    await prisma.file.delete({
-      where: { id },
-    });
-  } catch (error) {
-    throw new Error("File doesn't exist.");
-  }
-};
+    try {
+        await prisma.$queryRaw`
+            WITH RECURSIVE children AS (
+                SELECT id FROM files WHERE id = ${id}::uuid
+                
+                UNION ALL
+                
+                SELECT f.id FROM files f
+                INNER JOIN children c ON f.parent_id = c.id::text
+            )
+            DELETE FROM files
+            WHERE id IN (SELECT id FROM children)
+        `
+    } catch (error) {
+        throw new Error("File doesn't exist.")
+    }
+}

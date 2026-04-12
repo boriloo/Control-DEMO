@@ -20,11 +20,11 @@ export const updateUserController = async (req: Request, res: Response) => {
     try {
         const userId = (req as any).userId
         console.log(req.body)
-        const { name, filterBlur, filterDark, filterColor } = req.body;
+        const { name } = req.body;
 
         const profileImage = req.file?.buffer;
 
-        const user = await updateUserService(userId as string, { name, profileImage, filterDark, filterBlur, filterColor, });
+        const user = await updateUserService(userId as string, { name, profileImage });
 
         return res.status(201).json(user);
     } catch (err: any) {
