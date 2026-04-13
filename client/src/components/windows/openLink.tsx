@@ -49,7 +49,7 @@ export default function OpenLinkWindow({ url }: { url: string | null }) {
     return (
         <div onClick={handleAreaClick} className={`${openLink.currentStatus === 'open' ? returnFilterEffects() : 'pointer-events-none '} 
         transition-all duration-500 fixed z-110 w-full h-screen flex justify-center items-center p-4 pb-[50px] cursor-pointer`}>
-            <div className={`${openLink.currentStatus === 'open' ? 'scale-100' : 'scale-0'} cursor-default bg-(--color-dark)
+            <div className={`${openLink.currentStatus === 'open' ? 'scale-100' : 'scale-50 opacity-0'} cursor-default bg-(--color-dark)
              origin-center rounded-md p-4 w-full max-w-[700px] max-h-full flex flex-col gap-4 overflow-y-auto transition-all relative`}>
                 <div className="p-1.5 bg-(--color-regular) border border-(--color-light)/50 rounded-md absolute top-4 right-4">
                     <img src={imageSrc as string} className="w-10 object-contain pointer-events-none select-none" />

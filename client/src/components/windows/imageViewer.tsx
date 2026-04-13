@@ -153,8 +153,8 @@ export default function ImageViewerWindow() {
                 </div>
             </div>
 
-            <div className={`${isFullsceen ? 'max-w-full max-h-full' : 'rounded-lg max-w-[1200px] max-h-[700px]'} ${imgViewer.currentStatus === "open" ? 'scale-100' : 'scale-0 '} 
-                bg-zinc-900 cursor-default origin-bottom relative transition-all duration-300 flex flex-col w-full h-full overflow-y-auto`}>
+            <div className={`${isFullsceen ? 'max-w-full max-h-full' : 'rounded-lg max-w-[1200px] max-h-[700px]'} ${imgViewer.currentStatus === "open" ? 'scale-100' : 'scale-50 opacity-0'} 
+                bg-zinc-900 cursor-default origin-bottom relative transition-all duration-250 flex flex-col w-full h-full overflow-y-auto`}>
                 <div className="z-50 sticky select-none top-0 w-full bg-black/50 h-8 flex flex-row justify-between items-center backdrop-blur-[2px]">
                     <p className="p-2">Visualizar Imagem</p>
                     <div className="flex flex-row h-full">

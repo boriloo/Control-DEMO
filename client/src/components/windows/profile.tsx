@@ -23,8 +23,8 @@ export default function ProfileWindow() {
 
         <div onClick={handleAreaClick} className={`${isFullsceen ? 'pb-[40px]' : ' p-2 pb-[50px]'} ${profile.currentStatus === "open" ? returnFilterEffects() : 'pointer-events-none'} 
         fixed z-100 flex-1 flex justify-center items-center w-full h-screen transition-all duration-500 cursor-pointer`}>
-            <div className={`${isFullsceen ? 'max-w-full max-h-full' : 'rounded-lg max-w-[1200px] max-h-[700px]'} ${profile.currentStatus === "open" ? 'scale-100' : 'scale-0 '} 
-                bg-zinc-900 cursor-default origin-bottom relative transition-all duration-300 flex flex-col w-full h-full overflow-y-auto`}>
+            <div className={`${isFullsceen ? 'max-w-full max-h-full' : 'rounded-lg max-w-[1200px] max-h-[700px]'} ${profile.currentStatus === "open" ? 'scale-100' : 'scale-50 opacity-0 '} 
+                bg-(--color-dark) cursor-default origin-bottom relative transition-all duration-250 flex flex-col w-full h-full overflow-y-auto`}>
                 <div className="z-50 sticky select-none top-0 w-full bg-black/50 h-8 flex flex-row justify-between items-center backdrop-blur-[2px]">
                     <p className="p-2">Seu Perfil</p>
                     <div className="flex flex-row h-full">
@@ -39,7 +39,7 @@ export default function ProfileWindow() {
                         minimazeAllWindows();
                         config.openWindow();
                     }} className="flex flex-row gap-2 items-center p-1 mb-2 text-[16px] 
-                px-3 border-[1.5px] border-white/50 cursor-pointer rounded-md bg-zinc-800 text-white transition-all hover:border-blue-500 hover:text-blue-500 hover:bg-zinc-950">
+                px-3 border-[1.5px] border-(--color-light)/60 cursor-pointer rounded-md bg-(--color-regular) text-(--color-lighter) transition-all hover:border-(--color-lighter) hover:text-(--color-lighter) hover:bg-zinc-950">
                         <p>Editar Perfil</p>
                         <Pencil size={16} />
                     </button>
@@ -56,7 +56,7 @@ export default function ProfileWindow() {
                                 color: 'transparent',
                                 backgroundClip: 'text',
                                 WebkitBackgroundClip: 'text',
-                                backgroundImage: 'linear-gradient(to right, #389fff, #2563eb, #389fff)',
+                                backgroundImage: 'linear-gradient(to right, var(--color-light), var(--color-lighter), var(--color-light))',
 
                                 backgroundSize: '200% auto',
 
@@ -66,9 +66,9 @@ export default function ProfileWindow() {
                         {/* <h1 className="text-[28px] bg-clip-text text-transparent bg-gradient-to-r from-blue-400 via-blue-600 to-blue-400">{user.name as string} </h1> */}
                         <p className="text-[14px]">{user.email as string}</p>
                        
-                        <p className="mt-2 text-blue-500 bg-gradient-to-r from-black via-black to-blue-950 text-[16px] p-[1px] px-2 rounded-sm font-bold">PRO</p>
+                        {/* <p className="mt-2 text-(--color-lighter) bg-gradient-to-r from-black via-black to-blue-950 text-[16px] p-[1px] px-2 rounded-sm font-bold">PRO</p> */}
                     </div>
-                    <div className="w-[90%] h-[1px] bg-zinc-400"></div>
+                    <div className="w-[90%] h-[1px] bg-white/40"></div>
                     <div className="flex flex-row">
 
                     </div>
@@ -76,7 +76,7 @@ export default function ProfileWindow() {
 
 
                 <button onClick={authLogoutUser} className="sticky bottom-4 mt-auto ml-auto right-4 flex flex-row gap-2 items-center p-1 text-[18px] 
-                px-5 border-[1.5px] border-white/50 cursor-pointer rounded-md bg-zinc-950 text-white transition-all hover:border-red-500 hover:text-red-500">
+                px-5 border-[1.5px] border-(--color-light)/60 cursor-pointer rounded-md bg-zinc-950 text-white transition-all hover:border-red-500 hover:text-red-500">
                     <p>Sair</p>
                     <LogOut size={18} />
                 </button>

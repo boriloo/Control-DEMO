@@ -37,8 +37,8 @@ export const updateUserService = async (data: updateUserData) => {
     return response.data;
 }
 
-export const deleteUserService = async (id: string) => {
-    const response = await api.delete(`/user/${id}`)
+export const deleteUserService = async () => {
+    const response = await api.delete(`/user`)
 
     return (response).data;
 }

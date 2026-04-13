@@ -53,7 +53,7 @@ export function ClickableImageInput({ onFileSelected, currentImageUrl }: Clickab
             <div
                 {...getRootProps()}
                 className={`${preview ? 'min-h-[168px]' : ''} relative rounded-sm overflow-hidden cursor-pointer group 
-                    bg-zinc-700 border-2 transition  border-zinc-500 w-full max-w-[300px] hover:bg-zinc-800`}
+                    bg-(--color-regular) border-2 transition  border-(--color-light)/30 w-full max-w-[300px] hover:bg-(--color-light)/40`}
             >
                 <input {...getInputProps()} />
                 {preview ? (

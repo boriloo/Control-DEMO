@@ -45,6 +45,14 @@ export const updateUserService = async (id: string, data: updateUserData) => {
 // DELETE USER
 export const deleteUserService = async (id: string) => {
     try {
+        await prisma.file.deleteMany({
+            where: { ownerId: id },
+        })
+
+        await prisma.desktop.deleteMany({
+            where: { ownerId: id },
+        })
+
         await prisma.user.delete({
             where: { id },
         });

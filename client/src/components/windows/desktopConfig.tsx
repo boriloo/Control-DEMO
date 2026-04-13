@@ -180,7 +180,7 @@ export default function DesktopConfigWindow() {
                     <p className="text-lg">Atenção! Você está prestes a excluir um desktop </p>
                     <p className="text-xl text-red-500">{windowDesktop?.name}</p>
                     <p className="text-lg mt-4">
-                        Esta ação removerá todos os membros do desktop e <b className="font-medium text-red-500">excluirá permanentemente </b>
+                        Esta ação removerá o desktop e <b className="font-medium text-red-500">excluirá permanentemente </b>
                         todos os arquivos presentes nele.
                     </p>
                     <p className="text-lg mt-4">Digite <b className="font-medium">{formattedUserName}/{formattedDtName}</b> para seguir com a exclusão.</p>
@@ -201,8 +201,8 @@ export default function DesktopConfigWindow() {
                 </div>
             </div>
 
-            <div key={dtConfig.desktop?.backgroundImage} className={`${isFullsceen ? 'max-w-full max-h-full' : 'rounded-lg max-w-[1200px] max-h-[700px]'} ${dtConfig.currentStatus === "open" ? 'scale-100' : 'scale-0 '} 
-                bg-(--color-dark) cursor-default origin-center relative transition-all duration-300 flex flex-col w-full h-full overflow-y-auto`}>
+            <div key={dtConfig.desktop?.backgroundImage} className={`${isFullsceen ? 'max-w-full max-h-full' : 'rounded-lg max-w-[1200px] max-h-[700px]'} ${dtConfig.currentStatus === "open" ? 'scale-100' : 'scale-50 opacity-0'} 
+                bg-(--color-dark) cursor-default origin-center relative transition-all duration-250 flex flex-col w-full h-full overflow-y-auto`}>
                 <div className="z-50 sticky select-none top-0 w-full bg-black/60 h-8 flex flex-row justify-between items-center backdrop-blur-[6px]">
                     <p className="p-2">Configurar Desktop</p>
                     <div className="flex flex-row h-full">
@@ -240,13 +240,13 @@ export default function DesktopConfigWindow() {
                             <p className="p-1 px-3 mt-5 bg-zinc-950/50 border-1 border-zinc-600 rounded-full">{windowDesktop?.members.length}
                                 {windowDesktop?.members.length && windowDesktop?.members.length > 1 ? ' Membros' : ' Membro'}</p> */}
                         </div>
-                        <div className="p-2 pb-3 flex flex-col bg-zinc-950/60 backdrop-blur-[2px] border-1 border-zinc-800 rounded-lg min-w-[300px]">
+                        {/* <div className="p-2 pb-3 flex flex-col bg-zinc-950/60 backdrop-blur-[2px] border-1 border-zinc-800 rounded-lg min-w-[300px]">
                             <p>Espaço Ocupado</p>
                             <h1 className="text-[30px]">{allFiles.length} / 10 mil items</h1>
                             <div className="w-full bg-zinc-950 h-1 mt-2 rounded-md overflow-hidden">
                                 <div className="bg-(--color-light) w-[34%] h-full"></div>
                             </div>
-                        </div>
+                        </div> */}
                     </div>
                     <div className="flex flex-row gap-6 p-2 mt-[80px] items-start">
 
