@@ -16,7 +16,7 @@ export interface ColumnFileProps {
 export default function ColumnFile({ file, animationKey, index, imageValidations }: ColumnFileProps) {
     const { root } = useRootContext();
     const { minimazeAllWindows } = useAppContext();
-    const { newFile, imgViewer, openLink, fileViewer } = useWindowContext();
+    const { newFile, imgViewer, openLink, fileViewer, deleteFile } = useWindowContext();
     const [driveThumb, setDriveThumb] = useState<string | null>(null)
 
 
@@ -64,6 +64,12 @@ export default function ColumnFile({ file, animationKey, index, imageValidations
         }
     }
 
+    const handleDeleteFile = useCallback((e: React.MouseEvent) => {
+        e.stopPropagation()
+        deleteFile.setFile(file)
+        deleteFile.openWindow()
+    }, [file])
+
     const returnAction = useCallback(() => {
         if (!root.canOpenWindow) return;
         newFile.setFile(file)
@@ -106,7 +112,7 @@ export default function ColumnFile({ file, animationKey, index, imageValidations
             <div className="ml-auto flex flex-row gap-3">
                 <Menu className="cursor-pointer transition-all opacity-0 scale-75 group-hover:scale-100 group-hover:opacity-100 hover:bg-(--color-lighter)/15 
                                         hover:border-(--color-lighter) hover:text-(--color-lighter) w-9 h-9 p-1.5 bg-white/5 border border-white/40 rounded-md" />
-                <Trash className="cursor-pointer transition-all opacity-0 scale-75 group-hover:scale-100 group-hover:opacity-100 hover:bg-red-700/15 
+                <Trash onClick={handleDeleteFile} className="cursor-pointer transition-all opacity-0 scale-75 group-hover:scale-100 group-hover:opacity-100 hover:bg-red-700/15 
                                         hover:border-red-500 hover:text-red-500 w-9 h-9 p-1.5 bg-white/5 border border-white/40 rounded-md" />
             </div>
         </div>
