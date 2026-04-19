@@ -1,26 +1,26 @@
 # Control
 
-> Desktop virtual compartilhado com interface inspirada no Windows.
+> A web-based virtual desktop platform inspired by the Windows interface.
 
-![screenshot do projeto](.github/preview.png)
+![Project Screenshot](.github/preview.png)
 
-## 🚀 Sobre
+## About
 
-Control é uma plataforma web onde usuários podem criar desktops virtuais
-para organizar links, arquivos e pastas de forma visual e intuitiva.
-Desktops podem ser compartilhados entre usuários em tempo real.
+Control is a web platform where users can create virtual desktops to organize
+links, files and folders in a visual and intuitive way. Desktops can be shared
+between users with real-time synchronization.
 
-## ✨ Funcionalidades
+## Features
 
-- Criação de desktops virtuais com wallpaper customizável
-- Arrastar e soltar ícones com sincronização de posição
-- Pastas com navegação recursiva
-- Links com favicon automático
-- Múltiplos desktops por usuário
-- Interface com filtros de aparência (blur, escuridão, saturação)
-- Suporte a internacionalização (PT-BR / EN)
+- Virtual desktops with customizable wallpapers
+- Drag and drop icons with position synchronization
+- Recursive folder navigation
+- Links with automatic favicon detection
+- Multiple desktops per user
+- Appearance filters (blur, darkness, saturation)
+- Internationalization support (PT-BR / EN)
 
-## 🛠️ Stack
+## Stack
 
 **Frontend**
 - React + Vite + TypeScript
@@ -32,67 +32,67 @@ Desktops podem ser compartilhados entre usuários em tempo real.
 - Prisma ORM
 - PostgreSQL
 
-## 📦 Rodando localmente
+## Running locally
 
-### Pré-requisitos
+### Prerequisites
 - Node.js 18+
-- PostgreSQL rodando localmente ou via Supabase
+- PostgreSQL running locally or via Supabase
 
-### Instalação
+### Installation
 
-\`\`\`bash
-# Clone o repositório
-git clone https://github.com/seu-usuario/control.git
+```bash
+# Clone the repository
+git clone https://github.com/your-username/control.git
 cd control
 
-# Instale as dependências raiz
+# Install root dependencies
 npm install
 
-# Configure as variáveis de ambiente
+# Set up environment variables
 cp server/.env.example server/.env
-# edite o server/.env com suas credenciais
-\`\`\`
+# Edit server/.env with your credentials
+```
 
-### Banco de dados
+### Database
 
-\`\`\`bash
+```bash
 cd server
 npx prisma migrate deploy
 npx prisma generate
-\`\`\`
+```
 
-### Rodando
+### Running
 
-\`\`\`bash
-# Na raiz do projeto
+```bash
+# From the project root
 npm run dev
-\`\`\`
+```
 
-Acesse http://localhost:5173
+Access http://localhost:5173
 
-## 🔑 Variáveis de ambiente
+## Environment variables
 
-Crie um `server/.env` baseado no `server/.env.example`:
+Create a `server/.env` file based on `server/.env.example`:
 
-\`\`\`env
+```env
 DATABASE_URL=postgresql://user:password@localhost:5432/control
-JWT_SECRET=seu_secret_aqui
-JWT_REFRESH_SECRET=seu_refresh_secret_aqui
+JWT_SECRET=your_secret_here
+JWT_REFRESH_SECRET=your_refresh_secret_here
 PORT=3000
-\`\`\`
+```
 
-## 📁 Estrutura do projeto
+## Project structure
 
-\`\`\`
+```
 control/
-├── client/          # Frontend React
+├── client/          # React frontend
 │   ├── src/
 │   │   ├── components/
 │   │   ├── context/
 │   │   ├── pages/
 │   │   ├── services/
 │   │   └── types/
-└── server/          # Backend Express
+└── server/          # Express backend
     ├── src/
     │   ├── controllers/
     │   ├── middlewares/
@@ -101,4 +101,4 @@ control/
     │   └── types/
     └── prisma/
         └── schema.prisma
-\`\`\`
+```
