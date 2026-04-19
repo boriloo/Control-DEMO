@@ -2,13 +2,13 @@ import { LoginData, RegisterData } from "../types/auth";
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import { UserData } from "../types/user";
-import prisma from "../lib/prisma";
+import db from "../lib/prisma";
 
 
 // Service for registering users
 export const authRegisterService = async ({ name, email, password }: RegisterData) => {
 
-    const userExists = await prisma.user.findUnique({
+    const userExists = await db.prisma.user.findUnique({
         where: { email }
     })
 
@@ -18,7 +18,7 @@ export const authRegisterService = async ({ name, email, password }: RegisterDat
 
     const hashedPassword = await bcrypt.hash(password, 10)
 
-    return await prisma.user.create({
+    return await db.prisma.user.create({
         data: { name, email, password: hashedPassword },
         select: { id: true, name: true, email: true, createdAt: true }
     })
@@ -27,7 +27,7 @@ export const authRegisterService = async ({ name, email, password }: RegisterDat
 // Service for logging users in
 export const authLoginService = async ({ email, password, rememberMe }: LoginData) => {
 
-    const user = await prisma.user.findUnique({
+    const user = await db.prisma.user.findUnique({
         where: { email }
     })
 

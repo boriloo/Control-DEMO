@@ -1,9 +1,9 @@
-import { prisma } from "../lib/prisma";
+import db from "../lib/prisma";
 import { updateUserData, UserData } from "../types/user";
 
 // GET ME
 export const getMeService = async (id: string) => {
-    const user = await prisma.user.findUnique({
+    const user = await db.prisma.user.findUnique({
         where: { id },
     });
 
@@ -22,7 +22,7 @@ export const getMeService = async (id: string) => {
 // UPDATE USER
 export const updateUserService = async (id: string, data: updateUserData) => {
     try {
-        const updated = await prisma.user.update({
+        const updated = await db.prisma.user.update({
             where: { id },
             data: {
                 name: data.name,
@@ -45,15 +45,15 @@ export const updateUserService = async (id: string, data: updateUserData) => {
 // DELETE USER
 export const deleteUserService = async (id: string) => {
     try {
-        await prisma.file.deleteMany({
+        await db.prisma.file.deleteMany({
             where: { ownerId: id },
         })
 
-        await prisma.desktop.deleteMany({
+        await db.prisma.desktop.deleteMany({
             where: { ownerId: id },
         })
 
-        await prisma.user.delete({
+        await db.prisma.user.delete({
             where: { id },
         });
     } catch (error) {

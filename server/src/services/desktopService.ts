@@ -1,9 +1,9 @@
-import { prisma } from "../lib/prisma";
+import db from "../lib/prisma";
 import { CreateDesktopData } from "../types/desktop";
 
 // CREATE DESKTOP
 export const createDesktopService = async (data: CreateDesktopData) => {
-    const desktop = await prisma.desktop.create({
+    const desktop = await db.prisma.desktop.create({
         data: {
             name: data.name,
             ownerId: data.ownerId,
@@ -19,7 +19,7 @@ export const createDesktopService = async (data: CreateDesktopData) => {
 
 // GET DESKTOP BY ID
 export const getDesktopByIdService = async (id: string) => {
-    const desktop = await prisma.desktop.findUnique({
+    const desktop = await db.prisma.desktop.findUnique({
         where: { id },
     });
 
@@ -35,7 +35,7 @@ export const getDesktopByIdService = async (id: string) => {
 
 // GET DESKTOPS BY OWNER ID
 export const getDesktopByOwnerService = async (ownerId: string) => {
-    const desktops = await prisma.desktop.findMany({
+    const desktops = await db.prisma.desktop.findMany({
         where: { ownerId },
     });
 
@@ -48,7 +48,7 @@ export const getDesktopByOwnerService = async (ownerId: string) => {
 // UPDATE DESKTOP
 export const updateDesktopService = async (id: string, data: { name?: string; backgroundImage?: Buffer }) => {
     try {
-        const updated = await prisma.desktop.update({
+        const updated = await db.prisma.desktop.update({
             where: { id },
             data: {
                 name: data.name,
@@ -68,11 +68,11 @@ export const updateDesktopService = async (id: string, data: { name?: string; ba
 // DELETE DESKTOP
 export const deleteDesktopService = async (id: string) => {
     try {
-        await prisma.file.deleteMany({
+        await db.prisma.file.deleteMany({
             where: { desktopId: id }
         })
 
-        await prisma.desktop.delete({
+        await db.prisma.desktop.delete({
             where: { id },
         });
     } catch (error) {

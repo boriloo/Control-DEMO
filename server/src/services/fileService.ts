@@ -1,9 +1,9 @@
-import { prisma } from "../lib/prisma";
+import db from "../lib/prisma";
 import { CreateFileData, FilePositionsData } from "../types/file";
 
 // CREATE FILE
 export const createFileService = async (data: CreateFileData) => {
-  const file = await prisma.file.create({
+  const file = await db.prisma.file.create({
     data: {
       name: data.name,
       ownerId: data.ownerId,
@@ -21,14 +21,14 @@ export const createFileService = async (data: CreateFileData) => {
 
 // GET ALL FILES FROM DESKTOP
 export const getAllFilesFromDesktopService = async (desktopId: string) => {
-  return await prisma.file.findMany({
+  return await db.prisma.file.findMany({
     where: { desktopId },
   });
 };
 
 // GET ROOT FILES FROM DESKTOP
 export const getFilesFromDesktopService = async (desktopId: string) => {
-  return await prisma.file.findMany({
+  return await db.prisma.file.findMany({
     where: {
       desktopId,
       parentId: "root",
@@ -38,14 +38,14 @@ export const getFilesFromDesktopService = async (desktopId: string) => {
 
 // GET FILE BY ID
 export const getFileByIdService = async (fileId: string) => {
-  return await prisma.file.findUnique({
+  return await db.prisma.file.findUnique({
     where: { id: fileId },
   });
 };
 
 // GET FILES BY PARENT ID
 export const getFilesFromParentService = async (parentId: string) => {
-  return await prisma.file.findMany({
+  return await db.prisma.file.findMany({
     where: { parentId },
   });
 };
@@ -57,7 +57,7 @@ export const getFilesParentNamesService = async (parentId: string) => {
   if (parentId === "root") return [];
 
   // Prisma não tem suporte nativo para WITH RECURSIVE, usamos queryRaw
-  const result = await prisma.$queryRaw<{ id: string; name: string }[]>`
+  const result = await db.prisma.$queryRaw<{ id: string; name: string }[]>`
     WITH RECURSIVE parents AS (
         SELECT id, name, parent_id
         FROM files
@@ -81,9 +81,9 @@ export const updateFilePositionService = async (files: FilePositionsData[]) => {
   if (files.length < 1) throw new Error("No files received.");
 
   // Usamos uma transação para garantir que todas as posições sejam atualizadas
-  await prisma.$transaction(
+  await db.prisma.$transaction(
     files.map((file) =>
-      prisma.file.update({
+      db.prisma.file.update({
         where: { id: file.id },
         data: {
           xPos: file.xPos,
@@ -98,7 +98,7 @@ export const updateFilePositionService = async (files: FilePositionsData[]) => {
 // DELETE FILE
 export const deleteFileService = async (id: string) => {
     try {
-        await prisma.$queryRaw`
+        await db.prisma.$queryRaw`
             WITH RECURSIVE children AS (
                 SELECT id FROM files WHERE id = ${id}::uuid
                 
