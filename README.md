@@ -2,7 +2,7 @@
 
 > A web-based virtual desktop platform inspired by the Windows interface.
 
-![Project Screenshot](.github/preview.png)
+![test img](client/public/assets/images/authBG3.jpg)
 
 ## About
 
@@ -42,44 +42,26 @@ between users with real-time synchronization.
 
 ```bash
 # Clone the repository
-git clone https://github.com/your-username/control.git
-cd control
+git clone https://github.com/boriloo/Control.git
+cd Control
 
 # Install root dependencies
-npm install
+npm run install:all
 
 # Set up environment variables
-cp server/.env.example server/.env
+npm run copy-env
 # Edit server/.env with your credentials
-```
-
-### Database
-
-```bash
-cd server
-npx prisma migrate deploy
-npx prisma generate
 ```
 
 ### Running
 
 ```bash
 # From the project root
-npm run dev
+npm run start:all
 ```
 
 Access http://localhost:5173
 
-## Environment variables
-
-Create a `server/.env` file based on `server/.env.example`:
-
-```env
-DATABASE_URL=postgresql://user:password@localhost:5432/control
-JWT_SECRET=your_secret_here
-JWT_REFRESH_SECRET=your_refresh_secret_here
-PORT=3000
-```
 
 ## Project structure
 
