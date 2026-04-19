@@ -10,7 +10,7 @@ export type CreateFileType = "folder" | "link"
 
 export default function DeleteFileWindow() {
     const { rootFiles, changeRootFiles, allFiles, changeAllFiles } = useFileContext();
-    const { deleteFile } = useWindowContext();
+    const { deleteFile, fileViewer } = useWindowContext();
     const [fileType, setFileType] = useState<CreateFileType>('folder')
     const [name, setName] = useState<string | null>(null)
     const [url, setUrl] = useState<string | null>(null)
@@ -36,9 +36,6 @@ export default function DeleteFileWindow() {
 
 
     useEffect(() => {
-        console.log('opaaaa')
-
-
         switch (deleteFile.file?.fileType) {
             case ('folder'):
                 console.log('é paxta')
@@ -78,6 +75,12 @@ export default function DeleteFileWindow() {
             changeAllFiles(filteredAllFiles)
 
             deleteFile.setFile(null)
+
+            if (deleteFile.file === fileViewer.file) {
+                fileViewer.closeWindow()
+            }
+
+
         } catch (err) {
             console.log(err)
         }

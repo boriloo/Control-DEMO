@@ -14,7 +14,7 @@ export default function FileWindow() {
     const { allFiles } = useFileContext()
     const { minimazeAllWindows } = useAppContext();
     const { user, currentDesktop } = useUser()
-    const { fileViewer, newFile } = useWindowContext();
+    const { fileViewer, newFile, deleteFile } = useWindowContext();
     const [isFullsceen, setIsFullscreen] = useState<boolean>(false)
     const [internalFiles, setInternalFiles] = useState<FileData[]>([])
     const [imageValidations, setImageValidations] = useState<Record<string, boolean>>({});
@@ -27,7 +27,6 @@ export default function FileWindow() {
 
     useEffect(() => {
         if (!fileViewer.file?.desktopId || !fileViewer.file?.id || !user || !currentDesktop) return;
-        console.log('NIGGA')
         setAnimKey(prev => prev + 1);
         const initInternalFiles = async () => {
 
@@ -116,6 +115,11 @@ export default function FileWindow() {
         newFile.setFile(fileViewer.file)
     }
 
+    const handleDeleteFolder = () => {
+        deleteFile.setFile(fileViewer.file)
+        deleteFile.openWindow()
+    }
+
     const handlePathClick = async (pathId: string | null) => {
         if (!currentDesktop) return;
 
@@ -185,7 +189,7 @@ export default function FileWindow() {
                                 <ExternalLink size={25} />
                                 Abrir
                             </div> */}
-                            <div className="flex flex-col items-center p-2 px-4 gap-1 bg-(--color-light)/80 flex-1 cursor-pointer 
+                            <div onClick={handleDeleteFolder} className="flex flex-col items-center p-2 px-4 gap-1 bg-(--color-light)/80 flex-1 cursor-pointer 
                              transition-all rounded-md hover:bg-red-600/20 hover:text-red-500 hover:border-red-500 hover:scale-105">
                                 <Trash size={25} />
                                 Excluir Pasta

@@ -162,9 +162,9 @@ export default function AuthPage() {
                                     </div>
                                     <p className={`${rememberMe ? 'text-blue-300' : 'text-white'} `}>Lembrar de mim</p>
                                 </div>
-                                <div className="text-blue-300 font-medium text-md cursor-pointer p-1 px-2 transition-all hover:bg-blue-500/40 rounded-lg">
+                                {/* <div className="text-blue-300 font-medium text-md cursor-pointer p-1 px-2 transition-all hover:bg-blue-500/40 rounded-lg">
                                     Esqueci minha senha
-                                </div>
+                                </div> */}
                             </div>
                         )}
 
