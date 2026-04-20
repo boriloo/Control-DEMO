@@ -7,25 +7,22 @@
 ## About
 
 Control is a web platform where users can create virtual desktops to organize
-links, files and folders in a visual and intuitive way. Desktops can be shared
-between users with real-time synchronization.
+links and folders in a visual and intuitive way.
 
 ## Features
 
 - Virtual desktops with customizable wallpapers
-- Drag and drop icons with position synchronization
+- Drag and drop icons
 - Recursive folder navigation
 - Links with automatic favicon detection
 - Multiple desktops per user
 - Appearance filters (blur, darkness, saturation)
-- Internationalization support (PT-BR / EN)
 
 ## Stack
 
 **Frontend**
 - React + Vite + TypeScript
 - TailwindCSS
-- i18next
 
 **Backend**
 - Node.js + Express
