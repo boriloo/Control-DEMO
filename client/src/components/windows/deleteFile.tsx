@@ -10,8 +10,7 @@ export type CreateFileType = "folder" | "link"
 
 export default function DeleteFileWindow() {
     const { rootFiles, changeRootFiles, allFiles, changeAllFiles } = useFileContext();
-    const { deleteFile, fileViewer } = useWindowContext();
-    const [fileType, setFileType] = useState<CreateFileType>('folder')
+    const { deleteFile, fileViewer, imgViewer } = useWindowContext();
     const [name, setName] = useState<string | null>(null)
     const [url, setUrl] = useState<string | null>(null)
     const [loading, setLoading] = useState<boolean>(false)
@@ -75,6 +74,8 @@ export default function DeleteFileWindow() {
             changeAllFiles(filteredAllFiles)
 
             deleteFile.setFile(null)
+
+            imgViewer.closeWindow();
 
             if (deleteFile.file === fileViewer.file) {
                 fileViewer.closeWindow()

@@ -9,7 +9,7 @@ import { useAppContext } from "../../context/AppContext";
 export default function ImageViewerWindow() {
     const { callToast } = useAppContext();
     const { user } = useUser();
-    const { imgViewer } = useWindowContext();
+    const { imgViewer, deleteFile } = useWindowContext();
     const [isFullsceen, setIsFullscreen] = useState<boolean>(false)
     const [imgFull, setImgFull] = useState<boolean>(false)
     const [downLoading, setDownLoading] = useState<boolean>(false)
@@ -110,17 +110,8 @@ export default function ImageViewerWindow() {
     }
 
     const handleDeleteFile = () => {
-        try {
-            // deleteFile({ fileId: imgViewer.file?.id, filePath: imgViewer.file?.filePath });
-            setConfirmDelete(false);
-            imgViewer.setFile(null);
-            imgViewer.closeWindow();
-            callToast({ message: 'Arquivo deletado com sucesso!', type: 'success' })
-        } catch (err) {
-            callToast({ message: 'Erro ao excluir arquivo', type: 'error' })
-            throw err
-        }
-
+        deleteFile.setFile(imgViewer.file)
+        deleteFile.openWindow()
     }
 
 
@@ -185,7 +176,7 @@ export default function ImageViewerWindow() {
                     </div>
 
                     <div className="flex flex-row gap-3 items-center p-1 px-3">
-                        <Trash onClick={() => setConfirmDelete(true)} size={40} className="p-2 transition-all cursor-pointer hover:bg-zinc-700 rounded-sm" />
+                        <Trash onClick={handleDeleteFile} size={40} className="p-2 transition-all cursor-pointer hover:bg-zinc-700 rounded-sm" />
                         {/* <div className="h-5 w-[1px] bg-zinc-700"></div> */}
                         {/* <div>
                             <FolderUp size={40} className="peer p-2 transition-all cursor-pointer hover:bg-zinc-700 rounded-sm" />

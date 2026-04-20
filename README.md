@@ -2,7 +2,7 @@
 
 > A web-based virtual desktop platform inspired by the Windows interface.
 
-![test img](client/public/assets/images/authBG3.jpg)
+![project running](client/public/assets/images/readme.png)
 
 ## About
 
@@ -45,18 +45,19 @@ between users with real-time synchronization.
 git clone https://github.com/boriloo/Control.git
 cd Control
 
-# Install root dependencies
+# Install dependencies
 npm run install:all
 
 # Set up environment variables
 npm run copy-env
-# Edit server/.env with your credentials
+
+# OPTIONAL - Edit .env with your credentials
 ```
 
 ### Running
 
 ```bash
-# From the project root
+# From the project root (Make sure Docker is running)
 npm run start:all
 ```
 
