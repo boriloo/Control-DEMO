@@ -29,6 +29,18 @@ links and folders in a visual and intuitive way.
 - Prisma ORM
 - PostgreSQL
 
+## Screenshots
+
+![Screenshot 1](client/public/assets/images/sc1.png)
+
+![Screenshot 2](client/public/assets/images/sc2.png)
+
+![Screenshot 3](client/public/assets/images/sc3.png)
+
+![Screenshot 4](client/public/assets/images/sc4.png)
+
+![Screenshot 5](client/public/assets/images/sc5.png)
+
 ## Running locally
 
 ### Prerequisites
@@ -82,3 +94,6 @@ control/
     └── prisma/
         └── schema.prisma
 ```
+
+
+

@@ -149,7 +149,7 @@ export default function FileWindow() {
             <div className={`${isFullsceen ? 'max-w-full max-h-full' : 'rounded-lg max-w-[1200px] max-h-[700px]'} ${fileViewer.currentStatus === "open" ? 'scale-100' : 'scale-50 opacity-0'} 
                 bg-(--color-dark) cursor-default origin-bottom relative transition-all duration-250 flex flex-col w-full h-full overflow-y-auto select-none`}>
                 <div className="z-50 sticky select-none top-0 w-full bg-black/50 h-8 flex flex-row justify-between items-center backdrop-blur-[2px]">
-                    <p className="p-2">Pasta</p>
+                    <p className="p-2">{fileViewer.file?.name ?? 'Pasta'}</p>
                     <div className="flex flex-row h-full">
                         <Minus onClick={fileViewer.minimizeWindow} className="transition-colors cursor-pointer p-1 px-2 w-9 h-full hover:bg-white/20" />
                         <Maximize onClick={() => setIsFullscreen(!isFullsceen)} className="transition-colors cursor-pointer p-1 px-2 w-9 h-full hover:bg-white/20" />
