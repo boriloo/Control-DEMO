@@ -94,7 +94,7 @@ export default function ColumnFile({ file, animationKey, index, imageValidations
             <div className="ml-auto flex flex-row gap-3">
 
                 <Trash onClick={handleDeleteFile} className="cursor-pointer transition-all opacity-0 group-hover:w-30 group-hover:opacity-100 hover:bg-red-700/35 
-                absolute right-0 top-0 hover:border-red-500 hover:text-red-500 w-0 h-full p-3.5 bg-(--color-dark)" />
+                absolute right-0 top-0 hover:border-red-500 hover:text-red-500 w-0 h-full p-4 bg-(--color-dark)" />
             </div>
         </div>
     )
