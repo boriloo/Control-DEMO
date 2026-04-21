@@ -1,20 +1,14 @@
-import { ArrowRight, Maximize, Menu, Plus, UserRound, X } from "lucide-react"
+import { ArrowRight, Maximize, X } from "lucide-react"
 import { useEffect, useRef, useState } from "react"
 import { useUser } from "../../context/AuthContext";
 import { useWindowContext } from "../../context/WindowContext";
 import { returnFilterEffects } from "../../types/auth";
 import { ClickableImageInput } from "../imageInput";
 import { DotLottieReact } from "@lottiefiles/dotlottie-react";
-// import { getDownloadURL, getStorage, ref, uploadBytes } from "firebase/storage";
-// import { deleteDesktopById, FullDesktopData, getDesktopById, getDesktopsByMember, updateDesktopBackground, updateDesktopName } from "../../services/desktop";
-// import { doc, onSnapshot } from "firebase/firestore";
-// import { db } from "../../firebase/config";
 import { useAppContext } from "../../context/AppContext";
-import { FileData } from "../../types/file";
 import { DesktopData } from "../../types/desktop";
 import { deleteDesktopService, getDesktopByIdService, getDesktopByOwnerService, updateDesktopService } from "../../services/desktopServices";
 import { useFileContext } from "../../context/FileContext";
-// import { FullFileData, listenToAllFilesByDesktop } from "../../services/file";
 
 
 export default function DesktopConfigWindow() {
@@ -33,7 +27,6 @@ export default function DesktopConfigWindow() {
     const [formattedDtName, setFormattedDtName] = useState<string | null>(null)
     const [deleteInput, setDeleteInput] = useState<string>('')
     const [desktopName, setDesktopName] = useState('')
-    const [allFiles, setAllFiles] = useState<FileData[]>([]);
     const mouseDownTarget = useRef<EventTarget | null>(null);
 
     const handleMouseDown = (e: React.MouseEvent<HTMLElement>) => {
@@ -49,21 +42,6 @@ export default function DesktopConfigWindow() {
         }
         mouseDownTarget.current = null;
     };
-
-    useEffect(() => {
-        if (!user || !currentDesktop?.id) return;
-
-        // const unsubscribeAll = listenToAllFilesByDesktop(
-        //     user.uid as string,
-        //     currentDesktop.id,
-        //     (newFiles) => {
-        //         setAllFiles(newFiles);
-        //     }
-        // );
-
-        // return () => unsubscribeAll();
-
-    }, [currentDesktop?.id, user?.id]);
 
     useEffect(() => {
         if (!dtConfig.desktop) {
@@ -167,9 +145,6 @@ export default function DesktopConfigWindow() {
 
 
     return (
-
-
-
         <div onMouseDown={handleMouseDown} onMouseUp={handleMouseUp}
             className={`${isFullsceen ? 'pb-[40px]' : ' p-2 pb-[50px]'} ${dtConfig.currentStatus === "open" ? returnFilterEffects() : 'pointer-events-none'} 
         fixed z-100 flex-1 flex justify-center items-center w-full h-screen transition-all duration-500 cursor-pointer`}>
@@ -256,8 +231,8 @@ export default function DesktopConfigWindow() {
                                 <p className="text-lg">Nome do Desktop</p>
                                 <input value={desktopName} onChange={(e) => {
                                     setDesktopName(e.target.value)
-                                }} type="text" className="border-1 border-zinc-600 outline-none transition-all text-lg bg-zinc-800 hover:bg-zinc-700/50 mt-1
-                                cursor-pointer focus:cursor-text p-0.5 px-1.5 rounded-sm focus:border-(--color-light) focus:bg-zinc-700/80 focus:text-blue-100 w-full max-w-[300px]" />
+                                }} type="text" className="border-1 border-(--color-light)/50 outline-none transition-all text-lg bg-(--color-regular) hover:bg-(--color-light)/30 mt-1
+                                cursor-pointer focus:cursor-text p-0.5 px-1.5 rounded-sm focus:border-(--color-light) focus:bg-(--color-lighter)/40 w-full max-w-[300px]" />
                             </div>
 
 

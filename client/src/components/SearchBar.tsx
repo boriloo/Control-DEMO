@@ -175,7 +175,7 @@ export default function SearchBar() {
             peer-focus:opacity-100 hover:opacity-100 ${searchTerm.trim() !== '' ? '' : ''} 
             opacity-0 flex flex-col bg-(--color-dark) top-10 rounded-md w-full max-h-[300px] overflow-y-auto`}>
                 {filteredFiles.map((file) => (
-                    <div key={file.id} onClick={() => returnAction(file)} className="min-h-13 group flex flex-row justify-between relative rounded-md 
+                    <div key={file.id} onClick={() => returnAction(file)} className="min-h-14 group flex flex-row justify-between relative rounded-md 
                     cursor-pointer hover:bg-(--color-regular)/30 overflow-hidden transition-all">
                         <div className="flex flex-row gap-2 p-3 w-full items-center">
                             <img src={imageReturn(file.fileType, file.url as string)} className="w-7 max-h-5 object-contain" alt={file.name} />

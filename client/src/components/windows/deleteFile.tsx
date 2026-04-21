@@ -3,6 +3,7 @@ import { useWindowContext } from "../../context/WindowContext";
 import { returnFilterEffects } from "../../types/auth";
 import { deleteFileService } from "../../services/fileServices";
 import { useFileContext } from "../../context/FileContext";
+import { useAppContext } from "../../context/AppContext";
 // import { createFile } from "../../services/file";
 
 
@@ -11,6 +12,7 @@ export type CreateFileType = "folder" | "link"
 export default function DeleteFileWindow() {
     const { rootFiles, changeRootFiles, allFiles, changeAllFiles } = useFileContext();
     const { deleteFile, fileViewer, imgViewer } = useWindowContext();
+    const { callToast } = useAppContext();
     const [name, setName] = useState<string | null>(null)
     const [url, setUrl] = useState<string | null>(null)
     const [loading, setLoading] = useState<boolean>(false)
@@ -57,9 +59,9 @@ export default function DeleteFileWindow() {
 
 
     const handleDelete = useCallback(async () => {
-        console.log('um')
+
         if (!deleteFile.file?.id) return
-        console.log('dois')
+
         try {
             await deleteFileService(deleteFile.file?.id as string)
 
@@ -81,8 +83,11 @@ export default function DeleteFileWindow() {
                 fileViewer.closeWindow()
             }
 
+            callToast({ message: 'Arquivo excluído com sucesso.', type: 'success' })
 
         } catch (err) {
+
+            callToast({ message: 'Erro ao excluir arquivo.', type: 'error' })
             console.log(err)
         }
     }, [deleteFile.file, rootFiles, allFiles])
