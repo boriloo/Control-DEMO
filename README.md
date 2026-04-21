@@ -1,13 +1,18 @@
 # Control
 
+![React](https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB)
+![Prisma](https://img.shields.io/badge/Prisma-3982CE?style=for-the-badge&logo=Prisma&logoColor=white)
+
 > A web-based virtual desktop platform inspired by the Windows interface.
 
 ![project running](client/public/assets/images/readme.png)
 
 ## About
 
-Control is a web platform where users can create virtual desktops to organize
-links and folders in a visual and intuitive way.
+Control is a web platform where users can create virtual desktops to organize 
+links, files and folders visually. Inspired by the Windows interface, it brings 
+a familiar desktop experience to the browser, with support for multiple desktops, 
+icon synchronization and customizable appearance.
 
 ## Features
 
@@ -60,7 +65,8 @@ npm run install:all
 # Set up environment variables
 npm run copy-env
 
-# OPTIONAL - Edit .env with your credentials
+# Your .env file will work just fine with .env-example values,
+# but feel free to customize it with your credentials
 ```
 
 ### Running
@@ -95,5 +101,6 @@ control/
         └── schema.prisma
 ```
 
-
+## License
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
