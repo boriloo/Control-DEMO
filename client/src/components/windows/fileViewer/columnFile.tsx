@@ -77,7 +77,7 @@ export default function ColumnFile({ file, animationKey, index, imageValidations
         <div
             key={`${file.id}-${animationKey}`}
             onClick={() => returnAction()}
-            className={`group flex flex-row p-3 pl-4.5 gap-3 rounded-md bg-linear-to-b from-(--color-regular)/10 to-(--color-regular)/55 transition-all cursor-pointer bg-(--color-dark) 
+            className={`group flex flex-row p-3 pl-4.5 gap-4 rounded-md bg-linear-to-b from-(--color-regular)/10 to-(--color-regular)/55 transition-all cursor-pointer bg-(--color-dark) 
                 hover:bg-(--color-regular)/80 hover:to-(--color-light)/15 animate-slideIn opacity-0 items-center overflow-hidden
             shadow-md min-w-40`}
             style={{

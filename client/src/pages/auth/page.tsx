@@ -103,9 +103,9 @@ export default function AuthPage() {
                     filterDark: 'low', filterBlur: 'low', filterColor: 'color'
                 });
                 setApproved(true)
-                setTimeout(() => {
-                    navigate('/dashboard')
-                }, 1000)
+                authLoginUser({
+                    email: registerData.email, password: registerData.password, rememberMe: false
+                } as LoginData)
             } catch (error) {
                 setSent(false)
                 console.error("❌ Ocorreu um erro durante o processo de registro:", error);
@@ -123,7 +123,7 @@ export default function AuthPage() {
                 bg-[url('/assets/images/authBG6.jpg')] bg-cover bg-center transition-all duration-1000 z-[-1]`}>
             </div>
             <div className="flex justify-center items-center p-4 w-full min-h-screen">
-                <div className={`${approved ? 'opacity-0' : 'opacity-100'} max-w-[550px] p-6 py-10 transition-all duration-500 select-none flex flex-col items-start w-full  bg-black/40 rounded-lg backdrop-blur-md `}>
+                <div className={`${approved ? 'opacity-0' : 'opacity-100'} max-w-[550px] p-6 py-10 transition-all duration-500 select-none flex flex-col items-start w-full  bg-black/50 rounded-lg backdrop-blur-lg `}>
 
                     <h1 className={`${error ? 'text-red-400 p-1 px-2 bg-red-700/20' : ''} rounded-md transition-all text-[30px]`}>{error ? error : loginForm ? 'Entrar com e-mail' : 'Crie sua conta'}</h1>
                     <form className="w-full mt-6 flex flex-col gap-4 items-start" id="loginForm" onSubmit={handleSubmit(handleFormSubmit)}>
@@ -134,12 +134,12 @@ export default function AuthPage() {
                         )}
 
                         <input {...register("email")} type="email" name="email" placeholder="E-mail"
-                            className="w-full p-3 placeholder-white/80 rounded-md bg-black/30 text-white hover:bg-black/40 transition-all outline-1 outline-transparent duration-400 
+                            className="w-full p-3 placeholder-white/80 rounded-md bg-black/40 text-white hover:bg-black/50 transition-all outline-1 outline-transparent duration-400 
                     cursor-pointer focus:cursor-text focus:bg-black/50 focus:outline-blue-500" />
                         <p className={`${errors.email?.message ? 'p-1 px-3' : 'opacity-0 mt-[-10px] '} text-red-500 bg-red-700/10  rounded-sm text-[15px] transition-all`}>{errors.email?.message}</p>
                         <div className="relative w-full">
                             <input {...register("password")} type={`${seePass ? 'text' : 'password'}`} name="password" placeholder="Senha"
-                                className="w-full p-3 placeholder-white/80 rounded-md bg-black/30 text-white hover:bg-black/40 transition-all 
+                                className="w-full p-3 placeholder-white/80 rounded-md bg-black/40 text-white hover:bg-black/50 transition-all 
                             outline-1 outline-transparent duration-400 cursor-pointer focus:cursor-text focus:bg-black/50 focus:outline-blue-500" />
                             {!seePass ?
                                 (<Eye onClick={() => setSeePass(true)} className="absolute top-2 text-blue-500 cursor-pointer right-2 rounded-sm w-8 h-8 p-1 transition-all hover:bg-blue-500 hover:text-white" />)
