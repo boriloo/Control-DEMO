@@ -27,6 +27,7 @@ export default function DesktopConfigWindow() {
     const [formattedDtName, setFormattedDtName] = useState<string | null>(null)
     const [deleteInput, setDeleteInput] = useState<string>('')
     const [desktopName, setDesktopName] = useState('')
+    const [bgVersion, setBgVersion] = useState(0)
     const mouseDownTarget = useRef<EventTarget | null>(null);
 
     const handleMouseDown = (e: React.MouseEvent<HTMLElement>) => {
@@ -79,6 +80,8 @@ export default function DesktopConfigWindow() {
             if (response.id === currentDesktop?.id) {
                 changeCurrentDesktop(response)
             }
+
+            setBgVersion(prev => prev + 1)
 
             callToast({ message: 'Fundo do desktop alterado!', type: 'success' })
         } catch (err) {
@@ -176,7 +179,7 @@ export default function DesktopConfigWindow() {
                 </div>
             </div>
 
-            <div key={dtConfig.desktop?.backgroundImage} className={`${isFullsceen ? 'max-w-full max-h-full' : 'rounded-lg max-w-[1200px] max-h-[700px]'} ${dtConfig.currentStatus === "open" ? 'scale-100' : 'scale-50 opacity-0'} 
+            <div key={bgVersion} className={`${isFullsceen ? 'max-w-full max-h-full' : 'rounded-lg max-w-[1200px] max-h-[700px]'} ${dtConfig.currentStatus === "open" ? 'scale-100' : 'scale-50 opacity-0'} 
                 bg-(--color-dark) cursor-default origin-center relative transition-all duration-250 flex flex-col w-full h-full overflow-y-auto`}>
                 <div className="z-50 sticky select-none top-0 w-full bg-black/60 h-8 flex flex-row justify-between items-center backdrop-blur-[6px]">
                     <p className="p-2">Configurar Desktop</p>
