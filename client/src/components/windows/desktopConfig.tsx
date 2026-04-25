@@ -81,7 +81,11 @@ export default function DesktopConfigWindow() {
                 changeCurrentDesktop(response)
             }
 
-            setBgVersion(prev => prev + 1)
+            setTimeout(() => {
+                setBgVersion(prev => prev + 1)
+            }, 200)
+
+            console.log('bg version alterado')
 
             callToast({ message: 'Fundo do desktop alterado!', type: 'success' })
         } catch (err) {
